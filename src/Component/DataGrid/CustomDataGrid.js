@@ -5,61 +5,49 @@ import { DataGrid } from '@mui/x-data-grid';
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
-    field: 'name',
+    field: 'owner',
     headerName: 'Last name',
-    width: 150,
-    editable: true,
+
   },
   {
-    field: 'TeboName',
+    field: 'uuid',
     headerName: 'TeboName',
-    width: 150,
-    editable: true,
+
   },
 
   {
-    field: 'startTime',
+    field: 'session_start',
     headerName: 'startTime',
     type: 'number',
-    width: 110,
-    editable: true,
+
   },
   {
-    field: 'entTime',
+    field: 'session_end',
     headerName: 'entTime',
     type: 'number',
-    width: 110,
-    editable: true,
+ 
+
   },
   
 
   {
-    field: 'Date',
+    field: 'updated_at',
     headerName: 'Date',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
     
   }
 ];
 
-const rows = [
-  { id: 1, name: 'Snow', TeboName: 'Jon', entTime:"1:30:00" ,Date:"12-12-2020" ,startTime:"8:30:00"  },
-  { id: 2, name: 'Lannister', TeboName: 'Cersei', entTime:"1:30:00" ,Date:"12-12-2020" ,startTime:"8:30:00"  },
-  { id: 3, name: 'Lannister', TeboName: 'Jaime', entTime:"1:30:00" ,Date:"12-12-2020" ,startTime:"8:30:00"  },
-  { id: 4, name: 'Stark', TeboName: 'Arya', entTime:"1:30:00" ,Date:"12-12-2020" ,startTime:"8:30:00"  },
-  { id: 5, name: 'Targaryen', TeboName: 'Daenerys', entTime:"1:30:00" ,Date:"12-12-2020" ,startTime:"8:30:00"  },
-  { id: 6, name: 'Melisandre', TeboName: null, entTime:"1:30:00" ,Date:"12-12-2020" ,startTime:"8:30:00"  },
-  { id: 7, name: 'Clifford', TeboName: 'Ferrara', entTime:"1:30:00" ,Date:"12-12-2020" ,startTime:"8:30:00"  },
-  { id: 8, name: 'Frances', TeboName: 'Rossini', entTime:"1:30:00" ,Date:"12-12-2020" ,startTime:"8:30:00"  },
-  { id: 9, name: 'Roxie', TeboName: 'Harvey', entTime:"1:30:00" ,Date:"12-12-2020" ,startTime: 65 },
-];
 
-export default function CustomDataGrid() {
+
+export default function CustomDataGrid({callLogs}) {
+  // rows = callLogs?.map(data=>{
+  //   return [{ ...data, uuid: data.robot.uuid }];
+  // })
   return (
     <Box sx={{ height: 400, width: '100%' }}>
-      <Card>
+      <Card>  
       <DataGrid
-        rows={rows}
+        rows={callLogs}
         columns={columns}
         initialState={{
           pagination: {

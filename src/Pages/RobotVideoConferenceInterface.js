@@ -23,7 +23,7 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
-import { TiltController } from "../Component/VideoConference";
+// import { TiltController } from "../Component/VideoConference";
 import VideoPlayer from "../Component/Backup/VideoPlayerForConference"; // Correct casing
 import { TILT_CONTROLLER } from "../Constant/defaultValue";
 import { RobotController } from "../Component/VideoConference";
@@ -71,7 +71,6 @@ function RobotVideoConferenceInterface() {
     disconnectUser,
     otherUserId,
     processCall,
-    
   } = useContext(SocketContext);
 
   const addUser = useCallback(() => {
@@ -84,29 +83,26 @@ function RobotVideoConferenceInterface() {
 
   useEffect(() => {
     addUser();
-   
 
     searchParams.set("toId", "TEBO-BXAYP-H2WH5-IRONO");
     navigate(`/RobotVideoConferenceInterface/?${searchParams.toString()}`);
-    return ()=>{
-      leaveCall()
-      DisConnectUser()
-    }
+    return () => {
+      leaveCall();
+      DisConnectUser();
+    };
   }, []);
 
-
-
   useEffect(() => {
-  
-   setTimeout(() => {
-    if(call.isReceivingCall && !callAccepted ){
-      console.log(`call.isReceivingCall && !callAccepted `,call.isReceivingCall && !callAccepted )
-      answerCall()
-     }
-   }, 1000);
-   
-  }, [call])
-  
+    setTimeout(() => {
+      if (call.isReceivingCall && !callAccepted) {
+        console.log(
+          `call.isReceivingCall && !callAccepted `,
+          call.isReceivingCall && !callAccepted
+        );
+        answerCall();
+      }
+    }, 1000);
+  }, [call]);
 
   return (
     <div>
@@ -125,20 +121,14 @@ function RobotVideoConferenceInterface() {
         CONTROLLER_ICON_SIZE={CONTROLLER_ICON_SIZE}
         setControls={setControls}
       />
-        {call.isReceivingCall && !callAccepted && (
-                  <div
-                    style={{ display: "flex", justifyContent: "space-around" }}
-                  >
-                    <h1>{call.name} is calling:</h1>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={answerCall}
-                    >
-                      Answer
-                    </Button>
-                  </div>
-                )}
+      {call.isReceivingCall && !callAccepted && (
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          <h1>{call.name} is calling:</h1>
+          <Button variant="contained" color="primary" onClick={answerCall}>
+            Answer
+          </Button>
+        </div>
+      )}
 
       {/* {call.isReceivingCall && !callAccepted && (
         <div style={{ display: "flex", justifyContent: "space-around" }}>

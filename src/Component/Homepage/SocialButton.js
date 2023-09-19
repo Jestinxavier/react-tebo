@@ -2,7 +2,7 @@ import { Button, Stack } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
 import styled from "styled-components";
-import Google from "../../Pages/Authatication/Authatication";
+import Google from "../../Pages/Authatication/AuthaticationGoogle";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import MyFacebookButton from "../../Pages/Authatication/MyFacebookButton";
 import FacebookAuth from "react-facebook-auth";
@@ -40,12 +40,12 @@ function SocialButton() {
       alignItems="center"
       spacing={1}
     >
-      <GoogleOAuthProvider clientId="873869484443-ac9ncvoc6vif5vc67pn619g1ba1jjogq.apps.googleusercontent.com">
-        {/* <ImageWrapper src={`./images/${data}`} /> */}
-        <Google />
-      </GoogleOAuthProvider>
+      {/* <GoogleOAuthProvider clientId="873869484443-ac9ncvoc6vif5vc67pn619g1ba1jjogq.apps.googleusercontent.com"> 
+        <ImageWrapper src={`./images/${data}`} />
+       
+      </GoogleOAuthProvider>  */}
 
-
+      <Google />
 <FacebookLogin
   appId="1326090128300626"
   style={{

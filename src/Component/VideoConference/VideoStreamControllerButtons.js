@@ -76,10 +76,11 @@ const toIdUUID = searchParms.get("toId");
     console.log("mute");
   
     if (mute) {
-      setMuteButtonName("material-symbols:mic-off");
-      toggleMic()
-    }else{
       setMuteButtonName("ic:sharp-mic");
+      toggleMic()
+      setMute(!mute);
+    }else{
+      setMuteButtonName("material-symbols:mic-off");
       setMute(!mute);
       toggleMic()
     }

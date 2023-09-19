@@ -12,6 +12,9 @@ import {
   formatDateToYYYYMMDD,
 } from "../../utils/momentformat";
 import { raseAticket } from "../../Api/raseAticket";
+import {getTicket} from "../../redux/slices/robot"
+import {dispatch} from "../../redux/store"
+
 import {
   Grid,
   Card,
@@ -64,6 +67,7 @@ function SupportForm() {
       if (responseData) {
         enqueueSnackbar("Thank you for your complaint! We'll address it shortly.", { variant: "success" });
         reset();
+        dispatch(getTicket());
       }
     } catch (error) {
       enqueueSnackbar(error.message, { variant: "error" });
@@ -132,7 +136,7 @@ function SupportForm() {
                 fontWeight: 100,
               }}
             >
-              Rase A Ticket
+              Raise A Ticket
             </Button>
           </Stack>
       

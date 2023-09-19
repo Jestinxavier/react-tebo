@@ -88,7 +88,7 @@ function RobotController({
       }
       if (data.context === "moveBackWard") {
         if (data["moveBackWard"]) {
-          setMqttRequestToServer("Back",toIdUUID);
+          setMqttRequestToServer("back",toIdUUID);
         } else {
           setMqttRequestToServer("stop",toIdUUID);       
         }

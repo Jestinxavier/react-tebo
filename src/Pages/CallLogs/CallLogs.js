@@ -6,6 +6,8 @@ import { Heading, CustomContainer } from "../../Component/CustomComponent";
 
 import { SettingsForm } from "../../Component/Settings";
 import DataGrid from "../../Component/DataGrid/CustomDataGrid";
+import { getCallLogs } from "../../redux/slices/robot";
+import { dispatch, useSelector } from "../../redux/store";
 function CallLogs() {
   const {
     handleDrawerOpen,
@@ -15,7 +17,11 @@ function CallLogs() {
     setOpen,
     modalOpen,
   } = useDrawerContext();
+  const callLogs = useSelector((state) => state.robot.calllogs);
 
+  useEffect(() => {
+    dispatch(getCallLogs());
+  }, []);
 
   return (
     <Box>
@@ -28,9 +34,8 @@ function CallLogs() {
       />
       <CustomContainer>
         <Heading>Call Logs</Heading>
-       
-         <DataGrid />
 
+        {callLogs && <DataGrid callLogs={callLogs} />}
       </CustomContainer>
     </Box>
   );

@@ -53,6 +53,9 @@ export default function TiltController({TiltController}) {
   }
 
   const handleChange = (data)=>{
+    console.log('====================================');
+    console.log(data);
+    console.log('====================================');
     setMqttRequestForTilting(data,toIdUUID)
   }
 
@@ -64,6 +67,7 @@ export default function TiltController({TiltController}) {
             WebkitAppearance: 'slider-vertical',
           },
         }}
+        step={10}
         orientation="vertical"
         defaultValue={[30]}
         onChange={(e)=>{

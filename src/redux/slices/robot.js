@@ -1,10 +1,9 @@
-import sum from 'lodash/sum';
-import uniq from 'lodash/uniq';
-import uniqBy from 'lodash/uniqBy';
-import { createSlice } from '@reduxjs/toolkit';
+import sum from "lodash/sum";
+import uniq from "lodash/uniq";
+import uniqBy from "lodash/uniqBy";
+import { createSlice } from "@reduxjs/toolkit";
 // utils
-import axios from '../../utils/axios';
-
+import axios from "../../utils/axios";
 
 // ----------------------------------------------------------------------
 
@@ -13,8 +12,10 @@ const initialState = {
   error: null,
   products: [],
   robots: [],
-  sharedRobot:[],
-  singleRobot:[],
+  calllogs: [],
+  listTicket: [],
+  sharedRobot: [],
+  singleRobot: [],
   product: null,
   checkout: {
     activeStep: 0,
@@ -29,7 +30,7 @@ const initialState = {
 };
 
 const slice = createSlice({
-  name: 'robot',
+  name: "robot",
   initialState,
   reducers: {
     // START LOADING
@@ -49,19 +50,29 @@ const slice = createSlice({
       state.products = action.payload;
     },
 
-    getRobotList(state,action){
+    getRobotList(state, action) {
       state.isLoading = false;
       state.robots = action.payload;
     },
 
-    geSingletRobot(state,action){
+    setCallLogs(state, action) {
+      state.isLoading = false;
+      state.calllogs = action.payload;
+    },
+
+    setTicket(state, action) {
+      state.isLoading = false;
+      state.listTicket = action.payload;
+    },
+
+    geSingletRobot(state, action) {
       state.isLoading = false;
       state.singleRobot = action.payload;
     },
 
     // get SharedRobot
 
-    getSharedRobot(state,action){
+    getSharedRobot(state, action) {
       state.isLoading = false;
       state.sharedRobot = action.payload;
     },
@@ -77,7 +88,9 @@ const slice = createSlice({
       const cart = action.payload;
 
       const totalItems = sum(cart.map((product) => product.quantity));
-      const subtotal = sum(cart.map((product) => product.price * product.quantity));
+      const subtotal = sum(
+        cart.map((product) => product.price * product.quantity)
+      );
       state.checkout.cart = cart;
       state.checkout.discount = state.checkout.discount || 0;
       state.checkout.shipping = state.checkout.shipping || 0;
@@ -108,12 +121,16 @@ const slice = createSlice({
           return product;
         });
       }
-      state.checkout.cart = uniqBy([...state.checkout.cart, newProduct], 'id');
-      state.checkout.totalItems = sum(state.checkout.cart.map((product) => product.quantity));
+      state.checkout.cart = uniqBy([...state.checkout.cart, newProduct], "id");
+      state.checkout.totalItems = sum(
+        state.checkout.cart.map((product) => product.quantity)
+      );
     },
 
     deleteCart(state, action) {
-      const updateCart = state.checkout.cart.filter((product) => product.id !== action.payload);
+      const updateCart = state.checkout.cart.filter(
+        (product) => product.id !== action.payload
+      );
 
       state.checkout.cart = updateCart;
     },
@@ -186,7 +203,8 @@ const slice = createSlice({
     applyShipping(state, action) {
       const shipping = action.payload;
       state.checkout.shipping = shipping;
-      state.checkout.total = state.checkout.subtotal - state.checkout.discount + shipping;
+      state.checkout.total =
+        state.checkout.subtotal - state.checkout.discount + shipping;
     },
   },
 });
@@ -216,7 +234,7 @@ export function getProducts() {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.post('/owner/my-robots');
+      const response = await axios.post("/owner/my-robots");
       dispatch(slice.actions.getProductsSuccess(response.data.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -228,7 +246,9 @@ export function getSingleRobot(data) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.post('/owner/show-robot',{owned_robot_id:2});
+      const response = await axios.post("/owner/show-robot", {
+        owned_robot_id: 2,
+      });
       dispatch(slice.actions.geSingletRobot(response.data.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -240,16 +260,13 @@ export function getSharedRobotList(data) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.post('/owner/others-shared-with-me');
+      const response = await axios.post("/owner/others-shared-with-me");
       dispatch(slice.actions.getSharedRobot(response.data.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
   };
 }
-
-
-
 
 // ----------------------------------------------------------------------
 
@@ -259,11 +276,9 @@ export function getRobot() {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.post('/owner/my-robots');
-      if(response){
-       dispatch(slice.actions.getRobotList(response.data.data));
-       
-
+      const response = await axios.post("/owner/my-robots");
+      if (response) {
+        dispatch(slice.actions.getRobotList(response.data.data));
       }
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -277,12 +292,52 @@ export function getProduct(name) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/api/products/product', {
+      const response = await axios.get("/api/products/product", {
         params: { name },
       });
       dispatch(slice.actions.getProductSuccess(response.data.product));
     } catch (error) {
       console.error(error);
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+// ----------------------------------------------------------------------
+
+export function getCallLogs() {
+
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      const response = await axios.post("/owner/all-call-logs");
+      if (response) {
+        console.log(response.data.data,"response.data.data");
+        let result = response?.data?.data?.logs?.map((res) => ({
+          ...res,
+          uuid: res.robot?.uuid,
+          owner:response?.data?.data?.owner?.name
+        }));
+        if (result) {
+          dispatch(slice.actions.setCallLogs(result));
+          
+        }
+      }
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+export function getTicket() {
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      const response = await axios.post("/owner/list-ticket");
+      if (response) {
+        dispatch(slice.actions.setTicket(response.data.data));
+      }
+    } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
   };

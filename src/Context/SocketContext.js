@@ -221,7 +221,7 @@ const ContextProvider = ({ children }) => {
 
   async function processCall() {
     
-    console.log("👺", otherUserId);
+    // console.log("👺", otherUserId);
     const sessionDescription = await peerConnection.current.createOffer();
 
     await peerConnection.current.setLocalDescription(sessionDescription);
@@ -305,9 +305,7 @@ function deleteMap(){
   }
 
   function leave() {
-    socket?.emit("meeting-ended",{id:otherUserId.current});
-
-    
+    socket?.emit("meeting-ended",{id:otherUserId.current});    
     peerConnection.current.close();
     setlocalStream(null);
     stream.getTracks().forEach((track) => {

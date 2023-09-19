@@ -87,18 +87,22 @@ function ProfileForm() {
       const dataOfBirth = formatDateToYYYYMMDD(data.date_of_birth);
       data.date_of_birth = dataOfBirth;
      
-console.log(image,"image");
-      if (image.upload) {
-        data.profile_pic = image.imageFile.file;
-      }
-      console.log(data, "data**");
 
-      const responseData = await addProfile(data);
+      
+      let updatedData = null
+
+  
+      console.log(image.imageFile.file, "image");
+
+        let profile_pic = image.imageFile.file;
+         updatedData = {...data,profile_pic:profile_pic }
+
+     if(updatedData){ const responseData = await addProfile(data);
       if (responseData) {
         enqueueSnackbar("Login successfully", { variant: "success" });
         //   navigate("/");
         reset();
-      }
+      }}
     } catch (error) {
       enqueueSnackbar(error.message, { variant: "error" });
     }

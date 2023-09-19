@@ -95,22 +95,29 @@ function SettingsForm() {
     try {
       const dataOfBirth = formatDateToYYYYMMDD(data.date_of_birth);
       data.date_of_birth = dataOfBirth;
+      let updatedData = null
 
-      console.log(image, "image");
-      if (image.upload) {
-        data.profile_pic = image.imageFile.file;
-      }
+  
+      console.log(image.imageFile.file, "image");
+
+        let profile_pic = image.imageFile.file;
+         updatedData = {...data,profile_pic:profile_pic }
+      
+      
       console.log(data, "data**");
-
-      const responseData = await addProfile(data);
-      if (responseData) {
-        enqueueSnackbar(
-          "Thank you for your complaint! We'll address it shortly.",
-          { variant: "success" }
-        );
-        //   navigate("/");
-        reset();
+      if(updatedData){
+        const responseData = await addProfile(data);
+        if (responseData) {
+          enqueueSnackbar(
+            "Thank you for your complaint! We'll address it shortly.",
+            { variant: "success" }
+          );
+          //   navigate("/");
+          reset();
+        }
       }
+
+     
     } catch (error) {
       enqueueSnackbar(error.message, { variant: "error" });
     }

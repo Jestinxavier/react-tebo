@@ -47,7 +47,7 @@ function VideoController({
   
   const location = useLocation();
   const searchParms = new URLSearchParams(location.search);
-  const { setMqttRequestToServer } = useContext(SocketContext);
+  const { setMqttRequestToServer,processCall } = useContext(SocketContext);
   const toIdUUID = searchParms.get("toId");
 
   const callback = React.useCallback(() => {
@@ -177,7 +177,8 @@ function VideoController({
                           }}
                         />
                       </IconButton>
-                      <IconButton
+                       <IconButton
+                      
                         style={{
                           border: "1px solid gray",
                           borderColor: theme.palette.blueGray[900],
@@ -194,14 +195,16 @@ function VideoController({
                         }}
                       >
                         <Icon
-                          icon="ic:outline-flip-camera-ios"
+                       
+                          icon="pajamas:retry"
                           width={CONTROLLER_ICON_SIZE}
                           color={theme.palette.primary.contrastText}
                           onClick={() => {
                             setControls(!controls);
+                            processCall();
                           }}
                         />
-                      </IconButton>
+                      </IconButton> 
                     </Stack>
                   </Stack>
                 </Stack>
