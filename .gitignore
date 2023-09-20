@@ -1,0 +1,6 @@
+# Ignore Node.js dependencies
+node_modules/
+
+# Ignore environment configuration files
+.env
+

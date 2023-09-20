@@ -1,0 +1,1 @@
+export const TILT_CONTROLLER = 200;

@@ -1,0 +1,13 @@
+COLOR PALETTE
+
+021521  Dark SHade Theme Color
+f66b0e  Orange Color
+Border Radius 25px
+
+Font Family Roboto
+
+Button gradient Dark :  021421  to  072a44  to  082a43  Angle 49 Degree
+Button Light :  f7f7f7  to  fcfcfc  to f6f6f6  Angle 50 Degree
+
+Font COlor Dark : #000
+Font COlor Dark Grey :  #434343
