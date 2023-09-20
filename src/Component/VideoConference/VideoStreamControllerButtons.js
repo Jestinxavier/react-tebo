@@ -92,8 +92,10 @@ const toIdUUID = searchParms.get("toId");
     setMqttRequestForMeetingEnd(!docking,toIdUUID)
     callEndedInfo(callerApiId)
     
-    leaveCall()
-    navigate("/")
+    leaveCall().then(()=>{
+      navigate("/")
+    })
+   
     leave() 
   };
 

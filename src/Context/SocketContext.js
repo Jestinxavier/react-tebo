@@ -59,6 +59,10 @@ const ContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (callerId) {
+      console.log('====================================');
+            
+            console.log(callerId,"callerId,");
+      console.log('====================================');
       // "https://tebo.devlacus.com"
       const socketInstance = io(
         // "http://localhost:5000",
@@ -542,7 +546,7 @@ function deleteMap(){
 
   const leaveCall = () => {
     setCallEnded(true);
-
+    socket?.emit("meeting-ended",{id:otherUserId.current});    
     stream?.getTracks().forEach((track) => track.stop());
 
     if (connectionRef.current) {
@@ -553,7 +557,11 @@ function deleteMap(){
     }
 
     // window.location.reload();
+
+    setTimeout(() => {
     window.location.href = "/";
+    }, 1000);
+    return true;
   };
 
   const sendMessage = (message) => {
