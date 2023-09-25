@@ -47,12 +47,12 @@ const ContextProvider = ({ children }) => {
         {
           urls: "stun:stun.l.google.com:19302",
         },
-        {
-          urls: "stun:stun1.l.google.com:19302",
-        },
-        {
-          urls: "stun:stun2.l.google.com:19302",
-        },
+        // {
+        //   urls: "stun:stun1.l.google.com:19302",
+        // },
+        // {
+        //   urls: "stun:stun2.l.google.com:19302",
+        // },
       ],
     })
   );
@@ -97,6 +97,7 @@ const ContextProvider = ({ children }) => {
   let remoteRTCMessage = useRef(null);
 
   useEffect(() => {
+    let currentStreamCopy = null;
     if (PageTrigger && socket && otherUserId) {
       socket?.on("newCall", (data) => {
         console.log(data, "newCall");
@@ -163,6 +164,7 @@ const ContextProvider = ({ children }) => {
           console.log(stream.getTracks(), "Got stream!");
 
           setlocalStream(stream);
+          currentStreamCopy = stream;
           stream.getTracks().map((track) => {
             peerConnection.current.addTrack(track, stream);
           });
@@ -220,24 +222,25 @@ const ContextProvider = ({ children }) => {
       socket?.off("newCall");
       socket?.off("callAnswered");
       socket?.off("ICEcandidate");
+      currentStreamCopy?.getTracks().forEach((track) => track.stop());
     };
   }, [PageTrigger, socket]);
 
   async function processCall() {
     
-    // console.log("👺", otherUserId);
     const sessionDescription = await peerConnection.current.createOffer();
+    console.log("👺", sessionDescription);
 
     await peerConnection.current.setLocalDescription(sessionDescription);
     console.log("otherUserId.current", sessionDescription, peerConnection);
-    setTimeout(() => {
+    // setTimeout(() => {
       console.log("otherUserId.current", otherUserId.current);
       sendCall({
         calleeId: otherUserId.current,
         // calleeId: 'TEBO-GOKUL-NOKIA-TABLET',
         rtcMessage: sessionDescription,
       });
-    }, 5000);
+    // }, 5000);
     setfirst(true);
   }
   function sendICEcandidate(data) {

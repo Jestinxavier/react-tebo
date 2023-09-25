@@ -89,6 +89,10 @@ const toIdUUID = searchParms.get("toId");
 
   const callControl = () => {
     console.log("mute");
+    
+    setGotoHome(!gotoHome)
+    setMqttRequestForGotoHome(!gotoHome,toIdUUID)
+
     setMqttRequestForMeetingEnd(!docking,toIdUUID)
     callEndedInfo(callerApiId)
     

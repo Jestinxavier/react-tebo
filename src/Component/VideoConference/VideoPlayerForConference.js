@@ -111,7 +111,7 @@ export default function VideoPlayerForConference({
     const checkAndProcessCall = () => {
       if (!remoteStream && continueProcessCall) {
         processCall();
-        setTimeout(checkAndProcessCall, 1000); // Call again after a delay
+        setTimeout(checkAndProcessCall, 5000); // Call again after a delay
       } else {
         // remoteStream has data, you can stop calling processCall here
         continueProcessCall = false;

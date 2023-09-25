@@ -4,17 +4,34 @@ import {Box, Button} from '@mui/material'
 
 function AuthaticationGoogle() {
     const [googleLoginUrl, setGoogleLoginUrl] = useState(null);
+    const [callbackUrl, setCallbackUrl] = useState(null)
 
     useEffect(() => {
         axios.get('/google-login/redirect', { headers: { accept: 'application/json' } })
             .then((response) => {
                 const { data } = response;
-                setGoogleLoginUrl(data.url);
+                setCallbackUrl(data.url);
+                console.log('======data.url==============================');
+                console.log(data.url);
+                console.log('====================================');
             })
             .catch((error) => {
                 console.error('Error fetching data:', error);
             });
     }, []);
+
+    useEffect(() => {
+        axios.get(callbackUrl, { headers: { accept: 'application/json' } })
+            .then((response) => {
+                const { data } = response;
+               
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
+    }, [callbackUrl])
+    
+
 
     return (
         <Box>
@@ -23,6 +40,8 @@ function AuthaticationGoogle() {
                     Sign in with Google
                 </a>
             )}
+
+           
         </Box>
     );
 }

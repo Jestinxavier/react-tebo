@@ -37,6 +37,7 @@ const AirbnbSlider = styled(Slider)(({ theme }) => ({
     },
   }));
 
+
 export default function TiltController({TiltController}) {
 
   const location = useLocation();
@@ -47,12 +48,30 @@ export default function TiltController({TiltController}) {
   const toIdUUID = searchParms.get('toId');
 
   function preventHorizontalKeyboardNavigation(event) {
+    handleChange()
+    console.log('====================================');
+    console.log(event,"event");
+    console.log('====================================');
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      
       event.preventDefault();
     }
   }
 
+  const handleKeyDown = (event) => {
+    // Prevent the slider from reacting to the up and down arrow keys
+    if (
+      event.key === 'ArrowUp' ||
+      event.key === 'ArrowDown' ||
+      event.key === 'ArrowRight' ||
+      event.key === 'ArrowLeft'
+    ) {
+      event.preventDefault();
+    }
+  };
+
   const handleChange = (data)=>{
+    // data.preventDefault();
     console.log('====================================');
     console.log(data);
     console.log('====================================');
@@ -62,6 +81,7 @@ export default function TiltController({TiltController}) {
   return (
     <Box sx={{ height: {TiltController} }}>
       <AirbnbSlider
+      onKeyDown={handleKeyDown} // Attach the event handler
         sx={{
           '& input[type="range"]': {
             WebkitAppearance: 'slider-vertical',
@@ -75,7 +95,9 @@ export default function TiltController({TiltController}) {
         }}
         aria-label="Temperature"
         valueLabelDisplay="auto"
-        onKeyDown={preventHorizontalKeyboardNavigation}
+        // onKeyPress={handleKeyPress}
+        //  onKeyDown={preventHorizontalKeyboardNavigation}
+         onkeydown="event.preventDefault()"
       />
     </Box>
   );
