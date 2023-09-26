@@ -33,7 +33,6 @@ const ContextProvider = ({ children }) => {
   const [obstacle, setObstacle] = useState(false);
   const [mapState, setMapState] = useState(null);
 
-
   const [isScreenSharing, setIsScreenSharing] = useState(false); // New state for screen sharing
 
   const myVideo = useRef();
@@ -43,6 +42,9 @@ const ContextProvider = ({ children }) => {
 
   const peerConnection = useRef(
     new RTCPeerConnection({
+      sdpSemantics: "plan-b",
+      bundlePolicy: "max-compat",
+      rtcpMuxPolicy: "negotiate",
       iceServers: [
         {
           urls: "stun:stun.l.google.com:19302",
@@ -53,16 +55,21 @@ const ContextProvider = ({ children }) => {
         // {
         //   urls: "stun:stun2.l.google.com:19302",
         // },
+        // { urls: "stun:stun.services.mozilla.com" },
+        // { urls: "stun:stun3.l.google.com:19302" },
+        // { urls: "stun:stun4.l.google.com:19302" },
+        { urls: "stun:stun.ekiga.net" },
+        {urls: 'turn:172.31.83.246:3478?transport=tcp', credential: 'user', username: 'root'}
       ],
     })
   );
 
   useEffect(() => {
     if (callerId) {
-      console.log('====================================');
-            
-            console.log(callerId,"callerId,");
-      console.log('====================================');
+      console.log("====================================");
+
+      console.log(callerId, "callerId,");
+      console.log("====================================");
       // "https://tebo.devlacus.com"
       const socketInstance = io(
         // "http://localhost:5000",
@@ -106,7 +113,6 @@ const ContextProvider = ({ children }) => {
         setType("INCOMING_CALL");
       });
 
-
       socket?.on("callAnswered", (data) => {
         console.log("callAnswered", data);
         remoteRTCMessage.current = data.rtcMessage;
@@ -116,9 +122,9 @@ const ContextProvider = ({ children }) => {
         );
         setType("WEBRTC_ROOM");
       });
-      socket.on("call-state",(data)=>{
-        console.log(data,'call-state');
-      })
+      socket.on("call-state", (data) => {
+        console.log(data, "call-state");
+      });
 
       socket?.on("ICEcandidate", (data) => {
         let message = data.rtcMessage;
@@ -173,31 +179,27 @@ const ContextProvider = ({ children }) => {
           console.log(error.message);
         });
 
-
       peerConnection.current.onaddstream = (event) => {
         console.log(event, "onaddStream****");
         console.log("onaddstream", event.stream);
         setRemoteStream(event.stream);
       };
 
-      socket?.on('obstacleDetected',(data)=>{
-        console.log(data,"obstacleDetected***");
+      socket?.on("obstacleDetected", (data) => {
+        console.log(data, "obstacleDetected***");
 
-        if(data=="1"){
+        if (data == "1") {
+          setObstacle(true);
+        } else {
+          console.log(data, "obstacleDetected***");
 
-          setObstacle(true)
-
-        }else{
-        console.log(data,"obstacleDetected***");
-
-          setObstacle(false)
-
+          setObstacle(false);
         }
-      })
+      });
 
-      socket?.on('mapState',(data)=>{
-        setMapState(data)
-      })
+      socket?.on("mapState", (data) => {
+        setMapState(data);
+      });
 
       // peerConnection.current.addEventListener("addstream", (ev) => setRemoteStream(ev.stream), false);
 
@@ -227,19 +229,18 @@ const ContextProvider = ({ children }) => {
   }, [PageTrigger, socket]);
 
   async function processCall() {
-    
     const sessionDescription = await peerConnection.current.createOffer();
     console.log("👺", sessionDescription);
 
     await peerConnection.current.setLocalDescription(sessionDescription);
     console.log("otherUserId.current", sessionDescription, peerConnection);
     // setTimeout(() => {
-      console.log("otherUserId.current", otherUserId.current);
-      sendCall({
-        calleeId: otherUserId.current,
-        // calleeId: 'TEBO-GOKUL-NOKIA-TABLET',
-        rtcMessage: sessionDescription,
-      });
+    console.log("otherUserId.current", otherUserId.current);
+    sendCall({
+      calleeId: otherUserId.current,
+      // calleeId: 'TEBO-GOKUL-NOKIA-TABLET',
+      rtcMessage: sessionDescription,
+    });
     // }, 5000);
     setfirst(true);
   }
@@ -251,39 +252,35 @@ const ContextProvider = ({ children }) => {
     socket?.emit("answerCall", data);
   }
 
-  function startMapping(){
+  function startMapping() {
     console.log("sdsdsd");
-    socket?.emit("start-mapping",{id:otherUserId.current});
+    socket?.emit("start-mapping", { id: otherUserId.current });
   }
 
+  function stopMapping() {
+    socket?.emit("stopMapping", { id: otherUserId.current });
+  }
 
-function stopMapping(){
-  socket?.emit('stopMapping',{id:otherUserId.current});
-}
+  function deleteMap() {
+    socket?.emit("deleteMap", { id: otherUserId.current });
+  }
 
-
-function deleteMap(){
-  socket?.emit('deleteMap',{id:otherUserId.current});
-}
-  
-
-  
   function sendCall(data) {
     // console.log(data,socket,'sending call')
     console.log();
-    
-    socket?.emit("start-call",{id:data.calleeId});
 
-    socket?.emit("start-meeting",{id:data.calleeId});
+    socket?.emit("start-call", { id: data.calleeId });
+
+    socket?.emit("start-meeting", { id: data.calleeId });
     socket?.emit("call", data);
   }
 
   const addUserId = (userId) => {
     setCallerId(userId);
-    socket?.emit("setMapUser",{
-      from:userId,
-      toId:otherUserId.current,
-    })
+    socket?.emit("setMapUser", {
+      from: userId,
+      toId: otherUserId.current,
+    });
     socket?.emit("sentUserId", userId);
   };
 
@@ -312,7 +309,7 @@ function deleteMap(){
   }
 
   function leave() {
-    socket?.emit("meeting-ended",{id:otherUserId.current});    
+    socket?.emit("meeting-ended", { id: otherUserId.current });
     peerConnection.current.close();
     setlocalStream(null);
     stream.getTracks().forEach((track) => {
@@ -395,8 +392,6 @@ function deleteMap(){
       })
       .catch((error) => console.error("Error sharing screen:", error));
   };
-
-
 
   const stopScreenSharing = () => {
     if (screenShareStream) {
@@ -549,7 +544,7 @@ function deleteMap(){
 
   const leaveCall = () => {
     setCallEnded(true);
-    socket?.emit("meeting-ended",{id:otherUserId.current});    
+    socket?.emit("meeting-ended", { id: otherUserId.current });
     stream?.getTracks().forEach((track) => track.stop());
 
     if (connectionRef.current) {
@@ -562,7 +557,7 @@ function deleteMap(){
     // window.location.reload();
 
     setTimeout(() => {
-    window.location.href = "/";
+      window.location.href = "/";
     }, 1000);
     return true;
   };
