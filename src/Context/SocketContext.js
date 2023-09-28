@@ -49,6 +49,33 @@ const ContextProvider = ({ children }) => {
         {
           urls: "stun:stun.l.google.com:19302",
         },
+        {urls: 'turn:172.31.83.246:3478?transport=tcp', credential: 'user', username: 'root'},
+
+        {
+          urls: "stun:stun.relay.metered.ca:80",
+        },
+        {
+          urls: "turn:a.relay.metered.ca:80",
+          username: "3f1126a64ac64d04fae28a4e",
+          credential: "UrOud5yG1+sYkF8N",
+        },
+        {
+          urls: "turn:a.relay.metered.ca:80?transport=tcp",
+          username: "3f1126a64ac64d04fae28a4e",
+          credential: "UrOud5yG1+sYkF8N",
+        },
+        {
+          urls: "turn:a.relay.metered.ca:443",
+          username: "3f1126a64ac64d04fae28a4e",
+          credential: "UrOud5yG1+sYkF8N",
+        },
+        {
+          urls: "turn:a.relay.metered.ca:443?transport=tcp",
+          username: "3f1126a64ac64d04fae28a4e",
+          credential: "UrOud5yG1+sYkF8N",
+        },
+
+
         // {
         //   urls: "stun:stun1.l.google.com:19302",
         // },
@@ -58,8 +85,7 @@ const ContextProvider = ({ children }) => {
         // { urls: "stun:stun.services.mozilla.com" },
         // { urls: "stun:stun3.l.google.com:19302" },
         // { urls: "stun:stun4.l.google.com:19302" },
-        { urls: "stun:stun.ekiga.net" },
-        {urls: 'turn:172.31.83.246:3478?transport=tcp', credential: 'user', username: 'root'}
+        // { urls: "stun:stun.ekiga.net" },
       ],
     })
   );
@@ -128,7 +154,9 @@ const ContextProvider = ({ children }) => {
 
       socket?.on("ICEcandidate", (data) => {
         let message = data.rtcMessage;
-
+        console.log('====================================');
+        console.log(peerConnection.current,"data after connection********");
+        console.log('====================================');
         if (peerConnection.current) {
           peerConnection?.current
             .addIceCandidate(
@@ -153,7 +181,7 @@ const ContextProvider = ({ children }) => {
           audio: true,
           video: {
             mandatory: {
-              // minWidth: 500, // Provide your own width, height and frame rate here
+              //  minWidth: 500, // Provide your own width, height and frame rate here
               // minHeight: 300,
               // minFrameRate: 30,
 
@@ -186,12 +214,10 @@ const ContextProvider = ({ children }) => {
       };
 
       socket?.on("obstacleDetected", (data) => {
-        console.log(data, "obstacleDetected***");
 
         if (data == "1") {
           setObstacle(true);
         } else {
-          console.log(data, "obstacleDetected***");
 
           setObstacle(false);
         }
