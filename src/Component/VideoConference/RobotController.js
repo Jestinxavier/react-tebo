@@ -1,13 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { IconButton, Box, Stack, Grid } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { Icon } from "@iconify/react";
 // import {ControllingButtonComponent} from '../ButtonComponent'
 import { LongPressEventType, useLongPress } from "use-long-press";
 import { SocketContext } from "../../Context/SocketContext";
-import { useLocation } from 'react-router-dom';
-
-
+import { useLocation } from "react-router-dom";
 
 function RobotController({
   CONTROLLER_ICON_BORDER_RADIUS,
@@ -23,7 +21,7 @@ function RobotController({
   const searchParms = new URLSearchParams(location.search);
 
   const { setMqttRequestToServer } = useContext(SocketContext);
-  const toIdUUID = searchParms.get('toId');
+  const toIdUUID = searchParms.get("toId");
 
   const callback = React.useCallback(() => {
     setLongPressed(true);
@@ -31,14 +29,14 @@ function RobotController({
 
   React.useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === 'ArrowUp') {
+      if (event.key === "ArrowUp") {
         // Call the function you want to trigger when the Up arrow is pressed
         handleUpArrowPress();
       }
     };
 
     const handleKeyUp = (event) => {
-      if (event.key === 'ArrowUp') {
+      if (event.key === "ArrowUp") {
         // Call the function you want to trigger when the Up arrow is released
         handleUpArrowRelease();
       }
@@ -46,20 +44,20 @@ function RobotController({
 
     const handleUpArrowPress = () => {
       // Logic for when Up arrow is pressed
-      console.log('Up arrow pressed');
+      console.log("Up arrow pressed");
     };
 
     const handleUpArrowRelease = () => {
       // Logic for when Up arrow is released
-      console.log('Up arrow released');
+      console.log("Up arrow released");
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
 
@@ -67,40 +65,47 @@ function RobotController({
     if (data) {
       if (data.context === "moveForward") {
         if (data["moveForward"]) {
-          setMqttRequestToServer("forward",toIdUUID);
+          setMqttRequestToServer("forward", toIdUUID);
         } else {
-          setMqttRequestToServer("stop",toIdUUID);       
+          setMqttRequestToServer("stop", toIdUUID);
         }
       }
       if (data.context === "moveLeft") {
         if (data["moveLeft"]) {
-          setMqttRequestToServer("left",toIdUUID);
+          setMqttRequestToServer("left", toIdUUID);
         } else {
-          setMqttRequestToServer("stop",toIdUUID);       
+          setMqttRequestToServer("stop", toIdUUID);
         }
       }
       if (data.context === "moveRight") {
         if (data["moveRight"]) {
-          setMqttRequestToServer("right",toIdUUID);
+          setMqttRequestToServer("right", toIdUUID);
         } else {
-          setMqttRequestToServer("stop",toIdUUID);       
+          setMqttRequestToServer("stop", toIdUUID);
         }
       }
       if (data.context === "moveBackWard") {
         if (data["moveBackWard"]) {
-          setMqttRequestToServer("back",toIdUUID);
+          setMqttRequestToServer("back", toIdUUID);
         } else {
-          setMqttRequestToServer("stop",toIdUUID);       
+          setMqttRequestToServer("stop", toIdUUID);
         }
       }
     }
   };
-
+  const [start, setStart] = useState();
+  console.log('====================================');
+  console.log(start,"start");
+  console.log('====================================');
   const bind = useLongPress(enabled ? callback : null, {
     onStart: (event, meta) => {
       meta[meta.context] = true;
       console.log("Press started", { ...meta });
-      sentMqttControlMessage(meta);
+      let momentControllerData = setInterval(() => {
+        console.log("Press started", meta);
+        sentMqttControlMessage(meta);
+      }, 100);
+      setStart(momentControllerData);
 
       // setMomentController({ meta });
     },
@@ -110,11 +115,12 @@ function RobotController({
       setMomentController({ meta });
       sentMqttControlMessage(meta);
       // sentMqttControlMessage({meta})
-
+      clearInterval(start);
       console.log("Long press finished", meta);
     },
     onCancel: (event, meta) => {
       meta[meta.context] = false;
+      clearInterval(start)
       console.log("moving forward is stoped", meta);
       sentMqttControlMessage(meta);
     },
@@ -130,7 +136,6 @@ function RobotController({
   const moveLeft = bind("moveLeft");
   const moveRight = bind("moveRight");
   const moveBackWard = bind("moveBackWard");
-
 
   return (
     <Stack
@@ -280,7 +285,7 @@ function RobotController({
             </Stack>
 
             <IconButton
-            {...moveBackWard}
+              {...moveBackWard}
               style={{
                 border: "1px solid gray",
                 borderColor: theme.palette.blueGray[900],
@@ -311,5 +316,3 @@ function RobotController({
 }
 
 export default RobotController;
-
-

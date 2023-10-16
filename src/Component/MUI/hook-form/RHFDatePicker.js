@@ -9,13 +9,13 @@ RHFDatePicker.propTypes = {
   helperText: PropTypes.node,
 };
 
-export default function RHFDatePicker({ name, helperText, ...other }) {
+export default function RHFDatePicker({ name, label,helperText, ...other }) {
   const { control, setValue } = useFormContext(); // Added setValue
   const [value, setValueState] = useState(new Date());
 
   return (
     <DesktopDatePicker
-      label=""
+      label={label}
       value={value}
       fullWidth
       sx={{

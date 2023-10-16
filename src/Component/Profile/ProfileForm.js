@@ -11,6 +11,8 @@ import {
   regularFormatDate,
   formatDateToYYYYMMDD,
 } from "../../utils/momentformat";
+import { fData } from "../../utils/formatNumber";
+
 import { addProfile } from "../../Api/addProfile";
 import {
   Grid,
@@ -18,6 +20,8 @@ import {
   Button,
   Typography,
   Stack,
+  CardContent,
+  CardHeader,
   IconButton,
   InputAdornment,
 } from "@mui/material";
@@ -28,6 +32,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useSnackbar } from "../../Component/MUI/snackbar";
 import ImageUpload from "../FileUpload/ImageUpload";
 import { useSelector, useDispatch } from "../../redux/store";
+import { UploadAvatar, Upload, UploadBox } from "../../Component/upload";
+import appendToFormData from "../../utils/appendToFormData";
+import { useAuthContext } from "../../auth/useAuthContext";
+
 const defaultValues = {
   email: "",
   phone_number: "",
@@ -35,9 +43,11 @@ const defaultValues = {
 function ProfileForm() {
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
+  const { updateProfile } = useAuthContext();
   // const [value, setValue] = useState(defaultValues)
   const [image, setImage] = useState("");
   const [DateOfBerth, setDateOfBerth] = useState(new Date());
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const userDetail = useSelector(
     (state) => state?.userdetail?.userdetails?.owner
   );
@@ -63,6 +73,8 @@ function ProfileForm() {
     handleSubmit,
     reset,
     formState: { isSubmitting, errors },
+    getValues,
+    setValue,
   } = methods;
 
   useEffect(() => {
@@ -82,27 +94,43 @@ function ProfileForm() {
     }
   }, [userDetail]);
 
+  const handleDropAvatar = useCallback(
+    (acceptedFiles) => {
+      const newFile = acceptedFiles[0];
+      if (newFile) {
+        setAvatarUrl(
+          Object.assign(newFile, {
+            preview: URL.createObjectURL(newFile),
+          })
+        );
+      }
+      if (newFile) {
+        setValue("image_path", newFile, { shouldValidate: true });
+      }
+    },
+    [setValue]
+  );
+
   const onSubmit = useCallback(async (data) => {
     try {
       const dataOfBirth = formatDateToYYYYMMDD(data.date_of_birth);
       data.date_of_birth = dataOfBirth;
-     
+      let updatedData = null;
+      // let profile_pic = image.imageFile.file;
+      updatedData = { ...data, profile_pic: data.image_path };
+      if (updatedData) {
+        const formData = new FormData(); // Create a new FormData object for each API call
+        console.log("NNNN====================================");
+        console.log(getValues());
+        console.log("====================================");
+        appendToFormData(formData, updatedData);
 
-      
-      let updatedData = null
+        await updateProfile(formData);
 
-  
-      console.log(image.imageFile.file, "image");
-
-        let profile_pic = image.imageFile.file;
-         updatedData = {...data,profile_pic:profile_pic }
-
-     if(updatedData){ const responseData = await addProfile(data);
-      if (responseData) {
-        enqueueSnackbar("Login successfully", { variant: "success" });
+        enqueueSnackbar("Data Added successfully", { variant: "success" });
         //   navigate("/");
         reset();
-      }}
+      }
     } catch (error) {
       enqueueSnackbar(error.message, { variant: "error" });
     }
@@ -116,11 +144,35 @@ function ProfileForm() {
     >
       <Grid container spacing={2}>
         <Grid item md={6} xs={12}>
-          <ImageUpload
+          {/* <ImageUpload
             image={image}
             setImage={setImage}
             name="Upload Your Profile"
-          />
+          /> */}
+          <Card>
+            <CardHeader title="Upload Avatar" />
+            <CardContent>
+              <UploadAvatar
+                file={avatarUrl}
+                onDrop={handleDropAvatar}
+                helperText={
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      mt: 2,
+                      mx: "auto",
+                      display: "block",
+                      textAlign: "center",
+                      color: "text.secondary",
+                    }}
+                  >
+                    Allowed *.jpeg, *.jpg, *.png, *.gif
+                    <br /> max size of {fData(3145728)}
+                  </Typography>
+                }
+              />
+            </CardContent>
+          </Card>
         </Grid>
 
         <Grid item md={6} xs={12}>
@@ -143,8 +195,9 @@ function ProfileForm() {
                       paddingBottom: "25px",
                     },
                   }}
+                  InputLabelProps={{ shrink: true }}  
                   name="name"
-                  label="name"
+                  label="Name"
                 />
                 <RHFSelectPhoneNumber
                   fullWidth
@@ -187,7 +240,7 @@ function ProfileForm() {
                     },
                   }}
                   name="email"
-                  label="email"
+                  label="Email"
                 />
                 <Box
                   sx={{
@@ -207,6 +260,7 @@ function ProfileForm() {
                 >
                   <RHFDatePicker
                     name="date_of_birth"
+                    label="Date Of Birth"
                     fullWidth
                     dateValue={DateOfBerth}
                     sx={{

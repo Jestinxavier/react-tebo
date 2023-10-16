@@ -79,7 +79,7 @@ export default function TiltController({TiltController}) {
   }
 
   return (
-    <Box sx={{ height: {TiltController} }}>
+    <Box sx={{ height: {TiltController} }} className="my-tilt">
       <AirbnbSlider
       onKeyDown={handleKeyDown} // Attach the event handler
         sx={{

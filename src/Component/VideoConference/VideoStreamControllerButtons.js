@@ -126,7 +126,8 @@ const toIdUUID = searchParms.get("toId");
     {
       name: "fluent:home-20-filled",
       funcationToCall: gotoHomeHandler,
-      Color:theme.palette.primary.contrastText
+      Color:theme.palette.primary.contrastText,
+      classNameValue:"gohome",
     },
     // {
     //   name: "ri:parking-box-fill",
@@ -137,16 +138,19 @@ const toIdUUID = searchParms.get("toId");
     {
       name: "fluent:call-end-24-filled",
       funcationToCall: callControl,
-
+      classNameValue:"endcall",
     color: 'red',
 
     },
     {
       name: muteButtonName,
       funcationToCall: muteMic,
-      Color:theme.palette.primary.contrastText
+      Color:theme.palette.primary.contrastText,
+      classNameValue:"mutebutton",
+
 
     },
+    
   ];
   return (
     <Box
@@ -176,6 +180,7 @@ const toIdUUID = searchParms.get("toId");
             justifyContent: 'center',
           }}
           key={index}
+          className={data?.classNameValue}
           onClick={() => {
             data?.funcationToCall();
           }}

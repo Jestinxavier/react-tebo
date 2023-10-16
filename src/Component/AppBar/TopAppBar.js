@@ -156,7 +156,8 @@ function TopAppBar({ open, setOpen, handleDrawerOpen, handleDrawerClose }) {
                     fontSize: 12,
                   }}
                 >
-                  Last Login : {"5 Hours ago"}
+                
+                  Email : {user.email}
                 </Typography>
               </Box>
 

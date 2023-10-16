@@ -1,6 +1,8 @@
 import React from "react";
 import ImageUploader from "react-image-upload";
 import { Card, Stack, Typography, Box } from "@mui/material";
+import { UploadAvatar, Upload, UploadBox } from '../upload';
+
 function ImageUpload({ name, setImage, image, ImageUpdate, setImageUpdate }) {
   function getImageFileObject(imageFile) {
     console.log({ imageFile });

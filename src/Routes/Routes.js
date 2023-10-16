@@ -13,6 +13,7 @@ import {
   MapPage,
   Analytics,
   CallLogs,
+  ShareRobotList,
 } from "../Pages";
 import AuthGuard from "../auth/AuthGuard";
 
@@ -91,7 +92,16 @@ const Router = () =>
         </AuthGuard>
       ),
     },
+    {
+      path: "shared-robot-list/",
 
+      element: (
+        <AuthGuard>
+          <ShareRobotList />
+        </AuthGuard>
+      ),
+    },
+  
     {
       path: "analytics/",
 

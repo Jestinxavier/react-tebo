@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback,useContext } from "react";
 import {
   Card,
   CardMedia,
@@ -13,9 +13,13 @@ import styled from "styled-components";
 import { makeStyles, useTheme } from "@mui/styles";
 import Image from "mui-image";
 import { Box } from "@mui/system";
+import { useNavigate } from "react-router-dom";
 import IconBtn from "../CommonComponent/IconBtn";
 import ViewRobotModal from "../ViewRobotModel/ViewRobotModel";
 import ShareBotDialogs from "../../Component/Modal/ShareBotDialogs"
+import { useAuthContext } from "../../auth/useAuthContext";
+import { SocketContext } from "../../Context/SocketContext";
+
 const CustomCard = styled(Card)(({ theme }) => ({
   borderRadius: "20px",
   // boxShadow:
@@ -33,13 +37,31 @@ export default function RobotListingCard({ data }) {
   const [model, setModel] = useState(false);
   const [modalOpen, setModalOpen] = useState(false)
   const [robotId, setRobotId] = useState(null)
-  const handleConnect = () => {
-    console.log("clicked");
+  const navigate = useNavigate()
+  const {user} = useAuthContext()
+  const {processCall, addUserId, callUser } = useContext(SocketContext);
+  const searchParams = new URLSearchParams();
+ 
+
+
+
+  const connectRobot = (myid, toId) => {
+    searchParams.set("myid", myid);
+    searchParams.set("toId", toId);
+console.log("hhhh");
+    addUserId(myid);
+    callUser(toId)
+    navigate(`/conference-room?${searchParams.toString()}`);
   };
 
+  const handleConnect = () => {
+    connectRobot(user?.random_id, data?.robot?.uuid);
+    processCall()
+  };
   const shareRobot = (id)=>{
     setRobotId(id)
     setModalOpen(true)
+
   }
   const theme = useTheme();
   const ICON_COLOR = theme.palette.text.secondary;

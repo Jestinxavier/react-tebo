@@ -98,8 +98,8 @@ const ContextProvider = ({ children }) => {
       console.log("====================================");
       // "https://tebo.devlacus.com"
       const socketInstance = io(
-        // "http://localhost:5000",
-        "https://tebo.devlacus.com",
+        "http://localhost:5000",
+        // "https://tebo.devlacus.com",
         {
           // transports: ["websocket"],
           query: {

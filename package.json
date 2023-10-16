@@ -17,6 +17,7 @@
     "@mui/x-data-grid": "^6.13.0",
     "@mui/x-date-pickers": "^6.11.1",
     "@react-oauth/google": "^0.11.1",
+    "@react-spring/web": "^9.7.3",
     "@reduxjs/toolkit": "^1.9.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -37,6 +38,7 @@
     "nprogress": "^0.2.0",
     "numeral": "^2.0.6",
     "peerjs": "^1.4.7",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-animated-list": "^0.1.4",
     "react-apexcharts": "^1.4.0",
@@ -45,6 +47,7 @@
     "react-facebook-auth": "^1.4.0",
     "react-hook-form": "^7.42.1",
     "react-image-upload": "^3.0.1",
+    "react-joyride": "^2.5.5",
     "react-lazy-load-image-component": "^1.5.6",
     "react-loading": "^2.0.3",
     "react-player": "^2.12.0",
@@ -73,7 +76,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint --fix --ext .js,.jsx ."
   },
   "eslintConfig": {
     "extends": [

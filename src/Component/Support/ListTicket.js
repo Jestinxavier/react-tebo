@@ -14,7 +14,7 @@ function ListTicket({ index, data }) {
    
       <Card sx={{ minHeight: 100, position: "relative", my: 5 }} key={index}>
         <Stack sx={{ pt: 3, pl: 3, zIndex: 999, position: "absolute" }}>
-          <Typography variant="h6">Subject:</Typography>
+          <Typography variant="h6">FAQ:</Typography>
           <Typography variant="p">{data.ticket}</Typography>
         </Stack>
         <Box sx={{ position: "absolute", bottom: 0, width: "100%" }}>

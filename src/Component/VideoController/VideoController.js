@@ -152,6 +152,7 @@ function VideoController({
                       spacing={2}
                     >
                       <IconButton
+                      className="fullscreen"
                         style={{
                           border: "1px solid gray",
                           borderColor: theme.palette.blueGray[900],
@@ -178,7 +179,7 @@ function VideoController({
                         />
                       </IconButton>
                        <IconButton
-                      
+                      className="reconnect"
                         style={{
                           border: "1px solid gray",
                           borderColor: theme.palette.blueGray[900],
@@ -233,7 +234,7 @@ function VideoController({
             />
           </Stack>
         </Grid>
-        <Grid item md={4} xs={12}>
+        <Grid item md={4} xs={12} className='robotController'>
           <RobotController
             CONTROLLER_ICON_BORDER_RADIUS={CONTROLLER_ICON_BORDER_RADIUS}
             CONTROLLER_ICON_WRAPPER_SIZE={iconSize}

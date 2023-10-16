@@ -105,7 +105,7 @@ function SupportForm() {
                   name="ticket_content"
                   label=""
                   variant="outlined"
-                  placeholder="Enter your complaints or queries here"
+                  placeholder="Enter your complaints here"
                   multiline
                   rows={5}
                   rowsMax={10}

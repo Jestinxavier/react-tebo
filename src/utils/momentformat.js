@@ -9,7 +9,10 @@ export const  formatDateToYYYYMMDD = (date)=> {
 
   return formattedDate;
 }
-
+export const  formatDateTohmms = (date)=> {
+  const momentDate = moment(date).format('h:mm:ss a');
+  return momentDate
+}
 export const  regularFormatDate = (date)=> {
   // Convert the date to a Moment.js instance
   const momentDate = moment(date,'YYYY-MM-DD').toDate();

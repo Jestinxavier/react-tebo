@@ -86,7 +86,7 @@ export default function VideoPlayerForConference({
 
   useEffect(() => {
     setPageTrigger(true);
-
+    setLaunchPad(!launchPad)
     return () => setPageTrigger(false);
   }, []);
 
@@ -188,6 +188,7 @@ export default function VideoPlayerForConference({
                 }}
               >
                 <video
+                className="my-video"
                   src="/Video/Demo.mp4"
                   playsInline
                   ref={localRef}
@@ -241,6 +242,7 @@ export default function VideoPlayerForConference({
               marginBottom: 50,
             }}
           >
+           
             <Icon
               icon="ion:game-controller-outline"
               width={ICON_SIZE}

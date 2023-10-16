@@ -15,7 +15,8 @@ import Image from "mui-image";
 import { Box } from "@mui/system";
 import IconBtn from "../CommonComponent/IconBtn";
 import ViewRobotModal from "../ViewRobotModel/ViewRobotModel";
-import ShareBotDialogs from "../../Component/Modal/ShareBotDialogs"
+import ShareBotDialogs from "../../Component/Modal/ShareBotDialogs";
+import { useAuthContext } from "../../auth/useAuthContext";
 const CustomCard = styled(Card)(({ theme }) => ({
   borderRadius: "20px",
   // boxShadow:
@@ -30,11 +31,15 @@ const CustomCard = styled(Card)(({ theme }) => ({
 }));
 
 export default function SharedRobotListingCard({ data }) {
+  
   const [model, setModel] = useState(false);
   const [modalOpen, setModalOpen] = useState(false)
   const [robotId, setRobotId] = useState(null)
+  const { user } = useAuthContext();
   const handleConnect = () => {
-    console.log("clicked");
+    console.log("::::::):):)");
+    connectRobot(user?.random_id, data?.robot?.uuid);
+    processCall()
   };
 
   const shareRobot = (id)=>{

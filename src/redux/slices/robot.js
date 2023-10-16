@@ -2,6 +2,10 @@ import sum from "lodash/sum";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import { createSlice } from "@reduxjs/toolkit";
+import {
+  formatDateToYYYYMMDD,
+  formatDateTohmms,
+} from "../../utils/momentformat";
 // utils
 import axios from "../../utils/axios";
 
@@ -17,6 +21,7 @@ const initialState = {
   sharedRobot: [],
   singleRobot: [],
   product: null,
+  shareRobotList: [],
   checkout: {
     activeStep: 0,
     cart: [],
@@ -76,7 +81,11 @@ const slice = createSlice({
       state.isLoading = false;
       state.sharedRobot = action.payload;
     },
-
+    // Set PRODUCT
+    setSharedToRobotList(state, action) {
+      state.isLoading = false;
+      state.shareRobotList = action.payload;
+    },
     // GET PRODUCT
     getProductSuccess(state, action) {
       state.isLoading = false;
@@ -306,21 +315,25 @@ export function getProduct(name) {
 // ----------------------------------------------------------------------
 
 export function getCallLogs() {
-
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.post("/owner/all-call-logs");
       if (response) {
-        console.log(response.data.data,"response.data.data");
         let result = response?.data?.data?.logs?.map((res) => ({
           ...res,
           uuid: res.robot?.uuid,
-          owner:response?.data?.data?.owner?.name
+          owner: response?.data?.data?.owner?.name,
+          startDate: formatDateToYYYYMMDD(res.session_start),
+          startTime: formatDateTohmms(res.session_start),
+          endTime: formatDateTohmms(res.session_end),
+
+          //  session_start
         }));
+        console.log(result, "response.data.data");
+
         if (result) {
-          dispatch(slice.actions.setCallLogs(result));
-          
+          dispatch(slice.actions.setCallLogs([...result]));
         }
       }
     } catch (error) {
@@ -328,6 +341,55 @@ export function getCallLogs() {
     }
   };
 }
+
+// ----------------------------------------------------------------------
+
+export function getSharedToRobot() {
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      const response = await axios.post("/owner/my-robots");
+      if (response) {
+        const result = response?.data?.data?.robots;
+        console.log(result, "smily **");
+
+        if (result) {
+          // Debugging logs
+          console.log("Destructuring data...");
+          const destructuredResult = result
+            ?.map((item) =>
+              item.robot.sharing_with?.map((res) => (
+                
+                {
+                ...res,
+                robotName:item.nickname || "",
+                location_name:item.location_name ,
+                email: res.sharing_owner?.email || "",
+                name: res.sharing_owner?.name || "",
+                phone: res.sharing_owner?.phone || "",
+              }
+              
+              ))
+            ).flat().filter((item) => item !== null);
+          console.log(destructuredResult, "DestructuredResult**");
+
+          if (destructuredResult) {
+            // Debugging log
+            console.log("Dispatching data to Redux...");
+            dispatch(slice.actions.setSharedToRobotList(destructuredResult));
+          }
+        } else {
+          console.log("Invalid or empty result array.");
+        }
+      }
+    } catch (error) {
+      // Debugging log for error
+      console.error("Error:", error);
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
 
 export function getTicket() {
   return async (dispatch) => {

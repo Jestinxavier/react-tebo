@@ -100,7 +100,6 @@ const dispatch = useDispatch()
   const connectRobot = (myid, toId) => {
     searchParams.set("myid", myid);
     searchParams.set("toId", toId);
-
     addUserId(myid);
     callUser(toId)
     console.log(searchParams);
@@ -347,6 +346,9 @@ const dispatch = useDispatch()
                 <Box>
                   <SupportButton
                     startIcon={<Icon icon="radix-icons:question-mark" />}
+                    onClick={()=>{
+                      navigate('/support')
+                    }}
                   >
                     Support
                   </SupportButton>

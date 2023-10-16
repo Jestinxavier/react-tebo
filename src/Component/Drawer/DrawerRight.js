@@ -87,10 +87,8 @@ const showAnalytics = ()=>{
   navigate('/analytics')
   setOpenMenu(false)
 }
-const showAddRobot = ()=>{
-  console.log('showAddRobot called');
-  setModalOpen(true)
-  setOpenMenu(false)
+const shareRobot = ()=>{
+  navigate('/shared-robot-list')
 
 }
 const showLogsInBot = ()=>{
@@ -129,8 +127,8 @@ const NavigationData = [
   },
   {
     icon: "/images/icon-robot.png",
-    name: "ADD ROBOT",
-    funcation: showAddRobot ,
+    name: "TEBO LIST",
+    funcation: shareRobot ,
   },
 
   {
