@@ -97,7 +97,7 @@ export default function NickNameDialogs({ modalOpen, setModalOpen, nikName, robo
           console.log("Data updated:", data.data.connected);
           dispatch(getRobot())
         
-           enqueueSnackbar("SignUp Successfully", { variant: "success" });
+           enqueueSnackbar("Rename Successfully", { variant: "success" });
            handleClose()
         })
         .catch((error) => {
@@ -126,7 +126,7 @@ export default function NickNameDialogs({ modalOpen, setModalOpen, nikName, robo
     
           <>
             <Box display="flex" flexDirection="column" mr={4} ml={2} mb={2}>
-              <Typography mb={1}>Rename Your {nikName}</Typography>
+              {/* <Typography mb={1}>Rename Your {nikName}</Typography> */}
               <TextField
                 id="outlined-basic"
                 label=""

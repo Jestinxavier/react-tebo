@@ -89,7 +89,7 @@ const showAnalytics = ()=>{
 }
 const shareRobot = ()=>{
   navigate('/shared-robot-list')
-
+  setOpenMenu(false)
 }
 const showLogsInBot = ()=>{
   console.log('showLogsInBot called');

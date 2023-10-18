@@ -50,7 +50,7 @@ const stopSharingPermanently = (parms) => {
 
 const stopSharing = (parms) => {
   Swal.fire({
-    title: "Do you want to stop sharing the robot?",
+    title: "Do you want to stop sharing the Tebo?",
     showDenyButton: true,
     showCancelButton: true,
     confirmButtonText: "Stop Temporarily",

@@ -4,6 +4,7 @@
 // ----------------------------------------------------------------------
 
 export const HOST_API_KEY = process.env.REACT_APP_HOST_API_KEY || 'https://tebo.domainenroll.com/api/v1';
+export const IMAGE_PATH = process.env.REACT_APP_HOST_API_KEY || 'https://tebo.domainenroll.com';
 
 
 export const MAP_API = process.env.REACT_APP_MAPBOX_API;

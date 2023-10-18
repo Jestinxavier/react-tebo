@@ -25,8 +25,9 @@ import { Stack } from "@mui/system";
 import { AdsComponents } from "../Google";
 import { useAuthContext } from '../../auth/useAuthContext';
 import { useNavigate } from "react-router-dom";
+import CustomAvatar from "../MUI/custom-avatar/CustomAvatar";
 
-
+import {IMAGE_PATH} from "../../config-global"
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => {
@@ -93,7 +94,7 @@ function TopAppBar({ open, setOpen, handleDrawerOpen, handleDrawerClose }) {
   const theme = useTheme();
   const {user} = useAuthContext()
   const navigate = useNavigate()
-
+console.log(user,"user");
   return (
     <div>
       <CssBaseline />
@@ -121,10 +122,17 @@ function TopAppBar({ open, setOpen, handleDrawerOpen, handleDrawerClose }) {
             spacing={2}
           >
             <Box display={{ xs: "none", sm: "flex" }}>
-              <Box
+              {/* <Box
                 component="img"
                 src="/images/Login_03.jpg"
                 sx={{ height: "50px" }}
+              /> */}
+
+             
+              <CustomAvatar
+                alt="Tebo User profile Pic"
+                src={IMAGE_PATH+user.image_path || "/images/Login_03.jpg"}
+                sx={{ width: 50, height: 50 }}
               />
 
               <Box>

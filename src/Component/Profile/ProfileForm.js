@@ -127,7 +127,7 @@ function ProfileForm() {
 
         await updateProfile(formData);
 
-        enqueueSnackbar("Data Added successfully", { variant: "success" });
+        enqueueSnackbar("Profile updated successfully", { variant: "success" });
         //   navigate("/");
         reset();
       }

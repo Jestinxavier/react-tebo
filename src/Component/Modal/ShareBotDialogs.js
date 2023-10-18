@@ -127,7 +127,7 @@ export default function ShareBotDialogs({
 
         <>
           <Box display="flex" flexDirection="column" mr={4} ml={2} mb={2}>
-            <Typography mb={1}>Enter the email {nikName}</Typography>
+            <Typography mb={1}>Enter the email </Typography>
             <TextField
               id="outlined-basic"
               label=""
