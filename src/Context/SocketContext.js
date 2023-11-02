@@ -32,6 +32,7 @@ const ContextProvider = ({ children }) => {
 
   const [obstacle, setObstacle] = useState(false);
   const [mapState, setMapState] = useState(null);
+  const [allMapState, setAllMapState] = useState(null);
 
   const [isScreenSharing, setIsScreenSharing] = useState(false); // New state for screen sharing
 
@@ -98,8 +99,8 @@ const ContextProvider = ({ children }) => {
       console.log("====================================");
       // "https://tebo.devlacus.com"
       const socketInstance = io(
-        "http://localhost:5000",
-        // "https://tebo.devlacus.com",
+        // "http://localhost:5000",
+        "https://tebo.devlacus.com",
         {
           // transports: ["websocket"],
           query: {
@@ -224,6 +225,7 @@ const ContextProvider = ({ children }) => {
       });
 
       socket?.on("mapState", (data) => {
+        console.log('mapState',data);
         setMapState(data);
       });
 
@@ -246,6 +248,10 @@ const ContextProvider = ({ children }) => {
       };
     }
 
+    socket?.on("mapStatusBroadcastMessage",(data)=>{
+      console.log(data,"data****");
+      setAllMapState(data)
+    })  
     return () => {
       socket?.off("newCall");
       socket?.off("callAnswered");
@@ -278,17 +284,17 @@ const ContextProvider = ({ children }) => {
     socket?.emit("answerCall", data);
   }
 
-  function startMapping() {
-    console.log("sdsdsd");
-    socket?.emit("start-mapping", { id: otherUserId.current });
+  function startMapping(data) {
+    console.log("sdsdsd",data);
+    socket?.emit("start-mapping", { id: data });
   }
 
-  function stopMapping() {
-    socket?.emit("stopMapping", { id: otherUserId.current });
+  function stopMapping(data) {
+    socket?.emit("stopMapping", { id: data });
   }
 
-  function deleteMap() {
-    socket?.emit("deleteMap", { id: otherUserId.current });
+  function deleteMap(data) {
+    socket?.emit("deleteMap", { id: data });
   }
 
   function sendCall(data) {
@@ -302,6 +308,7 @@ const ContextProvider = ({ children }) => {
   }
 
   const addUserId = (userId) => {
+    
     setCallerId(userId);
     socket?.emit("setMapUser", {
       from: userId,
@@ -309,6 +316,10 @@ const ContextProvider = ({ children }) => {
     });
     socket?.emit("sentUserId", userId);
   };
+
+
+ 
+  
 
   const callUser = async (id) => {
     otherUserId.current = id;
@@ -646,6 +657,7 @@ const ContextProvider = ({ children }) => {
     <SocketContext.Provider
       value={{
         obstacle,
+        allMapState,
         call,
         callAccepted,
         myVideo,

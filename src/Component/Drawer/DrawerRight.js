@@ -11,6 +11,7 @@ import { useAuthContext } from '../../auth/useAuthContext';
 import { LoginSharp } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { PATH_AUTH } from "../../Routes/paths";
+import {ADMIN} from "../../config-global"
 
 
 
@@ -68,6 +69,7 @@ const logOut = ()=> {
 }
 const notification = ()=> {
   console.log("im in thenotification ")
+  navigate('/home')
 }
 const mail = ()=> {
   console.log("mail im in the")
@@ -111,6 +113,11 @@ const showSupport = ()=>{
 
   
 }
+const showAdminSupport = ()=>{
+  console.log('showSupport called');
+  navigate('/admin-support')
+  setOpenMenu(false)
+}
 const showProfile = ()=>{
   console.log('showProfile called');
   navigate('/profile')
@@ -118,8 +125,11 @@ const showProfile = ()=>{
 
 }
 
-
-const NavigationData = [
+const NavigationData = ADMIN?[  {
+  icon: "/images/icon-suppot.png",
+  name: "SUPPORT",
+  funcation: showAdminSupport ,
+},]:[
   {
     icon: "/images/icon-report.png",
     name: "ANALYTICS",
@@ -157,11 +167,11 @@ const NavigationData = [
   },
 ];
 const BottomIcon = [
-  { iconname: "ph:chat-dots-fill",funcation:logOut },
-  { iconname: "ant-design:notification-filled",funcation:notification },
-  { iconname: "material-symbols:mail",funcation:mail},
-  { iconname: "mdi:cellphone-settings-variant",funcation:support },
-  { iconname: "material-symbols:ecg-heart",funcation:robotHealth },
+  // { iconname: "ph:chat-dots-fill",funcation:logOut },
+  { iconname: "line-md:home-md",funcation:notification },
+  // { iconname: "material-symbols:mail",funcation:mail},
+  // { iconname: "mdi:cellphone-settings-variant",funcation:support },
+  // { iconname: "material-symbols:ecg-heart",funcation:robotHealth },
 ];
   const [state, setState] = useState({
     top: false,

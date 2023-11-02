@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import CustomAvatar from "../MUI/custom-avatar/CustomAvatar";
 
 import {IMAGE_PATH} from "../../config-global"
+import iconify from "../iconify";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => {
@@ -121,6 +122,32 @@ console.log(user,"user");
             alignItems="center"
             spacing={2}
           >
+              <Card
+              mx={5}
+              onClick={() =>
+                navigate('/home')
+              }
+              sx={{
+                border: "1px solid #f7f6f6",
+                display: "flex",
+                justifyContent: "center",
+                height: "45px",
+                width: "45px",
+                cursor: "pointer",
+                mx: "3px",
+                padding: "3px",
+                alignItems: "center",
+                borderRadius: "200px",
+              }}
+            >
+              <Icon
+                width="50%"
+                height="50%"
+                icon='line-md:home-md'
+                // className={classes.iconcolor}
+                // color={theme.palette.blueGray[900]}
+              />
+            </Card>
             <Box display={{ xs: "none", sm: "flex" }}>
               {/* <Box
                 component="img"
@@ -128,7 +155,8 @@ console.log(user,"user");
                 sx={{ height: "50px" }}
               /> */}
 
-             
+
+
               <CustomAvatar
                 alt="Tebo User profile Pic"
                 src={IMAGE_PATH+user.image_path || "/images/Login_03.jpg"}
@@ -168,6 +196,8 @@ console.log(user,"user");
                   Email : {user.email}
                 </Typography>
               </Box>
+
+            
 
               <IconButton size="large" aria-label="search" color="inherit">
                 <Icon icon="bi:info-circle" />

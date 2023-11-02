@@ -1,6 +1,6 @@
 import axios from "../utils/axios";
 import {formatDateToYYYYMMDD} from '../utils/momentformat'
-
+import {ADMIN} from "../config-global"
 export const  updateSignupData = (data) => {
   if (data.phone_number) {
     data.phone_number = data.phone_number.replace(/\s+/g, ''); // Remove all spaces
@@ -9,7 +9,7 @@ export const  updateSignupData = (data) => {
   if(data.date_of_birth){
      data.date_of_birth = formatDateToYYYYMMDD(data.date_of_birth);
   }
-    return axios.post('/signup-owner', data)
+    return ADMIN? axios.post('/admin/login') : axios.post('/signup-owner', data)
       .then(response => {
         // Handle the response data if needed
         return response.data;

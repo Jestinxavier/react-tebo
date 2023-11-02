@@ -30,8 +30,11 @@ import {
   CallStatusChartColumnSingle,
 } from "../../sections/_examples/extra/chart";
 // import { DemoChartsPage } from "../../Component/components/extra/DemoChartsPage";
+import { dispatch, useSelector } from "../../redux/store";
 
 import { SettingsForm } from "../../Component/Settings";
+import { getCallAnalytics } from "../../redux/slices/robot";
+
 function Analytics() {
   const {
     handleDrawerOpen,
@@ -41,7 +44,11 @@ function Analytics() {
     setOpen,
     modalOpen,
   } = useDrawerContext();
+  const robotState = useSelector((state) => state.robot.callAnalytics);
 
+  useEffect(() => {
+    dispatch(getCallAnalytics());
+  }, []);
 
   return (
     <Box>
@@ -56,23 +63,27 @@ function Analytics() {
         <Heading>Analytics</Heading>
         <Container sx={{ my: 10 }}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
               <Card dir="ltr">
                 <CardHeader title="Battery Charger Analytics" />
                 <CardContent>
                   <BactoryLevelChartArea />
                 </CardContent>
               </Card>
-            </Grid>
+            </Grid> */}
 
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={12}>
               <Card dir="ltr">
                 <CardHeader title="Call Analytics" />
                 <CardContent>
-                  <CallStatusChartColumnSingle />
+                  {robotState &&
+                   <CallStatusChartColumnSingle
+                    filterAnalyticData={robotState?.filterAnalyticData}
+                    xaxisData={robotState?.xaxisData}
+                  />}
                 </CardContent>
               </Card>
-            </Grid>          
+            </Grid>
           </Grid>
         </Container>
       </CustomContainer>

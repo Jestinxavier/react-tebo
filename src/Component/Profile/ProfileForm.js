@@ -6,7 +6,7 @@ import FormProvider, {
   RHFSelectPhoneNumber,
   RHFDatePicker,
 } from "../MUI/hook-form";
-import { getUserDetails } from "../../redux/slices/userdetail";
+import { getMyDetails, getUserDetails } from "../../redux/slices/userdetail";
 import {
   regularFormatDate,
   formatDateToYYYYMMDD,
@@ -48,6 +48,7 @@ function ProfileForm() {
   const [image, setImage] = useState("");
   const [DateOfBerth, setDateOfBerth] = useState(new Date());
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [File, setFile] = useState(false)
   const userDetail = useSelector(
     (state) => state?.userdetail?.userdetails?.owner
   );
@@ -78,6 +79,7 @@ function ProfileForm() {
   } = methods;
 
   useEffect(() => {
+    console.log(userDetail,"userDetail");
     if (userDetail !== undefined) {
       // const {name,email,date_of_birth,image_path} = userDetail
       const DOB = regularFormatDate(userDetail.date_of_birth);
@@ -88,9 +90,12 @@ function ProfileForm() {
         image_path: userDetail.image_path,
         phone_number: userDetail.phone,
       };
-
+      
+      if(responseValues){
+        console.log(responseValues,"responseValues");
       setDateOfBerth(DOB);
       reset(responseValues);
+      }
     }
   }, [userDetail]);
 
@@ -105,6 +110,7 @@ function ProfileForm() {
         );
       }
       if (newFile) {
+        setFile(true)
         setValue("image_path", newFile, { shouldValidate: true });
       }
     },
@@ -117,7 +123,13 @@ function ProfileForm() {
       data.date_of_birth = dataOfBirth;
       let updatedData = null;
       // let profile_pic = image.imageFile.file;
-      updatedData = { ...data, profile_pic: data.image_path };
+      console.log(data.phone_number,"File*****");
+      const sliceNumber = data.phone_number.replace(/\s/g,"");
+      if(data.image_path.path){
+      updatedData = { ...data, profile_pic: data.image_path,phone_number:sliceNumber };
+      }else{
+        updatedData ={...data,phone_number:sliceNumber}
+      }
       if (updatedData) {
         const formData = new FormData(); // Create a new FormData object for each API call
         console.log("NNNN====================================");
@@ -128,8 +140,10 @@ function ProfileForm() {
         await updateProfile(formData);
 
         enqueueSnackbar("Profile updated successfully", { variant: "success" });
+        
         //   navigate("/");
         reset();
+    dispatch(getUserDetails());
       }
     } catch (error) {
       enqueueSnackbar(error.message, { variant: "error" });

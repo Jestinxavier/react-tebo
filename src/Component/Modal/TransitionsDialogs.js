@@ -40,7 +40,7 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
   const [status, setStatus] = useState({
     sentRequest: true,
     approval: true,
-    userApproval: true,
+    userApproval: false,
     pending: false,
   });
 
@@ -236,70 +236,100 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
   // };
 
 
+  // const handleSubmmit = (data) => {
+  //   let intervalId = null;
+  //   let elapsedTime = 0;
+  //   let errorOccurred = false; // Flag to track API errors
+  
+  //   const addBotRepeatedly = () => {
+  //     if (elapsedTime >= 180 || errorOccurred || Mountcomponent) {
+  //       // Stop after 3 minutes (180 seconds), when an error occurs, or when Mountcomponent is true
+  //       clearInterval(intervalId);
+  //       console.log("Stopped calling addRobot");
+  //       return;
+  //     }
+  
+  //     addRobot(data)
+  //       .then((data) => {
+  //         console.log("Data updated:", data.data.connected);
+  
+  //         setStatus((pre) => {
+  //           let approvalStatus = false;
+  //           let pendingStatus = false;
+  
+  //           if (data.data.connected && data.data.response) {
+  //             approvalStatus = true;
+  //           }
+  //           if (!data.data.connected && data.data.response) {
+  //             approvalStatus = false;
+  //           }
+  //           if (data.data.response) {
+  //             pendingStatus = true;
+  //           }
+  
+  //           return {
+  //             ...pre,
+  //             approval: true,
+  //             userApproval: approvalStatus,
+  //             pending: pendingStatus,
+  //           };
+  //         });
+  
+  //         // enqueueSnackbar("SignUp Successfully", { variant: "success" });
+  //         if (data) {
+  //           setTimelineStatus(true);
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         errorOccurred = true; // Set the error flag
+  //         enqueueSnackbar(error.message, { variant: "error" });
+  //         console.error("Error updating data:", error);
+  //       });
+  
+  //     elapsedTime += 5;
+  //   };
+  
+  //   // Call the function initially
+  //   addBotRepeatedly();
+  
+  //   // Start the interval with a 5-second delay
+  //   intervalId = setInterval(addBotRepeatedly, 5000);
+  
+  //   // Clear the interval after 3 minutes
+  //   setTimeout(() => {
+  //     clearInterval(intervalId);
+  //     console.log("Stopped calling addRobot after 3 minutes");
+  //   }, 180000);
+  // };
+
   const handleSubmmit = (data) => {
     let intervalId = null;
-    let elapsedTime = 0;
-    let errorOccurred = false; // Flag to track API errors
-  
-    const addBotRepeatedly = () => {
-      if (elapsedTime >= 180 || errorOccurred || Mountcomponent) {
-        // Stop after 3 minutes (180 seconds), when an error occurs, or when Mountcomponent is true
-        clearInterval(intervalId);
-        console.log("Stopped calling addRobot");
-        return;
-      }
-  
+    
+    const stopCallingAPI = () => {
+      clearInterval(intervalId);
+      console.log("Stopped calling API after it returned true.");
+    };
+  setTimelineStatus(true)
+    intervalId = setInterval(() => {
       addRobot(data)
-        .then((data) => {
-          console.log("Data updated:", data.data.connected);
-  
-          setStatus((pre) => {
-            let approvalStatus = false;
-            let pendingStatus = false;
-  
-            if (data.data.connected && data.data.response) {
-              approvalStatus = true;
-            }
-            if (!data.data.connected && data.data.response) {
-              approvalStatus = false;
-            }
-            if (data.data.response) {
-              pendingStatus = true;
-            }
-  
-            return {
-              ...pre,
-              approval: true,
-              userApproval: approvalStatus,
-              pending: pendingStatus,
-            };
-          });
-  
-          // enqueueSnackbar("SignUp Successfully", { variant: "success" });
-          if (data) {
-            setTimelineStatus(true);
+        .then((response) => {
+          console.log('====================================');
+          console.log(response.data.connected);
+          if (response.data.connected) {
+            console.log(response.data.connected,'====================================');
+            stopCallingAPI();
+            setTimelineStatus(false)
+          enqueueSnackbar(response.message,{variant:'success'})
+          }else if(response.data.owner_email){
+            enqueueSnackbar(response.message,{variant:'error'})
+            stopCallingAPI();
+            setTimelineStatus(false)
           }
         })
         .catch((error) => {
-          errorOccurred = true; // Set the error flag
-          enqueueSnackbar(error.message, { variant: "error" });
-          console.error("Error updating data:", error);
+          console.error("Error calling the API:", error);
         });
-  
-      elapsedTime += 5;
-    };
-  
-    // Call the function initially
-    addBotRepeatedly();
-  
-    // Start the interval with a 5-second delay
-    intervalId = setInterval(addBotRepeatedly, 5000);
-  
-    // Clear the interval after 3 minutes
-    setTimeout(() => {
-      clearInterval(intervalId);
-      console.log("Stopped calling addRobot after 3 minutes");
-    }, 180000);
+    }, 10000); // Call the API every 5 seconds
   };
   
   

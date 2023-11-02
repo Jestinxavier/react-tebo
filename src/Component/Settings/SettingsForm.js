@@ -31,6 +31,7 @@ import SettingsCard  from "./Card/SettingsCard";
 import {getRobot} from "../../redux/slices/robot"
 import {dispatch,useSelector} from '../../redux/store';
 import Grow from '@mui/material/Grow';
+import NoRobotCard from '../../Component/Homepage/NoRobotCard'
 
 const defaultValues = {
   email: "",
@@ -129,7 +130,7 @@ function SettingsForm() {
       sx={{ padding: 20 }}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <Grid container spacing={2} sx={{ padding: 3 }}>
+      {myAllRobot?<Grid container spacing={2} sx={{ padding: 3 }}>
   
          
       {myAllRobot?.map((robotData,index)=><Grid item md={4} sm={12}>
@@ -137,7 +138,14 @@ function SettingsForm() {
           
         </Grid>)}
   
-      </Grid>
+      </Grid>:<Box>
+        
+        <NoRobotCard 
+           image ="/images/NoTeboSettings.gif"
+           Heading = "You Have No Tebo"
+           description ="No Tebo currently assigned to your email address"
+            />
+        </Box>}
     </FormProvider>
   ); 
 }

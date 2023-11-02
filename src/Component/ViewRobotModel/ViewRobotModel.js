@@ -334,12 +334,16 @@ const dispatch = useDispatch()
                     >
                       Battery Level
                     </Typography>
+                    {
+                      console.log(data,"data")
+                    }
                     <BatteryLevel
                       color={theme.palette.green[100]}
-                      BatteryPercentageLevel={data?.percentage || 73}
+                      // battery_charge
+                      BatteryPercentageLevel={data?.robot?.battery_charge || 73}
                     />
                     <Typography variant="caption">
-                      {data?.percentage || 73}%
+                      {data?.robot?.battery_charge || 73}%
                     </Typography>
                   </Stack>
                 </Box>

@@ -12,6 +12,8 @@ export {default as MapPage} from "./SettingsPage/MapPage"
 export {default as CallLogs} from "./CallLogs/CallLogs"
 export {default as Analytics} from "./Analytics/Analytics"
 export {default as ShareRobotList} from "./ShareRobot/ShareRobotList"
+export {default as AdminSupport} from "./AdminSupport"
+
 
 
 

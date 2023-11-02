@@ -115,7 +115,7 @@ function VideoConference() {
         <p class="card-description">You can preview your video here.</p>
       </div>
     </div>,
-      placement: "bottom",
+      placement: "top",
       styles: {
         options: {
           width: 300,
@@ -132,7 +132,7 @@ function VideoConference() {
         <p class="card-description">If Tebo is not connected, you can force a connection by clicking the 'Reconnect' button.</p>
       </div>
     </div>,
-      placement: "bottom",
+      placement: "top",
       styles: {
         options: {
           width: 300,
@@ -149,7 +149,7 @@ function VideoConference() {
         <p class="card-description">You can use this button to switch between full-screen and minimal-screen modes.</p>
       </div>
     </div>,
-      placement: "bottom",
+      placement: "top",
       styles: {
         options: {
           width: 300,
@@ -167,7 +167,7 @@ function VideoConference() {
         <p class="card-description">If you press the 'Go Home' button, Tebo will move to the docking station.</p>
       </div>
     </div>,
-      placement: "bottom",
+      placement: "top",
       styles: {
         options: {
           width: 300,
@@ -185,7 +185,7 @@ function VideoConference() {
         <p class="card-description">This button is used to end the call.</p>
       </div>
     </div>,
-      placement: "bottom",
+      placement: "top",
       styles: {
         options: {
           width: 300,
@@ -203,7 +203,7 @@ function VideoConference() {
         <p class="card-description">This button is used to mute and unmute the microphone.</p>
       </div>
     </div>,
-      placement: "bottom",
+        placement: "top",
       styles: {
         options: {
           width: 300,
@@ -220,7 +220,7 @@ function VideoConference() {
         <p class="card-description">These buttons are used to control Tebo's movement, including moving forward, backward, left, and right.</p>
       </div>
     </div>,
-      placement: "bottom",
+      placement: "top",
       styles: {
         options: {
           width: 300,

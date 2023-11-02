@@ -22,6 +22,7 @@ const initialState = {
   singleRobot: [],
   product: null,
   shareRobotList: [],
+  callAnalytics: null,
   checkout: {
     activeStep: 0,
     cart: [],
@@ -69,7 +70,10 @@ const slice = createSlice({
       state.isLoading = false;
       state.listTicket = action.payload;
     },
-
+    setCallAnalytics(state, action) {
+      state.isLoading = false;
+      state.callAnalytics = action.payload;
+    },
     geSingletRobot(state, action) {
       state.isLoading = false;
       state.singleRobot = action.payload;
@@ -358,19 +362,17 @@ export function getSharedToRobot() {
           console.log("Destructuring data...");
           const destructuredResult = result
             ?.map((item) =>
-              item.robot.sharing_with?.map((res) => (
-                
-                {
+              item.robot.sharing_with?.map((res) => ({
                 ...res,
-                robotName:item.nickname || "",
-                location_name:item.location_name ,
+                robotName: item.nickname || "",
+                location_name: item.location_name,
                 email: res.sharing_owner?.email || "",
                 name: res.sharing_owner?.name || "",
                 phone: res.sharing_owner?.phone || "",
-              }
-              
-              ))
-            ).flat().filter((item) => item !== null);
+              }))
+            )
+            .flat()
+            .filter((item) => item !== null);
           console.log(destructuredResult, "DestructuredResult**");
 
           if (destructuredResult) {
@@ -390,7 +392,6 @@ export function getSharedToRobot() {
   };
 }
 
-
 export function getTicket() {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
@@ -398,6 +399,29 @@ export function getTicket() {
       const response = await axios.post("/owner/list-ticket");
       if (response) {
         dispatch(slice.actions.setTicket(response.data.data));
+      }
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+export function getCallAnalytics() {
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      const response = await axios.post("/owner/call-analytics");
+      if (response) {
+        console.log('response.data.data====================================');
+        console.log(response?.data?.data?.calls_count_to_robots);
+        console.log('====================================');
+        
+let filterAnalyticData = response?.data?.data?.calls_count_to_robots.map((item, index) => item.count);
+let xaxisData = response?.data?.data?.calls_count_to_robots.map((item, index) =>item?.robot?.nickname )
+console.log('response.data.data====================================');
+console.log(filterAnalyticData);
+console.log('====================================');
+        dispatch(slice.actions.setCallAnalytics({filterAnalyticData,xaxisData}));
       }
     } catch (error) {
       dispatch(slice.actions.hasError(error));

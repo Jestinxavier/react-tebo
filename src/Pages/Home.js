@@ -166,9 +166,14 @@ function Home() {
   useEffect(() => {
     dispatch(getRobot());
     dispatch(getSharedRobotList());
-    addUserId(user?.random_id)
+   
     sendMessage("testing from Tebo");
   }, []);
+
+  useEffect(() => {
+    addUserId(user?.random_id);
+  }, [user])
+  
 
   const initialValues = {
     email: "",

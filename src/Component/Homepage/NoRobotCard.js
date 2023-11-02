@@ -6,7 +6,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import { Typography, Stack } from "@mui/material";
 
-export default function NoRobotCard({ image, description, Heading }) {
+export default function NoRobotCard({ image, description, Heading, Status }) {
   return (
     <Card>
       {/* <CardMedia
@@ -27,6 +27,8 @@ export default function NoRobotCard({ image, description, Heading }) {
           <Typography gutterBottom variant="h5" component="div">
             {Heading}
           </Typography>
+          {console.log(Status, "Status****")}
+          {Status && <Typography>{Status}...</Typography>}
           <Typography
             variant="body2"
             color="text.secondary"

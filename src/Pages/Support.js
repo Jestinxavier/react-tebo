@@ -52,9 +52,9 @@ function Support() {
         />
         <CustomContainer>
           <Heading>Support</Heading>
-          <Card sx={{ padding: 5 }}>
+          {/* <Card sx={{ padding: 5 }}> */}
             <SupportForm />
-          </Card>
+          {/* </Card> */}
          {ListData&&<AnimatedList animation={"grow"}>
 
           {ListData?.map((data, index) => (

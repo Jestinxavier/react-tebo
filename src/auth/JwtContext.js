@@ -11,7 +11,7 @@ import axios from "../utils/axios";
 import localStorageAvailable from "../utils/localStorageAvailable";
 //
 import { isValidToken, setSession } from "./utils";
-
+import {ADMIN} from "../config-global"
 // ----------------------------------------------------------------------
 
 // NOTE:
@@ -130,10 +130,16 @@ export function AuthProvider({ children }) {
 
   // LOGIN
   const login = useCallback(async (email, password) => {
-    const response = await axios.post("/login-owner", {
+    const response = await axios.post(ADMIN? '/admin/login':"/login-owner", ADMIN?{
+      admin_email: email,
+      admin_password: password,
+    }:{
       owner_email: email,
       owner_password: password,
     });
+    console.log('====================================');
+    console.log(response.data?.data);
+    console.log('====================================');
     const { owner } = response.data?.data;
     setSession(owner?.api_token);
 

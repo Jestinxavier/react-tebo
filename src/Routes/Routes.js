@@ -14,6 +14,7 @@ import {
   Analytics,
   CallLogs,
   ShareRobotList,
+  AdminSupport,
 } from "../Pages";
 import AuthGuard from "../auth/AuthGuard";
 
@@ -111,7 +112,15 @@ const Router = () =>
         </AuthGuard>
       ),
     },
+    {
+      path: "admin-support/",
 
+      element: (
+      <AuthGuard>
+      <AdminSupport/>
+      </AuthGuard>
+      )
+    },
     
 
     {

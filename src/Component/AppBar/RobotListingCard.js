@@ -48,7 +48,7 @@ export default function RobotListingCard({ data }) {
   const connectRobot = (myid, toId) => {
     searchParams.set("myid", myid);
     searchParams.set("toId", toId);
-console.log("hhhh");
+
     addUserId(myid);
     callUser(toId)
     navigate(`/conference-room?${searchParams.toString()}`);
@@ -71,6 +71,39 @@ console.log("hhhh");
   }, [setModel]);
 
 
+  const imageData = [
+    {
+      percentage: "100" ,
+      image: "/images/hundredPercentage.png",
+    },
+    {
+      percentage: "90",
+      image:"/images/ninetypercentage.png"
+    },
+    {
+      percentage: "80" ,
+      image:"/images/Eightypercentage.png"
+
+      
+    },
+    {
+      percentage: "30" ,
+      image:"/images/Thirtypercentage.png"
+    },
+    {
+      percentage: "20" ,
+      image:"/images/Twintypercentage.png"
+    },
+    {
+      percentage: "10" ,
+      image:"/images/tenpercentage.png"
+    },
+  ]
+
+  const imageFilter = (data) => {
+    let filterData = imageData.filter((item) => Number(item.percentage) < data);
+   return filterData[0].image
+  };
   return (
     <Box sx={{ maxWidth: "290px" }}>
       <CustomCard
@@ -118,10 +151,11 @@ console.log("hhhh");
                 right: "0px",
               }}
             >
+              {/* data?.robot?.battery_charge? */}
               {/* <Box className="mavi" sx={{ width: "100%" }}> */}
-              {data?.chargingStatus ? (
+              {data?.robot?.battery_charge? (
                 <Image
-                  src={data?.chargingStatus}
+                  src={'/images/spark-green.png'}
                   width={18}
                   fit={"contain"}
                   alignItems="flex-end"
@@ -132,7 +166,12 @@ console.log("hhhh");
               )}
               <Box>
                 <Box sx={{ height: "30px", pb: "5px" }}>
-                  <Image src={data?.PowerStatus} width={18} fit={"contain"} />
+                {data?.robot?.battery_charge? (
+                <Image
+                  src={imageFilter(data?.robot.battery_charge)}
+                  width={18} fit={"contain"}
+                />):<></>}
+                  
                 </Box>
               </Box>
               <Box sx={{ height: "10px" }}>
@@ -195,12 +234,11 @@ console.log("hhhh");
         sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
       >
         <Box sx={{ display: "flex" }}>
-          <Typography>Robot :</Typography>
-          <Typography sx={{ fontWeight: "bolder" }}>{data?.nickname}</Typography>
+          <Typography sx={{fontWeight:'bolder',color:theme.palette.text.secondary}}>Robot: {data?.nickname}</Typography>
+          {/* <Typography sx={{ fontWeight: "bolder" }}></Typography> */}
         </Box>
-        <Box sx={{ display: "flex" }}>
-          <Typography>Location :</Typography>
-          <Typography>{data?.place}</Typography>
+        <Box sx={{ display: "flex",textAlign:'center'}}>
+          <Typography><Box component="span" sx={{fontWeight:'bolder',color:theme.palette.text.secondary}}>Location: </Box> { data?.robot?.ownedrobot[0]?.location_name?.match(/, (.*$)|- (.*)$/)?.slice(1, 5)}</Typography>          
         </Box>
         
       </Box>

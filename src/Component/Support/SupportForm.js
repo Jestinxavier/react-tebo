@@ -12,8 +12,8 @@ import {
   formatDateToYYYYMMDD,
 } from "../../utils/momentformat";
 import { raseAticket } from "../../Api/raseAticket";
-import {getTicket} from "../../redux/slices/robot"
-import {dispatch} from "../../redux/store"
+import { getTicket } from "../../redux/slices/robot";
+import { dispatch } from "../../redux/store";
 
 import {
   Grid,
@@ -29,6 +29,13 @@ import { useForm } from "react-hook-form";
 import { useTheme } from "@mui/material/styles";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSnackbar } from "../MUI/snackbar";
+import InputBase from "@mui/material/InputBase";
+import Divider from "@mui/material/Divider";
+import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
+import DirectionsIcon from "@mui/icons-material/Directions";
+import axios from "../../utils/axios";
+import FaqAnswerDialogs from '../Modal/FaqAnswerDialogs'
 
 const defaultValues = {
   ticket_content: "",
@@ -39,14 +46,15 @@ function SupportForm() {
   // const [value, setValue] = useState(defaultValues)
   const [image, setImage] = useState("");
   const [DateOfBerth, setDateOfBerth] = useState(new Date());
-
+  const [searchResult, setSearchResult] = useState("");
+  const [suggestedQuestion, setSuggestedQuestion] = useState([]);
+  const [modal, setModal] = useState(false)
+  const [suggestedAnswer, setSuggestedAnswer] = useState(null)
   const theme = useTheme();
 
   const VerifySchema = Yup.object().shape({
-    ticket_content: Yup.string()
-      .required("This field is required"),
+    ticket_content: Yup.string().required("This field is required"),
   });
-
 
   const methods = useForm({
     resolver: yupResolver(VerifySchema),
@@ -59,13 +67,14 @@ function SupportForm() {
     formState: { isSubmitting, errors },
   } = methods;
 
-
-
   const onSubmit = useCallback(async (data) => {
     try {
       const responseData = await raseAticket(data); // Add "await" here
       if (responseData) {
-        enqueueSnackbar("Thank you for your complaint! We'll address it shortly.", { variant: "success" });
+        enqueueSnackbar(
+          "Thank you for your complaint! We'll address it shortly.",
+          { variant: "success" }
+        );
         reset();
         dispatch(getTicket());
       }
@@ -73,7 +82,28 @@ function SupportForm() {
       enqueueSnackbar(error.message, { variant: "error" });
     }
   }, []);
-  
+  useEffect(() => {
+    axios
+      .post("/matching-suggestion", {
+        question: searchResult,
+      })
+      .then((res) => {
+        setSuggestedQuestion(res?.data?.data);
+        
+      });
+  }, [searchResult]);
+  const handleSuggestClick = (data) => {
+    console.log(data, "clicked");
+    axios
+      .post("/owner/submit-suggestion", {
+        suggestion_id: data.id,
+      })
+      .then((res) => {
+        setSuggestedAnswer(res.data.data)
+        setModal(true)
+      })
+      .catch((err) => console.log(err.message));
+  };
 
   return (
     <FormProvider
@@ -81,65 +111,106 @@ function SupportForm() {
       sx={{ padding: 20 }}
       onSubmit={handleSubmit(onSubmit)}
     >
-      
-          
-            <Grid container spacing={2} sx={{ padding: 3 }}>
-              <Grid item md={12} sm={12}>
-                <RHFTextField
-                  fullWidth
-                  type="textarea"
-                  sx={{
-                    margin: "10px",
+      <Grid container spacing={2} sx={{ padding: 3 }}>
+        <Grid item md={12} sm={12}>
+          <Card>
+            <Stack flexDirection="row">
+              {/* <RHFTextField
+            fullWidth
+            type="textarea"
+            sx={{
+              margin: "10px",
 
-                    borderRadius: "15px",
-                    marginTop: "20px",
-                    "& fieldset": {
-                      borderRadius: "15px",
-                    },
-                    "& input": {
-                      borderRadius: "15px !important",
-                      height: "12px",
-                      paddingBottom: "25px",
-                    },
-                  }}
-                  name="ticket_content"
-                  label=""
-                  variant="outlined"
-                  placeholder="Enter your complaints here"
-                  multiline
-                  rows={5}
-                  rowsMax={10}
-                />
-              
-              </Grid>
-
-            
-            </Grid>
-           
-          
-        
-          <Stack display="flex" alignItems="flex-end" mt={5}>
-            <Button
-              type="submit"
-              fullWidth
-              variant="outlined"
-              sx={{
-                width: "150px",
-
+              borderRadius: "15px",
+              marginTop: "20px",
+              "& fieldset": {
                 borderRadius: "15px",
-                color: theme.palette.secondary.contrastText,
+              },
+              "& input": {
+                borderRadius: "0px !important",
 
-                padding: "9px",
-                borderColor: "#d5d5d5",
-                display: "flex",
+                height: "12px",
+                paddingBottom: "25px",
+              },
+              " & input textarea:focus, input:focus":{
+                outline: 'none',
+            }
 
-                fontWeight: 100,
-              }}
-            >
-              Raise A Ticket
-            </Button>
-          </Stack>
-      
+            }}
+            name="ticket_content"
+            label=""
+            variant="outlined"
+            placeholder="Enter your complaints here"
+            // multiline
+            // rows={5}
+            rowsMax={10}
+          /> */}
+
+              <IconButton sx={{ p: "10px" }} aria-label="menu">
+                <MenuIcon />
+              </IconButton>
+              <InputBase
+                fullWidth
+                sx={{ ml: 1, flex: 1 }}
+                onChange={(e) => {
+                  setSearchResult(e.target.value);
+                }}
+                placeholder="Search "
+                inputProps={{ "aria-label": "search google maps" }}
+              />
+              <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
+                <SearchIcon />
+              </IconButton>
+              <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+              <IconButton
+                color="primary"
+                sx={{ p: "10px" }}
+                aria-label="directions"
+              >
+                <DirectionsIcon />
+              </IconButton>
+            </Stack>
+            <Stack sx={{ overflow: "auto", maxHeight: 300 }}>
+              {suggestedQuestion.map((data, index) => (
+                <Box
+                  sx={{ p: 3 }}
+                  key={index}
+                  onClick={() => {
+                    handleSuggestClick(data);
+                  }}
+                >
+                  <Typography sx={{ fontWeight: "600" }}>
+                    {data.ticket}
+                  </Typography>
+                </Box>
+              ))}
+            </Stack>
+          </Card>
+        </Grid>
+      </Grid>
+
+      <Stack display="flex" alignItems="flex-end" mt={5}>
+        <Button
+          type="submit"
+          fullWidth
+          variant="outlined"
+          sx={{
+            width: "150px",
+
+            borderRadius: "15px",
+            color: theme.palette.secondary.contrastText,
+
+            padding: "9px",
+            borderColor: "#d5d5d5",
+            display: "flex",
+
+            fontWeight: 100,
+          }}
+        >
+          Raise A Ticket
+        </Button>
+      </Stack>
+      <FaqAnswerDialogs modalOpen={modal} setModalOpen={setModal} data={suggestedAnswer} />
     </FormProvider>
   );
 }

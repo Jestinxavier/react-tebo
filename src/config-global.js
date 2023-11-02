@@ -2,7 +2,7 @@
 
 // API
 // ----------------------------------------------------------------------
-
+export const ADMIN = false;
 export const HOST_API_KEY = process.env.REACT_APP_HOST_API_KEY || 'https://tebo.domainenroll.com/api/v1';
 export const IMAGE_PATH = process.env.REACT_APP_HOST_API_KEY || 'https://tebo.domainenroll.com';
 
