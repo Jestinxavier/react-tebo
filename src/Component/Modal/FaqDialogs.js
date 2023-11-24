@@ -22,9 +22,9 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { addFaq } from "../../Api/addFaq";
 import Loader from "../Loader/Loader";
-import { getRobot } from "../../redux/slices/robot";
+import { getRobot,getTicket } from "../../redux/slices/robot";
 import { useDispatch, useSelector } from "../../redux/store";
-
+import { dispatch } from "../../redux/store";
 // ----------------------------------------------------------------------
 
 const Transition = forwardRef((props, ref) => (
@@ -79,10 +79,10 @@ export default function FaqDialogs({
     }
   }, [modalOpen]);
   useEffect(() => {
-    console.log(data?.answers[0]?.answer,"data****");
+    console.log(data,"data****");
     setAnswerFaq(data?.answers[0]?.answer)
 
-  }, [])
+  }, [data])
   
 
   const methods = useForm({
@@ -101,8 +101,8 @@ export default function FaqDialogs({
         .then((data) => {
           console.log("Data updated:", data.data.connected);
           dispatch(getRobot());
-
-          enqueueSnackbar("Rename Successfully", { variant: "success" });
+          dispatch(getTicket())
+          enqueueSnackbar("Submitted Successfully", { variant: "success" });
           handleClose();
         })
         .catch((error) => {
@@ -170,7 +170,7 @@ export default function FaqDialogs({
               color="error"
               onClick={() => handleSubmit(data)}
             >
-              Rename
+              submit
             </Button>
           </Box>
         </DialogActions>

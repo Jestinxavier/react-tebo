@@ -10,7 +10,7 @@ import {
   Skeleton,
   Button,
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDrawerContext } from "../../Context/DrawerContext";
 import { SocketContext } from "../../Context/SocketContext";
 import { Heading, CustomContainer } from "../../Component/CustomComponent";
@@ -21,6 +21,7 @@ import Iconify from "../../Component/MUI/iconify/Iconify";
 import NoRobotCard from "../../Component/Homepage/NoRobotCard";
 import { getRobot } from "../../redux/slices/robot";
 import { IMAGE_PATH } from "../../config-global";
+import Swal from "sweetalert2";
 
 function MapPage() {
   const {
@@ -32,10 +33,12 @@ function MapPage() {
     modalOpen,
     mapState,
   } = useDrawerContext();
-  const { startMapping, stopMapping, allMapState } = useContext(SocketContext);
+  const navigate = useNavigate()
+  const { startMapping, stopMapping, allMapState,deleteMap } = useContext(SocketContext);
   const location = useLocation();
   const [startMap, setStartMap] = useState(false);
   const [mapExisist, setmapExisist] = useState(false);
+
   const searchParams = new URLSearchParams(location.search);
   const [currentMapStatus, setCurrentMapStatus] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
@@ -49,13 +52,37 @@ function MapPage() {
   };
 
 
+  const removeMap = (data,id) => {
+    // navigate(`/robot-map?${searchParams.toString()}`);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      deleteMap(id);
+      dispatch(getRobot())
+      if (result.isConfirmed) {
+        Swal.fire("Deleted!", "Your file has been deleted.", "success");
+      }
+    });
+  };
 
+console.log(robotList,"robotList***");
   const stopMappingProcess = () => {
     // const teboId = searchParams.get("teboId");
     startMapping(teboId);
     stopMapping(teboId);
     setStartMap(false);
   };
+
+  useEffect(() => {
+    console.log(imageUrl,"imageUrl");
+  }, [imageUrl])
+  
 
   const DeleteMapData = () => {
     // const teboId = searchParams.get("teboId");
@@ -80,15 +107,29 @@ function MapPage() {
     }
   }, [allMapState]);
 
+
+
   const filterData = ()=>{
      return robotList.filter(item=>item.robot.uuid==teboId)
   }
 
   useEffect(() => {
+    console.log('====================================');
+    console.log(filterData()[0]?.robot?.map_status);
+    console.log('====================================');
+    setCurrentMapStatus(filterData()[0]?.robot?.map_status)
+  }, [])
+  
+
+  useEffect(() => {
+    console.log('filterData()====================================');
+    console.log(filterData(),currentMapStatus);
+    console.log('====================================');
     if (currentMapStatus == "finished mapping") {
       setmapExisist(true);
       setStartMap(true);
       setDescription("");
+    
       setImageUrl(filterData());
     
     }
@@ -97,6 +138,9 @@ function MapPage() {
       setStartMap(true);
       dispatch(getRobot())
       setDescription("");
+      console.log('filterData()====================================');
+      console.log(filterData());
+      console.log('====================================');
       setImageUrl(filterData());
 
     }
@@ -121,10 +165,23 @@ function MapPage() {
         {startMap ? (
           
           <Box>
-            {mapExisist?<>
+            {mapExisist?<Box>
            
-             <img src={`${IMAGE_PATH}/public${imageUrl[0].robot.map_path}`} alt="mapImage" />
-            </>:<NoRobotCard
+             <img src={`${IMAGE_PATH}${imageUrl[0].robot.map_path}`} alt="mapImage" />
+             <Button
+            variant="outlined"
+            color="error"
+            sx={{
+              mt: 5,
+            }}
+            startIcon={<Iconify icon="mdi:map-marker-remove-outline" />}
+            onClick={() => {
+              removeMap(teboId);
+            }}
+          >
+           Delete Map
+          </Button>
+            </Box>:<NoRobotCard
               image="/images/mapping.gif"
               Heading="Mapping Started"
               Status={currentMapStatus}

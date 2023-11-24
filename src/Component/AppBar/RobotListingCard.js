@@ -33,7 +33,7 @@ const CustomCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-export default function RobotListingCard({ data }) {
+export default function RobotListingCard({ data,sharedRobot }) {
   const [model, setModel] = useState(false);
   const [modalOpen, setModalOpen] = useState(false)
   const [robotId, setRobotId] = useState(null)
@@ -98,10 +98,21 @@ export default function RobotListingCard({ data }) {
       percentage: "10" ,
       image:"/images/tenpercentage.png"
     },
+    {
+      percentage: "5" ,
+      image:"/images/tenpercentage.png"
+    },
+    {
+      percentage: "0" ,
+      image:"/images/tenpercentage.png"
+    },
   ]
 
   const imageFilter = (data) => {
-    let filterData = imageData.filter((item) => Number(item.percentage) < data);
+    let filterData = imageData.filter((item) => Number(item.percentage) <= data);
+    console.log('====================================');
+    console.log(filterData,"filterData");
+    console.log('====================================');
    return filterData[0].image
   };
   return (
@@ -238,7 +249,7 @@ export default function RobotListingCard({ data }) {
           {/* <Typography sx={{ fontWeight: "bolder" }}></Typography> */}
         </Box>
         <Box sx={{ display: "flex",textAlign:'center'}}>
-          <Typography><Box component="span" sx={{fontWeight:'bolder',color:theme.palette.text.secondary}}>Location: </Box> { data?.robot?.ownedrobot[0]?.location_name?.match(/, (.*$)|- (.*)$/)?.slice(1, 5)}</Typography>          
+         { !sharedRobot&&<Typography><Box component="span" sx={{fontWeight:'bolder',color:theme.palette.text.secondary}}>Location: </Box> { data?.robot?.ownedrobot[0]?.location_name?.match(/, (.*$)|- (.*)$/)?.slice(1, 5)}</Typography> }         
         </Box>
         
       </Box>

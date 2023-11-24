@@ -12,12 +12,12 @@ import OceanWaves from "../Animation/OceanWaves";
 import { useTheme } from "@mui/styles";
 import IconBtn from "../CommonComponent/IconBtn";
 import FaqDialogs from "../Modal/FaqDialogs";
-
 function ListTicketAdmin({ index, data }) {
   const theme = useTheme();
   const [modal, setModal] = useState(false);
   const editFaq = (data) => {
     setModal(true);
+  
   };
   return (
     <Card sx={{ minHeight: 100, position: "relative", my: 5 }} key={index}>

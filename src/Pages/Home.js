@@ -40,7 +40,7 @@ import { SocketContext } from "../Context/SocketContext";
 import { useDrawerContext } from "../Context/DrawerContext";
 import { useAuthContext } from "../auth/useAuthContext";
 import NoRobotCard from '../Component/Homepage/NoRobotCard'
-
+import { ADMIN } from "../config-global";
 // import {
 //   CarouselBasic1,
 //   CarouselBasic2,
@@ -190,6 +190,29 @@ function Home() {
     });
 
   return (
+<>
+   {ADMIN?<Stack
+   pt={10}
+      px={3}
+      sx={{
+        // height: "100vh",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        // backgroundPosition: "center",
+        backgroundPosition: "initial",
+      }}
+    >
+      <Typography component="h3" variant="h3">Admin Dashboard</Typography>
+      <Typography>An administrator's role is not just about managing systems and processes; it's about enabling and empowering the collective potential of a team to achieve extraordinary results.</Typography>
+      <PersistentDrawerRight
+          open={open}
+          setOpen={setOpen}
+          handleDrawerOpen={handleDrawerOpen}
+          handleDrawerClose={handleDrawerClose}
+          setModalOpen={setModalOpen}
+        />
+    </Stack> :
+    
     <Stack
       pt={10}
       sx={{
@@ -244,7 +267,7 @@ function Home() {
           <Grid item sm={12} xs={12} md={12}>
           <Heading>Shared Robots</Heading>
           
-          {shareRobotList? <CarouselTeboMode mockData={shareRobotList} />:
+          {shareRobotList? <CarouselTeboMode mockData={shareRobotList} sharedRobot />:
 
             <NoRobotCard 
            image ="/images/sharerobot.gif"
@@ -269,7 +292,8 @@ function Home() {
         </Box>
       </Box>
       <TransitionsDialogs modalOpen={modalOpen} setModalOpen={setModalOpen} />
-    </Stack>
+    </Stack>}
+    </>
   );
 }
 

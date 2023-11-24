@@ -32,6 +32,7 @@ import { TILT_CONTROLLER } from "../../Constant/defaultValue";
 import { RobotController } from "../../Component/VideoConference";
 import { SocketContext } from "../../Context/SocketContext";
 import { ContextProvider } from "../../Context/SocketContext";
+import VideoAlert from "../../Component/Modal/VideoAlert";
 
 const APP_BAR_HEIGHT = 64;
 const ICON_WRAPPER_SIZE = 80;
@@ -49,7 +50,7 @@ function VideoConference() {
   const [launchPad, setLaunchPad] = useState(false);
   const [idToCall, setIdToCall] = useState("");
   const [userId, setUserId] = useState("");
-
+  const [alert, setAlert] = useState("");
   const searchParms = new URLSearchParams(location.search);
 
   const userUUID = searchParms.get("myid");
@@ -79,7 +80,10 @@ function VideoConference() {
           <img src="/images/Touch.jpg" alt="Image Alt Text" />
           <div class="card-content">
             <h2 class="card-title">For Controller</h2>
-            <p class="card-description">Touch the center of the screen to access the controller button for controlling the Tebo.</p>
+            <p class="card-description">
+              Touch the center of the screen to access the controller button for
+              controlling the Tebo.
+            </p>
           </div>
         </div>
       ),
@@ -89,15 +93,17 @@ function VideoConference() {
       spotlightPadding: 20,
       target: ".video-controller",
     },
-    
+
     {
-      content:     <div>
-      <img src="/images/myVideo.gif" alt="Image Alt Text" />
-      <div class="card-content">
-        <h2 class="card-title">Preview</h2>
-        <p class="card-description">You can preview your video here.</p>
-      </div>
-    </div>,
+      content: (
+        <div>
+          <img src="/images/myVideo.gif" alt="Image Alt Text" />
+          <div class="card-content">
+            <h2 class="card-title">Preview</h2>
+            <p class="card-description">You can preview your video here.</p>
+          </div>
+        </div>
+      ),
       placement: "bottom",
       styles: {
         options: {
@@ -108,13 +114,15 @@ function VideoConference() {
       // title: "Our projects",
     },
     {
-      content:     <div>
-      <img src="/images/camareTilt.jpeg" alt="Image Alt Text" />
-      <div class="card-content">
-        <h2 class="card-title">Tilt Control</h2>
-        <p class="card-description">You can preview your video here.</p>
-      </div>
-    </div>,
+      content: (
+        <div>
+          <img src="/images/camareTilt.jpeg" alt="Image Alt Text" />
+          <div class="card-content">
+            <h2 class="card-title">Tilt Control</h2>
+            <p class="card-description">You can preview your video here.</p>
+          </div>
+        </div>
+      ),
       placement: "top",
       styles: {
         options: {
@@ -125,13 +133,18 @@ function VideoConference() {
       // title: "Our projects",
     },
     {
-      content:     <div>
-      <img src="/images/reconnect.gif" alt="Image Alt Text" />
-      <div class="card-content">
-        <h2 class="card-title">Reconnect Tebo</h2>
-        <p class="card-description">If Tebo is not connected, you can force a connection by clicking the 'Reconnect' button.</p>
-      </div>
-    </div>,
+      content: (
+        <div>
+          <img src="/images/reconnect.gif" alt="Image Alt Text" />
+          <div class="card-content">
+            <h2 class="card-title">Reconnect Tebo</h2>
+            <p class="card-description">
+              If Tebo is not connected, you can force a connection by clicking
+              the 'Reconnect' button.
+            </p>
+          </div>
+        </div>
+      ),
       placement: "top",
       styles: {
         options: {
@@ -142,13 +155,18 @@ function VideoConference() {
       // title: "Our projects",
     },
     {
-      content:     <div>
-      <img src="/images/fullscreen.jpeg" alt="Image Alt Text" />
-      <div class="card-content">
-        <h2 class="card-title">Screen Size</h2>
-        <p class="card-description">You can use this button to switch between full-screen and minimal-screen modes.</p>
-      </div>
-    </div>,
+      content: (
+        <div>
+          <img src="/images/fullscreen.jpeg" alt="Image Alt Text" />
+          <div class="card-content">
+            <h2 class="card-title">Screen Size</h2>
+            <p class="card-description">
+              You can use this button to switch between full-screen and
+              minimal-screen modes.
+            </p>
+          </div>
+        </div>
+      ),
       placement: "top",
       styles: {
         options: {
@@ -158,15 +176,20 @@ function VideoConference() {
       target: ".fullscreen",
       // title: "Our projects",
     },
-   
+
     {
-      content:     <div>
-      <img src="/images/gohome.gif" alt="Image Alt Text" />
-      <div class="card-content">
-        <h2 class="card-title">Go Home</h2>
-        <p class="card-description">If you press the 'Go Home' button, Tebo will move to the docking station.</p>
-      </div>
-    </div>,
+      content: (
+        <div>
+          <img src="/images/gohome.gif" alt="Image Alt Text" />
+          <div class="card-content">
+            <h2 class="card-title">Go Home</h2>
+            <p class="card-description">
+              If you press the 'Go Home' button, Tebo will move to the docking
+              station.
+            </p>
+          </div>
+        </div>
+      ),
       placement: "top",
       styles: {
         options: {
@@ -176,15 +199,17 @@ function VideoConference() {
       target: ".gohome",
       // title: "Our projects",
     },
-    
+
     {
-      content:     <div>
-      <img src="/images/callend.gif" alt="Image Alt Text" />
-      <div class="card-content">
-        <h2 class="card-title">Call End</h2>
-        <p class="card-description">This button is used to end the call.</p>
-      </div>
-    </div>,
+      content: (
+        <div>
+          <img src="/images/callend.gif" alt="Image Alt Text" />
+          <div class="card-content">
+            <h2 class="card-title">Call End</h2>
+            <p class="card-description">This button is used to end the call.</p>
+          </div>
+        </div>
+      ),
       placement: "top",
       styles: {
         options: {
@@ -194,16 +219,20 @@ function VideoConference() {
       target: ".endcall",
       // title: "Our projects",
     },
-    
+
     {
-      content:     <div>
-      <img src="/images/micmute.gif" alt="Image Alt Text" />
-      <div class="card-content">
-        <h2 class="card-title">Mute Button</h2>
-        <p class="card-description">This button is used to mute and unmute the microphone.</p>
-      </div>
-    </div>,
-        placement: "top",
+      content: (
+        <div>
+          <img src="/images/micmute.gif" alt="Image Alt Text" />
+          <div class="card-content">
+            <h2 class="card-title">Mute Button</h2>
+            <p class="card-description">
+              This button is used to mute and unmute the microphone.
+            </p>
+          </div>
+        </div>
+      ),
+      placement: "top",
       styles: {
         options: {
           width: 300,
@@ -213,13 +242,18 @@ function VideoConference() {
       // title: "Our projects",
     },
     {
-      content:     <div>
-      <img src="/images/controller.gif" alt="Image Alt Text" />
-      <div class="card-content">
-        <h2 class="card-title">Tebo Controller</h2>
-        <p class="card-description">These buttons are used to control Tebo's movement, including moving forward, backward, left, and right.</p>
-      </div>
-    </div>,
+      content: (
+        <div>
+          <img src="/images/controller.gif" alt="Image Alt Text" />
+          <div class="card-content">
+            <h2 class="card-title">Tebo Controller</h2>
+            <p class="card-description">
+              These buttons are used to control Tebo's movement, including
+              moving forward, backward, left, and right.
+            </p>
+          </div>
+        </div>
+      ),
       placement: "top",
       styles: {
         options: {
@@ -228,10 +262,7 @@ function VideoConference() {
       },
       target: ".robotController",
       // title: "Our projects",
-    }, 
-   
-    
-    
+    },
   ];
 
   const getHelpers = (helpers) => {
@@ -256,11 +287,18 @@ function VideoConference() {
     console.groupEnd();
   };
 
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
   const {
     name,
     callAccepted,
     myVideo,
     userVideo,
+    alertWarningOnCall,
     callEnded,
     stream,
     call,
@@ -282,6 +320,15 @@ function VideoConference() {
     callUser(toIdUUID);
     // callUser('TEBO-GOKUL-NOKIA-TABLET')
   }, [userUUID, toIdUUID]);
+  useEffect(() => {
+    console.log("alertWarningOnCall====================================");
+    console.log(alertWarningOnCall);
+    console.log("====================================");
+    if (alertWarningOnCall) {
+      setAlert(alertWarningOnCall);
+      setModalOpen(true);
+    }
+  }, [alertWarningOnCall]);
 
   const addUser = useCallback(() => {
     console.log("hhh55", userId);
@@ -456,6 +503,7 @@ function VideoConference() {
           )} */}
         </Grid>
       )}
+      <VideoAlert open={modalOpen} onClose={closeModal} message={alert} />
     </div>
   );
 }

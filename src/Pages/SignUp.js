@@ -24,8 +24,8 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Logo from "../Component/Logo/Logo";
 import { useNavigate } from "react-router-dom";
 import { SignupForm } from "../Component/Auth";
-import {LinkToNavigate} from "../Component/Link";
-import {PATH_DASHBOARD,PATH_AUTH} from "../Routes/paths"
+import { LinkToNavigate } from "../Component/Link";
+import { PATH_DASHBOARD, PATH_AUTH } from "../Routes/paths";
 
 const LogoImage = styled("img")(({ theme }) => ({
   width: { sm: "50%", md: "100%", xs: "30%" },
@@ -87,7 +87,7 @@ function SignUp() {
       },
     });
 
-  console.log(theme, "theme<***");
+
 
   return (
     <Stack
@@ -105,10 +105,8 @@ function SignUp() {
           <Logo />
         </Box>
       </Box>
-      <Grid container sx={{height:"100%"}}>
-      <Grid item md={6} sm={12}>
-        
-        </Grid>
+      <Grid container sx={{ height: "100%" }}>
+        <Grid item md={6} sm={12}></Grid>
         <Grid item md={6} sm={12}>
           <Stack
             justifyContent="flex-end"
@@ -164,7 +162,7 @@ function SignUp() {
                     component="h1"
                     variant="h6"
                   >
-                    Login
+                    Sign up
                     <Box
                       sx={{
                         position: "absolute",
@@ -187,20 +185,34 @@ function SignUp() {
                   <Box sx={{ flex: 1 }}>
                     <SignupForm />
 
-                   
-                    <LinkToNavigate HigliteName='Goto ' Subject='Login page' navigateTo={PATH_AUTH.login} />
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        flexDirection: "column",
+                        width: "100%",
+                        mt:1,
+                        ml:1
+                      }}
+                    >
+                      <LinkToNavigate
+                        HigliteName="Go to "
+                        Subject="Login page"
+                        navigateTo={PATH_AUTH.login}
+                      />
+                    </Box>
                   </Box>
-
-               
                 </Stack>
               </Box>
             </Box>
           </Stack>
-          <div onClick={()=>{
-             navigate("/RobotVideoConferenceInterface/");
-          }}>
+          {/* <div
+            onClick={() => {
+              navigate("/RobotVideoConferenceInterface/");
+            }}
+          >
             backup link
-          </div>
+          </div> */}
         </Grid>
       </Grid>
     </Stack>

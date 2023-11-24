@@ -141,7 +141,7 @@ function SignupForm() {
               color: theme.palette.secondary.contrastText,
             }}
           >
-            email
+            Email Address
           </Typography>
           <RHFTextField
             fullWidth
@@ -200,7 +200,7 @@ function SignupForm() {
               color: theme.palette.secondary.contrastText,
             }}
           >
-            confom Password
+           Confirm Password
           </Typography>
           <RHFTextField
             fullWidth
@@ -258,7 +258,7 @@ function SignupForm() {
               color: theme.palette.secondary.contrastText,
             }}
           >
-            Date
+            Date Of Birth
           </Typography>
           <RHFDatePicker
             name="date_of_birth"
@@ -317,7 +317,7 @@ function SignupForm() {
                 fontWeight: 100,
               }}
             >
-              Sign Up
+              Sign up
             </Button>
           </Stack>
         </Grid>

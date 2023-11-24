@@ -1,27 +1,24 @@
-import React,{ useState, useEffect } from "react";
-import {Box,Card,Typography} from '@mui/material';
-import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
+import React, { useState, useEffect } from "react";
+import { Box, Card, Typography } from "@mui/material";
+import Drawer from "@mui/material/Drawer";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
 import MenuIcon from "@mui/icons-material/Menu";
 import { makeStyles } from "@mui/styles";
 import { styled, useTheme } from "@mui/material/styles";
 import { Icon } from "@iconify/react";
-import { useAuthContext } from '../../auth/useAuthContext';
+import { useAuthContext } from "../../auth/useAuthContext";
 import { LoginSharp } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { PATH_AUTH } from "../../Routes/paths";
-import {ADMIN} from "../../config-global"
-
-
-
-
+import { ADMIN } from "../../config-global";
+import Swal from 'sweetalert2'
 const IconClass = styled(Icon)(({ theme }) => ({
   "& .iconify": {
     transition: "color 0.2s ease-in-out",
   },
   "&:hover .iconify": {
-    color: "red",
+    // color: "red",
   },
 }));
 
@@ -40,212 +37,221 @@ const useStyles = makeStyles((theme) => {
   console.log(theme, "theme,****123");
   return {
     iconifycolor: {
+      color: theme.palette.secondary.light,
+
       "&:hover": {
-        color: "red",
+        color: "#fff",
       },
       iconcolor: {
         "&:hover": {
-          color: theme.palette.secondary.light,
+          color: "#fff !important",
         },
       },
     },
   };
 });
 
-
-
-
-
-
-export default function DrawerRight({setOpenMenu,OpenMenu,setModalOpen}) {
+export default function DrawerRight({ setOpenMenu, OpenMenu, setModalOpen }) {
   const theme = useTheme();
-const { user, logout } = useAuthContext();
+  const { user, logout } = useAuthContext();
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const logOut = ()=> {
-  console.log("im logOut in the")
-  logout()
-}
-const notification = ()=> {
-  console.log("im in thenotification ")
-  navigate('/home')
-}
-const mail = ()=> {
-  console.log("mail im in the")
-}
-const support = ()=> {
-  console.log("im in suopport the")
-} 
-const robotHealth = ()=> {
-  console.log("im in robotHealth the")
-}
+  const logOut = () => {
+    Swal.fire({
+      title: "Do you want to logout your account?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      denyButtonText: `No`
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        // Swal.fire("Logout Successful!", "", "success");
+     logout();
 
+      }
+      // else if (result.isDenied) {
+      //   Swal.fire("Changes are not saved", "", "info");
+      // }
+    });
+    console.log("im logOut in the");
+  };
+  const notification = () => {
+    console.log("im in thenotification ");
+    navigate("/home");
+  };
+  const mail = () => {
+    console.log("mail im in the");
+  };
+  const support = () => {
+    console.log("im in suopport the");
+  };
+  const robotHealth = () => {
+    console.log("im in robotHealth the");
+  };
 
+  const showAnalytics = () => {
+    console.log("showAnalytics called");
+    navigate("/analytics");
+    setOpenMenu(false);
+  };
+  const shareRobot = () => {
+    navigate("/shared-robot-list");
+    setOpenMenu(false);
+  };
+  const showLogsInBot = () => {
+    console.log("showLogsInBot called");
+    navigate("/call-logs");
+    setOpenMenu(false);
+  };
+  const showSetting = () => {
+    navigate("/settings");
+    setOpenMenu(false);
 
+    console.log("showSetting called");
+  };
+  const showSupport = () => {
+    console.log("showSupport called");
+    navigate("/support");
+    setOpenMenu(false);
+  };
+  const showAdminSupport = () => {
+    console.log("showSupport called");
+    navigate("/admin-support");
+    setOpenMenu(false);
+  };
+  const showProfile = () => {
+    console.log("showProfile called");
+    navigate("/profile");
+    setOpenMenu(false);
+  };
 
-const showAnalytics = ()=>{
-  console.log('showAnalytics called');
-  navigate('/analytics')
-  setOpenMenu(false)
-}
-const shareRobot = ()=>{
-  navigate('/shared-robot-list')
-  setOpenMenu(false)
-}
-const showLogsInBot = ()=>{
-  console.log('showLogsInBot called');
-  navigate('/call-logs')
-  setOpenMenu(false)
+  const NavigationData = ADMIN
+    ? [
+        {
+          icon: "/images/icon-suppot.png",
+          name: "SUPPORT",
+          funcation: showAdminSupport,
+        },
+      ]
+    : [
+        {
+          icon: "/images/icon-report.png",
+          name: "ANALYTICS",
+          funcation: showAnalytics,
+        },
+        {
+          icon: "/images/icon-robot.png",
+          name: "SHARED TEBO",
+          funcation: shareRobot,
+        },
 
-  
-}
-const showSetting = ()=>{
-  navigate('/settings')
-  setOpenMenu(false)
-
-  console.log('showSetting called');
-}
-const showSupport = ()=>{
-  console.log('showSupport called');
-  navigate('/support')
-  setOpenMenu(false)
-
-  
-}
-const showAdminSupport = ()=>{
-  console.log('showSupport called');
-  navigate('/admin-support')
-  setOpenMenu(false)
-}
-const showProfile = ()=>{
-  console.log('showProfile called');
-  navigate('/profile')
-  setOpenMenu(false)
-
-}
-
-const NavigationData = ADMIN?[  {
-  icon: "/images/icon-suppot.png",
-  name: "SUPPORT",
-  funcation: showAdminSupport ,
-},]:[
-  {
-    icon: "/images/icon-report.png",
-    name: "ANALYTICS",
-    funcation: showAnalytics,
-  },
-  {
-    icon: "/images/icon-robot.png",
-    name: "TEBO LIST",
-    funcation: shareRobot ,
-  },
-
-  {
-    icon: "/images/icon-setting.png",
-    name: "SETTING",
-    funcation: showSetting ,
-
-  },
-  {
-    icon: "/images/icon-suppot.png",
-    name: "SUPPORT",
-    funcation: showSupport ,
-
-  },
-  {
-    icon: "/images/icon-call.png",
-    name: "LOGS",
-    funcation: showLogsInBot ,
-
-  },
-  {
-    icon: "/images/icon-profile.png",
-    name: "PROFILE",
-    funcation: showProfile ,
-
-  },
-];
-const BottomIcon = [
-  // { iconname: "ph:chat-dots-fill",funcation:logOut },
-  { iconname: "line-md:home-md",funcation:notification },
-  // { iconname: "material-symbols:mail",funcation:mail},
-  // { iconname: "mdi:cellphone-settings-variant",funcation:support },
-  // { iconname: "material-symbols:ecg-heart",funcation:robotHealth },
-];
+        {
+          icon: "/images/icon-setting.png",
+          name: "SETTING",
+          funcation: showSetting,
+        },
+        {
+          icon: "/images/icon-suppot.png",
+          name: "SUPPORT",
+          funcation: showSupport,
+        },
+        {
+          icon: "/images/icon-call.png",
+          name: "LOGS",
+          funcation: showLogsInBot,
+        },
+        {
+          icon: "/images/icon-profile.png",
+          name: "PROFILE",
+          funcation: showProfile,
+        },
+      ];
+  const BottomIcon = [
+    // { iconname: "ph:chat-dots-fill",funcation:logOut },
+    { iconname: "line-md:home-md", funcation: notification },
+    // { iconname: "material-symbols:mail",funcation:mail},
+    // { iconname: "mdi:cellphone-settings-variant",funcation:support },
+    // { iconname: "material-symbols:ecg-heart",funcation:robotHealth },
+  ];
   const [state, setState] = useState({
     top: false,
     left: false,
     bottom: false,
     right: false,
   });
-const classes = useStyles();
+  const classes = useStyles();
   useEffect(() => {
-    if(OpenMenu){
-    setState({ ...state, right:OpenMenu });
-   console.log( 'if(!state.right');
+    if (OpenMenu) {
+      setState({ ...state, right: OpenMenu });
+      console.log("if(!state.right");
     }
-  },[OpenMenu]);
+  }, [OpenMenu]);
 
   useEffect(() => {
-   
-    if(!state.right){
+    if (!state.right) {
       setOpenMenu(false);
     }
-  },[state]);
-  
+  }, [state]);
 
   const toggleDrawer = (anchor, open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
       return;
     }
 
     setState({ ...state, [anchor]: open });
   };
 
- 
-  
-
   const list = (anchor) => (
     <Box
-      sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250,display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',height: '100%' }}
+      className="hxhshxsh"
+      sx={{
+        width: anchor === "top" || anchor === "bottom" ? "auto" : 250,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        height: "100%",
+      }}
       role="presentation"
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
-
     >
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button
-            size="large"
-            aria-label="display more actions"
-            edge="end"
-            color="inherit"
-            onClick={toggleDrawer(anchor, false)}
-          >
-            <MenuIcon />
-          </Button>
-        </Box>
-
-        {/* --------------------Navigation ------------------------- */}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-          }}
+        <Button
+          size="large"
+          aria-label="display more actions"
+          edge="end"
+          color="inherit"
+          onClick={toggleDrawer(anchor, false)}
         >
-          {NavigationData.map((data) => (
-            <Box sx={{ padding: 1, flex: "50%", width: "100%" }}>
-              <ContentBox
-              onClick={()=>{
-                data.funcation()
-              }}
-              >
+          <MenuIcon />
+        </Button>
+      </Box>
 
+      {/* --------------------Navigation ------------------------- */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+        }}
+      >
+        {NavigationData.map((data) => (
+          <Box sx={{ padding: 1, flex: "50%", width: "100%" }}>
+            <ContentBox
+              onClick={() => {
+                data.funcation();
+              }}
+              className="ook"
+              sx={{ display: "flex", flexDirection: "row" }}
+            >
+              <Box sx={{ flex: 1 }}>
                 <Box
                   component="img"
                   src={data.icon}
@@ -256,34 +262,78 @@ const classes = useStyles();
                     cursor: "pointer",
                   }}
                 />
-              </ContentBox>
-              <Typography
+              </Box>
+              <Box
                 sx={{
-                  color: theme.palette.primary.dark,
-                  textAlign: "center",
-                  mt: 1,
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  alignContent: "center",
+                  flexWrap: "nowrap",
                 }}
               >
-                {data.name}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
+                <Typography
+                  sx={{
+                    // color: theme.palette.primary.dark,
+                    color: theme.palette.grey[0],
 
-        <Divider />
+                    textAlign: "center",
+                    mt: 1,
+                    ml: 1,
+                  }}
+                >
+                  {data.name}
+                </Typography>
+              </Box>
+            </ContentBox>
+          </Box>
+        ))}
+      </Box>
 
-        {/* -----------------------------------bottom icon------------------------- */}
-        <Box
+      <Divider />
+
+      {/* -----------------------------------bottom icon------------------------- */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "end",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          height: "100%",
+          margin: "10px 11px",
+        }}
+      >
+        <Card
           sx={{
+            flex: 1,
             display: "flex",
-            flexDirection: "row",
-            alignItems: "end",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            height: "100%",
-            margin: "10px 11px",
+            justifyContent: "center",
+            height: "30px",
+            mx: "3px",
+            padding: "3px",
+            alignItems: "center",
+            "&:hover": {
+              backgroundColor: theme.palette.secondary.main, // Change the background color on hover
+              cursor: "pointer", // Change the cursor to indicate interactivity
+              color: "#fff",
+            },
+          }}
+          onClick={() => {
+            logOut();
           }}
         >
+          <IconClass
+            width="100%"
+            height="100%"
+            icon="material-symbols:power-rounded"
+            className={classes.iconifycolor}
+            // color={theme.palette.secondary.light}
+          />
+        </Card>
+        {BottomIcon.map((label) => (
           <Card
             sx={{
               flex: 1,
@@ -293,64 +343,42 @@ const classes = useStyles();
               mx: "3px",
               padding: "3px",
               alignItems: "center",
-            }}
-            onClick={()=>{
-              logOut()
+
+              "&:hover": {
+                backgroundColor: theme.palette.secondary.main, // Change the background color on hover
+                cursor: "pointer", // Change the cursor to indicate interactivity
+                color: "#fff",
+              },
             }}
           >
-            <IconClass
-              width="100%"
-              height="100%"
-              icon="material-symbols:power-rounded"
-              className={classes.iconifycolor}
-              color={theme.palette.secondary.light}
+            <Icon
+              width="80%"
+              height="80%"
+              icon={label.iconname}
+              className={classes.iconcolor}
+              // color={theme.palette.blueGray[900]}
+              onClick={() => {
+                label.funcation();
+              }}
             />
           </Card>
-          {BottomIcon.map((label) => (
-            <Card
-              sx={{
-                flex: 1,
-                display: "flex",
-                justifyContent: "center",
-                height: "30px",
-                mx: "3px",
-                padding: "3px",
-                alignItems: "center",
-              }}
-             
-            >
-              <Icon
-                width="80%"
-                height="80%"
-                icon={label.iconname}
-                className={classes.iconcolor}
-                color={theme.palette.blueGray[900]}
-                onClick={() => {
-                  label.funcation(); 
-                }}
-              />
-            </Card>
-          ))}
-
-          
-        </Box>
+        ))}
+      </Box>
     </Box>
   );
 
   return (
     <div>
-     
-       
-        <React.Fragment key={'right'}>
-          {/* <Button onClick={toggleDrawer('right', true)}>right</Button> */}
-          <Drawer
-            anchor={'right'}
-            open={state['right']}
-            onClose={toggleDrawer('right', false)}
-          >
-            {list('right')}
-          </Drawer>
-        </React.Fragment>
+      <React.Fragment key={"right"}>
+        {/* <Button onClick={toggleDrawer('right', true)}>right</Button> */}
+        <Drawer
+          anchor={"right"}
+          open={state["right"]}
+          onClose={toggleDrawer("right", false)}
+        >
+          {list("right")}
+        </Drawer>
+      </React.Fragment>
     </div>
   );
 }

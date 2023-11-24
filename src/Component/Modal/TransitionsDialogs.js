@@ -18,13 +18,12 @@ import FormProvider, { RHFTextField } from "../MUI/hook-form";
 import { useSnackbar } from "../../Component/MUI/snackbar";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { useNavigate, } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { addRobot } from "../../Api/addBot";
 import Loader from "../Loader/Loader";
 import { getSingleRobot } from "../../redux/slices/robot";
-import { useDispatch,useSelector } from "../../redux/store";
-
+import { useDispatch, useSelector } from "../../redux/store";
 
 // ----------------------------------------------------------------------
 
@@ -49,11 +48,9 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(getSingleRobot())
-  }, [])
+    dispatch(getSingleRobot());
+  }, []);
 
-
-  
   const defaultValues = {
     robot_uuid: "",
   };
@@ -157,7 +154,7 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
   //         console.error("Error updating data:", error);
   //       });
 
-  //     elapsedTime += 5; 
+  //     elapsedTime += 5;
   //   };
 
   //   intervalId = setInterval(addBotRepeatedly, 5000);
@@ -166,30 +163,28 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
   //   addBotRepeatedly();
   // };
 
-
   // const handleSubmmit = (data) => {
   //   let intervalId = null;
   //   let elapsedTime = 0;
-  
+
   //   const addBotRepeatedly = () => {
   //     console.log(elapsedTime >= 180 || data?.data?.response || Mountcomponent, "elapsedTime");
-  
+
   //     if (elapsedTime >= 180 || data?.data?.response || Mountcomponent) {
   //       // Stop after 3 minutes (180 seconds)
   //       clearInterval(intervalId);
   //       console.log("Stopped calling addRobot");
   //       return;
   //     }
-  
+
   //     addRobot(data)
   //       .then((data) => {
   //         console.log("Data updated:", data.data.connected);
 
-  
   //         setStatus((pre) => {
   //           let approvalStatus = false;
   //           let pendingStatus = false;
-  
+
   //           if (data.data.connected && data.data.response) {
   //             approvalStatus = true;
   //           }
@@ -199,7 +194,7 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
   //           if (data.data.response) {
   //             pendingStatus = true;
   //           }
-  
+
   //           return {
   //             ...pre,
   //             approval: true,
@@ -207,7 +202,7 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
   //             pending: pendingStatus,
   //           };
   //         });
-  
+
   //         // enqueueSnackbar("SignUp Successfully", { variant: "success" });
   //         if (data) {
   //           setTimelineStatus(true);
@@ -216,18 +211,18 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
   //       .catch((error) => {
   //         enqueueSnackbar(error.message, { variant: "error" });
   //         console.error("Error updating data:", error);
-          
+
   //       });
-  
+
   //     elapsedTime += 5;
   //   };
-  
+
   //   // Call the function initially
   //   addBotRepeatedly();
-  
+
   //   // Start the interval with a 5-second delay
   //   intervalId = setInterval(addBotRepeatedly, 5000);
-  
+
   //   // Clear the interval after 3 minutes
   //   setTimeout(() => {
   //     clearInterval(intervalId);
@@ -235,12 +230,11 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
   //   }, 180000);
   // };
 
-
   // const handleSubmmit = (data) => {
   //   let intervalId = null;
   //   let elapsedTime = 0;
   //   let errorOccurred = false; // Flag to track API errors
-  
+
   //   const addBotRepeatedly = () => {
   //     if (elapsedTime >= 180 || errorOccurred || Mountcomponent) {
   //       // Stop after 3 minutes (180 seconds), when an error occurs, or when Mountcomponent is true
@@ -248,15 +242,15 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
   //       console.log("Stopped calling addRobot");
   //       return;
   //     }
-  
+
   //     addRobot(data)
   //       .then((data) => {
   //         console.log("Data updated:", data.data.connected);
-  
+
   //         setStatus((pre) => {
   //           let approvalStatus = false;
   //           let pendingStatus = false;
-  
+
   //           if (data.data.connected && data.data.response) {
   //             approvalStatus = true;
   //           }
@@ -266,7 +260,7 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
   //           if (data.data.response) {
   //             pendingStatus = true;
   //           }
-  
+
   //           return {
   //             ...pre,
   //             approval: true,
@@ -274,7 +268,7 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
   //             pending: pendingStatus,
   //           };
   //         });
-  
+
   //         // enqueueSnackbar("SignUp Successfully", { variant: "success" });
   //         if (data) {
   //           setTimelineStatus(true);
@@ -285,16 +279,16 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
   //         enqueueSnackbar(error.message, { variant: "error" });
   //         console.error("Error updating data:", error);
   //       });
-  
+
   //     elapsedTime += 5;
   //   };
-  
+
   //   // Call the function initially
   //   addBotRepeatedly();
-  
+
   //   // Start the interval with a 5-second delay
   //   intervalId = setInterval(addBotRepeatedly, 5000);
-  
+
   //   // Clear the interval after 3 minutes
   //   setTimeout(() => {
   //     clearInterval(intervalId);
@@ -304,26 +298,33 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
 
   const handleSubmmit = (data) => {
     let intervalId = null;
-    
+
     const stopCallingAPI = () => {
       clearInterval(intervalId);
       console.log("Stopped calling API after it returned true.");
     };
-  setTimelineStatus(true)
+    setTimelineStatus(true);
     intervalId = setInterval(() => {
       addRobot(data)
         .then((response) => {
-          console.log('====================================');
+          console.log("====================================");
           console.log(response.data.connected);
           if (response.data.connected) {
-            console.log(response.data.connected,'====================================');
+            console.log(
+              response.data.connected,
+              "===================================="
+            );
             stopCallingAPI();
-            setTimelineStatus(false)
-          enqueueSnackbar(response.message,{variant:'success'})
-          }else if(response.data.owner_email){
-            enqueueSnackbar(response.message,{variant:'error'})
+            setTimelineStatus(false);
+            enqueueSnackbar(response.message, { variant: "success" });
+          } else if (response.data.owner_email) {
+            enqueueSnackbar(response.message, { variant: "error" });
             stopCallingAPI();
-            setTimelineStatus(false)
+            setTimelineStatus(false);
+          } else if (response.data.response == "rejected") {
+            enqueueSnackbar(response.message, { variant: "error" });
+            stopCallingAPI();
+            setTimelineStatus(false);
           }
         })
         .catch((error) => {
@@ -331,8 +332,7 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
         });
     }, 10000); // Call the API every 5 seconds
   };
-  
-  
+
   return (
     <div>
       <Dialog
@@ -392,23 +392,31 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
 
         <DialogActions>
           <Box>
-            {timelineStatus?<Button color="inherit" onClick={()=>{
-              handleClose()
-              setTimelineStatus(false)
-              
-              }}>
-              Close
-            </Button>:<Button color="inherit" onClick={handleClose}>
-              cancel
-            </Button>}
+            {timelineStatus ? (
+              <Button
+                color="inherit"
+                onClick={() => {
+                  handleClose();
+                  setTimelineStatus(false);
+                }}
+              >
+                Close
+              </Button>
+            ) : (
+              <Button color="inherit" onClick={handleClose}>
+                cancel
+              </Button>
+            )}
 
-            {!timelineStatus&&<Button
-              variant="contained"
-              color="error"
-              onClick={() => handleSubmmit(robotId)}
-            >
-              Add Tebo
-            </Button>}
+            {!timelineStatus && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => handleSubmmit(robotId)}
+              >
+                Add Tebo
+              </Button>
+            )}
           </Box>
         </DialogActions>
       </Dialog>

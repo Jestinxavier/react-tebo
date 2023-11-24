@@ -335,7 +335,7 @@ const dispatch = useDispatch()
                       Battery Level
                     </Typography>
                     {
-                      console.log(data,"data")
+                      console.log(data?.robot?.battery_charge,"data?.robot?.battery_charge")
                     }
                     <BatteryLevel
                       color={theme.palette.green[100]}

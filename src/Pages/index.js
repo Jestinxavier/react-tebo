@@ -13,7 +13,8 @@ export {default as CallLogs} from "./CallLogs/CallLogs"
 export {default as Analytics} from "./Analytics/Analytics"
 export {default as ShareRobotList} from "./ShareRobot/ShareRobotList"
 export {default as AdminSupport} from "./AdminSupport"
-
+export {default as ResetPasswordPage} from "./ResetPassword/ResetPasswordPage"
+export {default as NewPasswordPage} from "./ResetPassword/NewPasswordPage"
 
 
 

@@ -22,7 +22,7 @@ function BatteryLevel({color,BatteryPercentageLevel}) {
     <Box
     sx={{
       height: 20,
-      width: 150,
+      width: 100,
       border: "1px solid #0000002e",
       borderRadius: "10px",
     }}

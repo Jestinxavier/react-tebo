@@ -22,18 +22,21 @@ CarouselTeboMode.propTypes = {
   data: PropTypes.array,
 };
 
-export default function CarouselTeboMode({mockData }) {
+export default function CarouselTeboMode({mockData,sharedRobot }) {
   const carouselRef = useRef(null);
 
   // mockData
 
  
-  
+  {
+    console.log(mockData,"mockData");
+  }
   const theme = useTheme();
 
   const carouselSettings = {
     slidesToShow: 3,
     centerMode: true,
+    Infinity: mockData.length>3,
     centerPadding: '60px',
     rtl: Boolean(theme.direction === 'rtl'),
     responsive: [
@@ -78,11 +81,11 @@ export default function CarouselTeboMode({mockData }) {
         onNext={handleNext}
         onPrevious={handlePrev}
       >
-        <Carousel ref={carouselRef} {...carouselSettings}>
+        <Carousel ref={carouselRef} {...carouselSettings} >
           {mockData?.map((item,id) => (
              
             <Box key={id} sx={{ px: 1 }}>
-              <CarouselItem item={item} />
+              <CarouselItem  item={item} sharedRobot={sharedRobot}/>
             </Box>
           ))}
         </Carousel>
@@ -97,13 +100,13 @@ CarouselItem.propTypes = {
   item: PropTypes.object,
 };
 
-function CarouselItem({ item }) {
+function CarouselItem({ item,sharedRobot }) {
   const theme = useTheme();
 
   // const { image, title } = item;
 
   return (
-    <RobotListingCard data={item}/>
+    <RobotListingCard data={item} sharedRobot={sharedRobot}/>
   );
 }
 

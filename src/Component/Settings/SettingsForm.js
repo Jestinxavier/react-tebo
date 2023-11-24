@@ -130,7 +130,7 @@ function SettingsForm() {
       sx={{ padding: 20 }}
       onSubmit={handleSubmit(onSubmit)}
     >
-      {myAllRobot?<Grid container spacing={2} sx={{ padding: 3 }}>
+      {myAllRobot?<Grid container spacing={2} >
   
          
       {myAllRobot?.map((robotData,index)=><Grid item md={4} sm={12}>

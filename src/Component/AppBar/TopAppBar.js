@@ -144,6 +144,7 @@ console.log(user,"user");
                 width="50%"
                 height="50%"
                 icon='line-md:home-md'
+              
                 // className={classes.iconcolor}
                 // color={theme.palette.blueGray[900]}
               />
@@ -199,9 +200,9 @@ console.log(user,"user");
 
             
 
-              <IconButton size="large" aria-label="search" color="inherit">
+              {/* <IconButton size="large" aria-label="search" color="inherit">
                 <Icon icon="bi:info-circle" />
-              </IconButton>
+              </IconButton> */}
             </Box>
             {!open ? (
               <IconButton

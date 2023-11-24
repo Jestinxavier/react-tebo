@@ -8,9 +8,9 @@ import { Box } from '@mui/material';
 function SentIcon({ ...other }) {
   const theme = useTheme();
 
-  const PRIMARY_MAIN = theme.palette.primary.main;
+  const PRIMARY_MAIN = theme.palette.secondary.main;
 
-  const PRIMARY_DARK = theme.palette.primary.dark;
+  const PRIMARY_DARK = theme.palette.secondary.light;
 
   return (
     <Box {...other}>

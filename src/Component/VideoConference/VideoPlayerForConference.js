@@ -86,7 +86,7 @@ export default function VideoPlayerForConference({
 
   useEffect(() => {
     setPageTrigger(true);
-    setLaunchPad(!launchPad)
+    setLaunchPad(!launchPad);
     return () => setPageTrigger(false);
   }, []);
 
@@ -160,15 +160,16 @@ export default function VideoPlayerForConference({
       }}
     >
       <div>
-        <video
-          src="/Video/Demo.mp4"
-          autoPlay
-          playsInline
-          ref={remoteRef}
-          onClick={() => setLaunchPad(!launchPad)}
-          style={videoStyles}
-        />
-
+        <div style={{ transform: "scaleX(-1)" }}>
+          <video
+            src="/Video/Demo.mp4"
+            autoPlay
+            playsInline
+            ref={remoteRef}
+            onClick={() => setLaunchPad(!launchPad)}
+            style={videoStyles}
+          />
+        </div>
         <div style={{ position: "absolute", top: "0", width: "100%" }}>
           <Grid container>
             <Grid item sx={6} md={6}>
@@ -188,7 +189,7 @@ export default function VideoPlayerForConference({
                 }}
               >
                 <video
-                className="my-video"
+                  className="my-video"
                   src="/Video/Demo.mp4"
                   playsInline
                   ref={localRef}
@@ -242,7 +243,6 @@ export default function VideoPlayerForConference({
               marginBottom: 50,
             }}
           >
-           
             <Icon
               icon="ion:game-controller-outline"
               width={ICON_SIZE}

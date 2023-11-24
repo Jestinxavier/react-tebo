@@ -7,11 +7,8 @@ import {
   Button,
   DialogTitle,
   DialogActions,
-  DialogContent,
-  DialogContentText,
+  Stack,
   Typography,
-  TextField,
-  Container,
 } from "@mui/material";
 import { HorizontalTimeline } from "../TimeLine";
 import FormProvider, { RHFTextField } from "../MUI/hook-form";
@@ -41,7 +38,8 @@ export default function FaqDialogs({
   const [open, setOpen] = useState(false);
 
   const dispatch = useDispatch();
-  const [answerFaq, setAnswerFaq] = useState(nikName);
+  const [answerFaq, setAnswerFaq] = useState("");
+  const [question, setQuestion] = useState("");
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
@@ -56,13 +54,11 @@ export default function FaqDialogs({
   });
   const handleClickOpen = () => {
     setOpen(true);
-   
   };
 
   const handleClose = () => {
     setOpen(false);
     setModalOpen(false);
-  
   };
 
   useEffect(() => {
@@ -71,27 +67,26 @@ export default function FaqDialogs({
     }
   }, [modalOpen]);
   useEffect(() => {
-   if(data){
-    console.log(data.answer[0].answer,"data****");
-   
-    setAnswerFaq(data.answer[0].answer)
-   }
-  }, [data])
-  
+    if (data) {
+      console.log(data, "data****");
+      setQuestion(data.question);
+      setAnswerFaq(data?.answer[0]?.answer || null);
+    }
+  }, [data]);
 
   const methods = useForm({
     resolver: yupResolver(VerifySchema),
     defaultValues,
   });
 
-
   const handleSubmit = (param) => {
     const addBotRepeatedly = () => {
-     let apiData = {}
-     apiData.answer = answerFaq;
-     apiData.question_id = param.id;
-     apiData.answer_id = param.answers.length>0? param?.answers[0]?.id :null
-      addFaq( apiData)
+      let apiData = {};
+      apiData.answer = answerFaq;
+      apiData.question_id = param.id;
+      apiData.answer_id =
+        param.answers.length > 0 ? param?.answers[0]?.id : null;
+      addFaq(apiData)
         .then((data) => {
           console.log("Data updated:", data.data.connected);
           dispatch(getRobot());
@@ -119,26 +114,30 @@ export default function FaqDialogs({
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle id="alert-dialog-slide-title">{data?.ticket}?</DialogTitle>
+        <DialogTitle id="alert-dialog-slide-title">Q: {question}?</DialogTitle>
         <>
           <Box display="flex" flexDirection="column" mr={4} ml={2} mb={2}>
-            <Typography mb={1}>Rename Your</Typography>
+            {answerFaq ? (
+              <Typography mb={1}>A:{answerFaq}</Typography>
+            ) : (
+              <Stack alignItems="center" justifyContent="center">
+                <Typography mb={1} sx={{ color: "red", ml: 1 }}>
+                  Not Answered
+                </Typography>
+                <Box
+                  component="img"
+                  src="/images/noAndswer.gif"
+                  sx={{ width: 150 }}
+                />
+              </Stack>
+            )}
           </Box>
-         
         </>
 
         <DialogActions>
           <Box>
             <Button color="inherit" onClick={handleClose}>
-              cancel
-            </Button>
-
-            <Button
-              variant="contained"
-              color="error"
-              onClick={() => handleSubmit(data)}
-            >
-              Rename
+              close
             </Button>
           </Box>
         </DialogActions>

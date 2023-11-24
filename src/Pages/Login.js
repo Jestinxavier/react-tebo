@@ -193,11 +193,22 @@ function Login() {
                 Username or password?
               </Link>
             </Typography> */}
-                <LinkToNavigate
-                  HigliteName="Forgot "
-                  Subject="Username or password?"
-                  navigateTo={"/login"}
-                />
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    flexDirection: "column",
+                    width: "100%",
+                    mt: 1,
+                    ml: 1,
+                  }}
+                >
+                  <LinkToNavigate
+                    HigliteName="Forgot "
+                    Subject="Username or password?"
+                    navigateTo={"/reset-password"}
+                  />
+                </Box>
               </Box>
 
               <Box sx={{ flex: 1 }}>
@@ -209,7 +220,7 @@ function Login() {
                   }}
                   // onClick={}
                 >
-                  Sign Up Now
+                  Sign up Now
                 </Typography>
 
                 <SocialButton />

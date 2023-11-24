@@ -8,7 +8,7 @@ import { Box } from '@mui/material';
 function PasswordIcon({ ...other }) {
   const theme = useTheme();
 
-  const PRIMARY_MAIN = theme.palette.primary.main;
+  const PRIMARY_MAIN = theme.palette.secondary.main;
 
   const WARNING_LIGHT = theme.palette.warning.light;
 

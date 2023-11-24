@@ -1,6 +1,6 @@
 import React, { useEffect, useState,useContext } from "react";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
+import {CardActions} from "@mui/material";
 import CardContent from "@mui/material/CardContent";
 import { CardMedia, Box } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -53,21 +53,23 @@ export default function SettingsCard({ robotData, index }) {
   };
 
   const removeMap = (data,id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      deleteMap(id);
-      dispatch(getRobot())
-      if (result.isConfirmed) {
-        Swal.fire("Deleted!", "Your file has been deleted.", "success");
-      }
-    });
+    searchParams.set("teboId",id);
+    navigate(`/robot-map?${searchParams.toString()}`);
+    // Swal.fire({
+    //   title: "Are you sure?",
+    //   text: "You won't be able to revert this!",
+    //   icon: "warning",
+    //   showCancelButton: true,
+    //   confirmButtonColor: "#3085d6",
+    //   cancelButtonColor: "#d33",
+    //   confirmButtonText: "Yes, delete it!",
+    // }).then((result) => {
+    //   deleteMap(id);
+    //   dispatch(getRobot())
+    //   if (result.isConfirmed) {
+    //     Swal.fire("Deleted!", "Your file has been deleted.", "success");
+    //   }
+    // });
   };
 
   useEffect(() => {
@@ -106,7 +108,7 @@ export default function SettingsCard({ robotData, index }) {
 
   return (
     <Box>
-      <Card sx={{ maxWidth: 345 }}>
+      <Card >
         <CardMedia
           key={index}
           sx={{ objectFit: "contain" }}
@@ -132,6 +134,7 @@ export default function SettingsCard({ robotData, index }) {
             </Box>
           )}
         </CardContent>
+        
         <CardActions sx={{ justifyContent: "flex-end" }}>
           {settingsIconData?.map((data, index) => (
             <Card

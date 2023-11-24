@@ -35,7 +35,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import DirectionsIcon from "@mui/icons-material/Directions";
 import axios from "../../utils/axios";
-import FaqAnswerDialogs from '../Modal/FaqAnswerDialogs'
+import FaqAnswerDialogs from "../Modal/FaqAnswerDialogs";
 
 const defaultValues = {
   ticket_content: "",
@@ -48,8 +48,8 @@ function SupportForm() {
   const [DateOfBerth, setDateOfBerth] = useState(new Date());
   const [searchResult, setSearchResult] = useState("");
   const [suggestedQuestion, setSuggestedQuestion] = useState([]);
-  const [modal, setModal] = useState(false)
-  const [suggestedAnswer, setSuggestedAnswer] = useState(null)
+  const [modal, setModal] = useState(false);
+  const [suggestedAnswer, setSuggestedAnswer] = useState(null);
   const theme = useTheme();
 
   const VerifySchema = Yup.object().shape({
@@ -67,21 +67,44 @@ function SupportForm() {
     formState: { isSubmitting, errors },
   } = methods;
 
-  const onSubmit = useCallback(async (data) => {
-    try {
-      const responseData = await raseAticket(data); // Add "await" here
-      if (responseData) {
-        enqueueSnackbar(
-          "Thank you for your complaint! We'll address it shortly.",
-          { variant: "success" }
-        );
-        reset();
-        dispatch(getTicket());
+  const onSubmit = useCallback(async () => {
+
+    if (suggestedQuestion.length == 0) {
+      
+      try {
+        const responseData = await raseAticket(searchResult); // Add "await" here
+        if (responseData) {
+          enqueueSnackbar(
+            "Thank you for your complaint! We'll address it shortly.",
+            { variant: "success" }
+          );
+          reset();
+          dispatch(getTicket());
+          setSearchResult("")
+          
+        }
+      } catch (error) {
+        enqueueSnackbar(error.message, { variant: "error" });
       }
-    } catch (error) {
-      enqueueSnackbar(error.message, { variant: "error" });
     }
-  }, []);
+  }, [searchResult]);
+
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === 'Enter') {
+        // Call your function when "Enter" key is pressed
+        onSubmit();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+
+    return () => {
+      // Remove the event listener when the component unmounts
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [onSubmit]);
+
   useEffect(() => {
     axios
       .post("/matching-suggestion", {
@@ -89,7 +112,6 @@ function SupportForm() {
       })
       .then((res) => {
         setSuggestedQuestion(res?.data?.data);
-        
       });
   }, [searchResult]);
   const handleSuggestClick = (data) => {
@@ -99,18 +121,14 @@ function SupportForm() {
         suggestion_id: data.id,
       })
       .then((res) => {
-        setSuggestedAnswer(res.data.data)
-        setModal(true)
+        setSuggestedAnswer(res.data.data);
+        setModal(true);
       })
       .catch((err) => console.log(err.message));
   };
 
   return (
-    <FormProvider
-      methods={methods}
-      sx={{ padding: 20 }}
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <>
       <Grid container spacing={2} sx={{ padding: 3 }}>
         <Grid item md={12} sm={12}>
           <Card>
@@ -153,6 +171,7 @@ function SupportForm() {
                 fullWidth
                 sx={{ ml: 1, flex: 1 }}
                 onChange={(e) => {
+                  console.log(e.target.value,"e.target.value");
                   setSearchResult(e.target.value);
                 }}
                 placeholder="Search "
@@ -179,7 +198,14 @@ function SupportForm() {
                     handleSuggestClick(data);
                   }}
                 >
-                  <Typography sx={{ fontWeight: "600" }}>
+                  <Typography
+                    sx={{
+                      fontWeight: "600",
+                      p: 5,
+                      borderRadius:1,
+                      "&:hover": { background: "#f7f7f7" },
+                    }}
+                  >
                     {data.ticket}
                   </Typography>
                 </Box>
@@ -190,28 +216,37 @@ function SupportForm() {
       </Grid>
 
       <Stack display="flex" alignItems="flex-end" mt={5}>
-        <Button
-          type="submit"
-          fullWidth
-          variant="outlined"
-          sx={{
-            width: "150px",
+        {suggestedQuestion.length == 0 && (
+          <Button
+            onClick={() => {
+              onSubmit();
+            }}
+            
+            fullWidth
+            variant="outlined"
+            sx={{
+              width: "150px",
 
-            borderRadius: "15px",
-            color: theme.palette.secondary.contrastText,
+              borderRadius: "15px",
+              color: theme.palette.secondary.contrastText,
 
-            padding: "9px",
-            borderColor: "#d5d5d5",
-            display: "flex",
+              padding: "9px",
+              borderColor: "#d5d5d5",
+              display: "flex",
 
-            fontWeight: 100,
-          }}
-        >
-          Raise A Ticket
-        </Button>
+              fontWeight: 100,
+            }}
+          >
+            Raise A Ticket
+          </Button>
+        )}
       </Stack>
-      <FaqAnswerDialogs modalOpen={modal} setModalOpen={setModal} data={suggestedAnswer} />
-    </FormProvider>
+      <FaqAnswerDialogs
+        modalOpen={modal}
+        setModalOpen={setModal}
+        data={suggestedAnswer}
+      />
+    </>
   );
 }
 

@@ -15,6 +15,8 @@ import {
   CallLogs,
   ShareRobotList,
   AdminSupport,
+  ResetPasswordPage,
+  NewPasswordPage,
 } from "../Pages";
 import AuthGuard from "../auth/AuthGuard";
 
@@ -28,6 +30,15 @@ const Router = () =>
       path: "register",
       element: <Signup />,
     },
+    {
+      path: "reset-password",
+      element: <ResetPasswordPage />,
+    },
+    {
+      path: "forgot-password",
+      element: <NewPasswordPage />,
+    },
+
     {
       path: "home",
       element: (
@@ -63,7 +74,7 @@ const Router = () =>
         </AuthGuard>
       ),
     },
-    
+
     {
       path: "RobotVideoConferenceInterface/",
       element: <RobotVideoConferenceInterface />,
@@ -102,7 +113,7 @@ const Router = () =>
         </AuthGuard>
       ),
     },
-  
+
     {
       path: "analytics/",
 
@@ -116,12 +127,11 @@ const Router = () =>
       path: "admin-support/",
 
       element: (
-      <AuthGuard>
-      <AdminSupport/>
-      </AuthGuard>
-      )
+        <AuthGuard>
+          <AdminSupport />
+        </AuthGuard>
+      ),
     },
-    
 
     {
       path: "support/",

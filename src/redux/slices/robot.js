@@ -8,6 +8,7 @@ import {
 } from "../../utils/momentformat";
 // utils
 import axios from "../../utils/axios";
+import {ADMIN} from '../../config-global'
 
 // ----------------------------------------------------------------------
 
@@ -396,7 +397,7 @@ export function getTicket() {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.post("/owner/list-ticket");
+      const response = await axios.post(ADMIN?"/admin/list-all-tickets":"/owner/list-ticket");
       if (response) {
         dispatch(slice.actions.setTicket(response.data.data));
       }

@@ -8,11 +8,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Stack, IconButton, InputAdornment, FormHelperText } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths';
+// import { PATH_DASHBOARD } from '../../routes/paths';
 // components
-import Iconify from '../../components/iconify';
-import { useSnackbar } from '../../components/snackbar';
-import FormProvider, { RHFTextField, RHFCodes } from '../../components/hook-form';
+import Iconify from '../../Component/iconify';
+import { useSnackbar } from '../../Component/MUI/snackbar';
+import FormProvider, { RHFTextField,RHFCodes } from '../../Component/MUI/hook-form';
+import axios from '../../utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -72,11 +73,44 @@ export default function AuthNewPasswordForm() {
         email: data.email,
         code: `${data.code1}${data.code2}${data.code3}${data.code4}${data.code5}${data.code6}`,
         password: data.password,
-      });
+      },"xssssx",data);
+      const secretKey = sessionStorage.getItem('secret-key');
+      try {
+        const verifyOtp = await axios.post('/owner/verify-otp', {
+          secret_key: secretKey,
+          otp: `${data.code1}${data.code2}${data.code3}${data.code4}${data.code5}${data.code6}`,
+        });
+
+        if (verifyOtp) {
+          console.log('this is an api ', data);
+          const apiToken = { accessToken: verifyOtp?.data?.data?.owner?.api_token };
+console.log(apiToken,"apiToken");
+          localStorage.setItem('accessTokenss', JSON.stringify(apiToken));
+          const setPassword = await axios.post('/owner/change-password', {
+            old_password: '',
+            new_password: data.password,
+            confirm_password: data.password,
+            email_id: data.email,
+          }, {
+            headers: {
+              'Authorization': `Bearer ${apiToken.accessToken}`
+            }
+          });
+          if (setPassword) {
+            enqueueSnackbar('Change password success!');
+            localStorage.removeItem('accessTokenss');
+            navigate('/login');
+          }
+        }
+      } catch (error) {
+        enqueueSnackbar(error.message, { variant: 'error' });
+      }
+
       sessionStorage.removeItem('email-recovery');
-      enqueueSnackbar('Change password success!');
-      navigate(PATH_DASHBOARD.root);
+      sessionStorage.removeItem('secret-key');
     } catch (error) {
+      enqueueSnackbar(error.message, { variant: 'error' });
+
       console.error(error);
     }
   };
@@ -140,6 +174,7 @@ export default function AuthNewPasswordForm() {
           type="submit"
           variant="contained"
           loading={isSubmitting}
+          color="secondary"
           sx={{ mt: 3 }}
         >
           Update Password

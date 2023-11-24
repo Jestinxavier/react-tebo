@@ -28,6 +28,7 @@ const ContextProvider = ({ children }) => {
   const [localMicOn, setlocalMicOn] = useState(true);
   const [localWebcamOn, setlocalWebcamOn] = useState(true);
   const [first, setfirst] = useState(false);
+  const [alertWarningOnCall, setAlertWarningOnCall] = useState(null)
   const otherUserId = useRef(null);
 
   const [obstacle, setObstacle] = useState(false);
@@ -223,6 +224,10 @@ const ContextProvider = ({ children }) => {
           setObstacle(false);
         }
       });
+      socket?.on("homeStatusChanged",(data)=>{
+        console.log("homeStatusChanged",data);
+        setAlertWarningOnCall(data)
+      })
 
       socket?.on("mapState", (data) => {
         console.log('mapState',data);
@@ -656,6 +661,7 @@ const ContextProvider = ({ children }) => {
   return (
     <SocketContext.Provider
       value={{
+        alertWarningOnCall,
         obstacle,
         allMapState,
         call,
