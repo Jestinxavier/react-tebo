@@ -28,36 +28,45 @@ import {
 } from "@mui/material";
 import { TiltController } from "../../Component/VideoConference";
 import VideoPlayer from "../../Component/VideoConference/VideoPlayerForConference"; // Correct casing
-import { TILT_CONTROLLER } from "../../Constant/defaultValue";
+import { TILT_CONTROLLER,APP_BAR_HEIGHT,ICON_WRAPPER_SIZE,ICON_SIZE,CONTROLLER_ICON_SIZE,CONTROLLER_ICON_WRAPPER_SIZE,CONTROLLER_ICON_BORDER_RADIUS } from "../../Constant/defaultValue";
 import { RobotController } from "../../Component/VideoConference";
 import { SocketContext } from "../../Context/SocketContext";
 import { ContextProvider } from "../../Context/SocketContext";
 import VideoAlert from "../../Component/Modal/VideoAlert";
+import { dispatch, useSelector } from "../../redux/store";
+import { TourController } from "../../redux/slices/robot";
+import { useAuthContext } from "../../auth/useAuthContext";
+import axios from "../../utils/axios";
 
-const APP_BAR_HEIGHT = 64;
-const ICON_WRAPPER_SIZE = 80;
-const ICON_SIZE = 50;
-const CONTROLLER_ICON_SIZE = 30;
-const CONTROLLER_ICON_WRAPPER_SIZE = 50;
-const CONTROLLER_ICON_BORDER_RADIUS = 8;
+// const APP_BAR_HEIGHT = 64;
+// const ICON_WRAPPER_SIZE = 80;
+// const ICON_SIZE = 50;
+// const CONTROLLER_ICON_SIZE = 30;
+// const CONTROLLER_ICON_WRAPPER_SIZE = 50;
+// const CONTROLLER_ICON_BORDER_RADIUS = 8;
 
 function VideoConference() {
+  
   const theme = useTheme();
   const location = useLocation();
   const joyrideRef = useRef(null);
-
+const takeAtour = useSelector((state) => state?.robot?.takeAtour)
+const {user} = useAuthContext()
   const [controls, setControls] = useState(false);
   const [launchPad, setLaunchPad] = useState(false);
+ const [joyRide, setJoyRide] = useState(true)
   const [idToCall, setIdToCall] = useState("");
   const [userId, setUserId] = useState("");
   const [alert, setAlert] = useState("");
-  const searchParms = new URLSearchParams(location.search);
+  const searchPrams = new URLSearchParams(location.search);
 
-  const userUUID = searchParms.get("myid");
-  const toIdUUID = searchParms.get("toId");
+  const userUUID = searchPrams.get("myid");
+  const toIdUUID = searchPrams.get("toId");
+  
+  const sharedRobot = searchPrams.get("sharedRobot");
 
   const [runTour, setRunTour] = useState(true);
-  const [run, setRun] = useState(true);
+  const [run, setRun] = useState(false);
   // wakingmen.gif
   const steps = [
     {
@@ -154,28 +163,28 @@ function VideoConference() {
       target: ".reconnect",
       // title: "Our projects",
     },
-    {
-      content: (
-        <div>
-          <img src="/images/fullscreen.jpeg" alt="Image Alt Text" />
-          <div class="card-content">
-            <h2 class="card-title">Screen Size</h2>
-            <p class="card-description">
-              You can use this button to switch between full-screen and
-              minimal-screen modes.
-            </p>
-          </div>
-        </div>
-      ),
-      placement: "top",
-      styles: {
-        options: {
-          width: 300,
-        },
-      },
-      target: ".fullscreen",
-      // title: "Our projects",
-    },
+    // {
+    //   content: (
+    //     <div>
+    //       <img src="/images/fullscreen.jpeg" alt="Image Alt Text" />
+    //       <div class="card-content">
+    //         <h2 class="card-title">Screen Size</h2>
+    //         <p class="card-description">
+    //           You can use this button to switch between full-screen and
+    //           minimal-screen modes.
+    //         </p>
+    //       </div>
+    //     </div>
+    //   ),
+    //   placement: "top",
+    //   styles: {
+    //     options: {
+    //       width: 300,
+    //     },
+    //   },
+    //   target: ".fullscreen",
+    //   // title: "Our projects",
+    // },
 
     {
       content: (
@@ -264,22 +273,31 @@ function VideoConference() {
       // title: "Our projects",
     },
   ];
-
+  const stopTour = (data)=>{
+    setRun(data)
+    dispatch(TourController(data))
+  }
   const getHelpers = (helpers) => {
     joyrideRef.current = helpers;
   };
 
+
   const handleClickStart = (e) => {
     e.preventDefault();
-    setRun(true);
+    stopTour(true);
   };
 
   const handleJoyrideCallback = (data) => {
-    const { status, type } = data;
+    console.log({data});
+    const { status, type,action } = data;
     const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
+    if (action ===  'close') {
+      // setJoyRide(false)
+      stopTour(false)
+    }
 
     if (finishedStatuses.includes(status)) {
-      setRun(false);
+      stopTour(false);
     }
 
     console.groupCollapsed(type);
@@ -292,6 +310,25 @@ function VideoConference() {
   const closeModal = () => {
     setModalOpen(false);
   };
+
+  useEffect(() => {
+    console.log({takeAtour});
+    // setJoyRide(takeAtour)
+
+    
+   
+  
+      stopTour(takeAtour)
+    
+  }, [takeAtour])
+
+  useEffect(() => {
+    if(user?.tour_status == 1){
+      stopTour(true);
+      axios.post('/owner/tour-status')
+    }
+  }, [])
+  
 
   const {
     name,
@@ -315,25 +352,25 @@ function VideoConference() {
     disconnectUser,
   } = useContext(SocketContext);
 
-  useEffect(() => {
-    addUserId(userUUID);
-    callUser(toIdUUID);
+  // useEffect(() => {
+    // addUserId(userUUID);
+    // callUser(toIdUUID);
     // callUser('TEBO-GOKUL-NOKIA-TABLET')
-  }, [userUUID, toIdUUID]);
+    // setTimeout(() => {
+    //   // setJoyRide(false)
+    //   stopTour(false)
+    // }, 1000);
+  // }, [userUUID, toIdUUID]);
   useEffect(() => {
-    console.log("alertWarningOnCall====================================");
-    console.log(alertWarningOnCall);
-    console.log("====================================");
     if (alertWarningOnCall) {
       setAlert(alertWarningOnCall);
       setModalOpen(true);
     }
   }, [alertWarningOnCall]);
 
-  const addUser = useCallback(() => {
-    console.log("hhh55", userId);
-    addUserId(userId);
-  }, [userId, addUserId]);
+  // const addUser = useCallback(() => {
+  //   addUserId(userId);
+  // }, [userId, addUserId]);
 
   const DisConnectUser = useCallback(() => {
     disconnectUser(userId);
@@ -341,9 +378,11 @@ function VideoConference() {
 
   return (
     <div>
+      {/* {joyRide&& */}
       <Joyride
         callback={handleJoyrideCallback}
         continuous={true}
+        hideCloseButton={false}
         getHelpers={getHelpers}
         run={run}
         scrollToFirstStep={true}
@@ -356,6 +395,8 @@ function VideoConference() {
           },
         }}
       />
+      {/* } */}
+        
       <div
         className="video-controller"
         style={{
@@ -368,7 +409,6 @@ function VideoConference() {
           alignItems: "center",
         }}
       ></div>
-
       <div className="react-player" style={{ display: "none" }}></div>
       <VideoPlayer
         className="tour-logo"
@@ -404,103 +444,7 @@ function VideoConference() {
             controls={controls}
             ICON_SIZE={ICON_SIZE}
           />
-
-          {/*--------- The below code is to do extra funcationality ----------*/}
-
-          {/* {me && (
-            <Grid container>
-              <Grid item xs={12} md={6}>
-                <Typography gutterBottom variant="h6">
-                  Account Info
-                </Typography>
-                <TextField
-                  label="Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  fullWidth
-                />
-                {console.log(myId, "myId")}
-                <input
-                  ref={myId}
-                  value={me}
-                  style={{ border: "1px solid red" }}
-                ></input>
-               
-
-                <Button variant="contained" color="primary" fullWidth>
-                  Copy Your ID {me}
-                </Button>
-              
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography gutterBottom variant="h6">
-                  Make a call
-                </Typography>
-                <TextField
-                  label="ID to call"
-                  value={idToCall}
-                  onChange={(e) => setIdToCall(e.target.value)}
-                  fullWidth
-                />
-                <TextField
-                  label="Sent Id"
-                  onChange={(e) => setUserId(e.target.value)}
-                  fullWidth
-                />
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  fullWidth
-                  onClick={addUser}
-                >
-                  sendUser Id
-                </Button>
-
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  fullWidth
-                  onClick={DisConnectUser}
-                >
-                  DissConnect User
-                </Button>
-
-                {callAccepted && !callEnded ? (
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    fullWidth
-                    onClick={leaveCall}
-                  >
-                    Hang Up
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={() => callUser(idToCall)}
-                  >
-                    Call
-                  </Button>
-                )}
-                {call.isReceivingCall && !callAccepted && (
-                  <div
-                    style={{ display: "flex", justifyContent: "space-around" }}
-                  >
-                    <h1>{call.name} is calling:</h1>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={answerCall}
-                    >
-                      Answer
-                    </Button>
-                  </div>
-                )}
-              </Grid>
-            </Grid>
-          )} */}
+        
         </Grid>
       )}
       <VideoAlert open={modalOpen} onClose={closeModal} message={alert} />

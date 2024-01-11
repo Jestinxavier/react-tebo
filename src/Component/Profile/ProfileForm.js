@@ -35,6 +35,8 @@ import { useSelector, useDispatch } from "../../redux/store";
 import { UploadAvatar, Upload, UploadBox } from "../../Component/upload";
 import appendToFormData from "../../utils/appendToFormData";
 import { useAuthContext } from "../../auth/useAuthContext";
+import moment from "moment";
+
 
 const defaultValues = {
   email: "",
@@ -48,7 +50,7 @@ function ProfileForm() {
   const [image, setImage] = useState("");
   const [DateOfBerth, setDateOfBerth] = useState(new Date());
   const [avatarUrl, setAvatarUrl] = useState(null);
-  const [File, setFile] = useState(false)
+  const [File, setFile] = useState(false);
   const userDetail = useSelector(
     (state) => state?.userdetail?.userdetails?.owner
   );
@@ -74,21 +76,25 @@ function ProfileForm() {
     handleSubmit,
     reset,
     formState: { isSubmitting, errors },
-    getValues,
+    getValues,watch,
     setValue,
   } = methods;
-
+const values = watch() 
   useEffect(() => {
     console.log(userDetail,"userDetail");
     if (userDetail !== undefined) {
       // const {name,email,date_of_birth,image_path} = userDetail
-      const DOB = regularFormatDate(userDetail.date_of_birth);
+      // const DOB = regularFormatDate(userDetail.date_of_birth);
+      const DOB = moment(userDetail.date_of_birth).format('YYYY-MM-DD');
+
+      console.log(DOB,"DOB");
       const responseValues = {
         name: userDetail?.name,
         email: userDetail?.email,
         date_of_birth: DOB,
         image_path: userDetail.image_path,
         phone_number: userDetail.phone,
+        
       };
       
       if(responseValues){
@@ -97,7 +103,7 @@ function ProfileForm() {
       reset(responseValues);
       }
     }
-  }, [userDetail]);
+  }, [userDetail,reset]);
 
   const handleDropAvatar = useCallback(
     (acceptedFiles) => {
@@ -119,6 +125,7 @@ function ProfileForm() {
 
   const onSubmit = useCallback(async (data) => {
     try {
+      console.log(data.date_of_birth,"data.date_of_birth");
       const dataOfBirth = formatDateToYYYYMMDD(data.date_of_birth);
       data.date_of_birth = dataOfBirth;
       let updatedData = null;
@@ -156,7 +163,7 @@ function ProfileForm() {
       sx={{ padding: 20 }}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <Grid container spacing={2}>
+      <Grid container  spacing={{ xs: 2, sm: 2, md: 2, lg: 2 }}>
         <Grid item md={6} xs={12}>
           {/* <ImageUpload
             image={image}
@@ -272,11 +279,19 @@ function ProfileForm() {
                     },
                   }}
                 >
+                 {
+               
+                  console.log('values.date_of_birth',values.date_of_birth)
+            
+                 }
                   <RHFDatePicker
                     name="date_of_birth"
                     label="Date Of Birth"
+                    inputFormat="YYYY-MM-DD"
                     fullWidth
-                    dateValue={DateOfBerth}
+                    value={values.date_of_birth}
+                    // dateValue={new Date()-1}
+                   
                     sx={{
                       "& fieldset": {
                         borderRadius: "15px",

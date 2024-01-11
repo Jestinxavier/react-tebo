@@ -140,7 +140,7 @@ export function AuthProvider({ children }) {
     console.log('====================================');
     console.log(response.data?.data);
     console.log('====================================');
-    const { owner } = response.data?.data;
+    const { owner } = response?.data?.data;
     setSession(owner?.api_token);
 
     dispatch({
@@ -151,6 +151,19 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
+
+    // LOGIN
+    const googleLogin = useCallback(async (data) => {
+      const { user } = data
+      setSession(user?.api_token);
+  
+      dispatch({
+        type: "LOGIN",
+        payload: {
+          user: user,
+        },
+      });
+    }, []);
   // REGISTER
   const register = useCallback(async (data) => {
     const response = await axios.post("/signup-owner", data);
@@ -213,12 +226,14 @@ export function AuthProvider({ children }) {
       register,
       logout,
       updateProfile,
+      googleLogin,
     }),
     [
       state.isAuthenticated,
       state.isInitialized,
       state.user,
       login,
+      googleLogin,
       logout,
       register,
     ]

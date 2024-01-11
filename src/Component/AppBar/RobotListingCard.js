@@ -19,7 +19,9 @@ import ViewRobotModal from "../ViewRobotModel/ViewRobotModel";
 import ShareBotDialogs from "../../Component/Modal/ShareBotDialogs"
 import { useAuthContext } from "../../auth/useAuthContext";
 import { SocketContext } from "../../Context/SocketContext";
-
+import {useSnackbar} from '../MUI/snackbar'
+import { dispatch } from "../../redux/store";
+import { getProducts, getSharedRobotList } from "../../redux/slices/robot";
 const CustomCard = styled(Card)(({ theme }) => ({
   borderRadius: "20px",
   // boxShadow:
@@ -41,22 +43,59 @@ export default function RobotListingCard({ data,sharedRobot }) {
   const {user} = useAuthContext()
   const {processCall, addUserId, callUser } = useContext(SocketContext);
   const searchParams = new URLSearchParams();
- 
+ const {enqueueSnackbar} = useSnackbar()
 
 
 
-  const connectRobot = (myid, toId) => {
+  // const connectRobot = (myid, toId) => {
+  //   searchParams.set("myid", myid);
+  //   searchParams.set("toId", toId);
+  //   searchParams.set("sharedRobot", false);
+
+  //   if(sharedRobot){
+  //     searchParams.set("sharedRobot", true);
+  //   }
+
+
+  //   addUserId(myid);
+  //   callUser(toId)
+
+  //   navigate(`/conference-room?${searchParams.toString()}`);
+  // };
+
+
+  const connectRobot = async (myid, toId) => {
+    searchParams.set("sharedRobot", false);
+
+    if (sharedRobot) {
+      searchParams.set("sharedRobot", true);
+    }
     searchParams.set("myid", myid);
     searchParams.set("toId", toId);
+    // addUserId(myid)
 
-    addUserId(myid);
-    callUser(toId)
-    navigate(`/conference-room?${searchParams.toString()}`);
+    try {
+      const data = await addUserId(myid);
+  
+      console.log({ data: "mandan", success: data });
+  
+      if (data?.error) {
+      enqueueSnackbar('You cannot connect to Tebo right now, another person is currently using Tebo.',{variant:'error'});
+        console.log({ data: "mandan", success: data.error });
+      } else {
+        // Uncomment the following lines if you want to perform additional actions on success
+        callUser(toId);
+        console.log(searchParams);
+        navigate(`/conference-room?${searchParams.toString()}`);
+        processCall();
+      }
+    } catch (error) {
+      console.error({ error: "Error:", error });
+    }
   };
-
   const handleConnect = () => {
     connectRobot(user?.random_id, data?.robot?.uuid);
-    processCall()
+    // processCall()
   };
   const shareRobot = (id)=>{
     setRobotId(id)
@@ -66,8 +105,16 @@ export default function RobotListingCard({ data,sharedRobot }) {
   const theme = useTheme();
   const ICON_COLOR = theme.palette.text.secondary;
 
-  const handleButton = useCallback(() => {
+  const handleButton = useCallback((data) => {
+    console.log(data.robot_online_status, data.screen_online_status
+    )
+    if(data.robot_online_status&&data.screen_online_status){
     setModel(true);
+    }else{
+      enqueueSnackbar('The Tebo is not Online.',{variant:'error'});
+      dispatch(getProducts())
+      dispatch(getSharedRobotList())
+    }
   }, [setModel]);
 
 
@@ -110,9 +157,7 @@ export default function RobotListingCard({ data,sharedRobot }) {
 
   const imageFilter = (data) => {
     let filterData = imageData.filter((item) => Number(item.percentage) <= data);
-    console.log('====================================');
-    console.log(filterData,"filterData");
-    console.log('====================================');
+    
    return filterData[0].image
   };
   return (
@@ -134,7 +179,7 @@ export default function RobotListingCard({ data,sharedRobot }) {
         
       >
        
-        <CardActionArea onClick={() => handleButton()}>
+        <CardActionArea onClick={() => handleButton(data)}>
           <Box sx={{ position: "relative" }}>
             
            <CardMedia
@@ -142,7 +187,7 @@ export default function RobotListingCard({ data,sharedRobot }) {
               alt="green iguana"
               // height="140"
               // image={data.botImage}
-              image='/images/robot.png'
+              image='/images/robot.gif'
               sx={{ flex: 1 }}
               />
            
@@ -219,8 +264,8 @@ export default function RobotListingCard({ data,sharedRobot }) {
               background: theme.palette.ButtonColor[600],
               mr: 1,
               color: ICON_COLOR,
-              height: "55px",
-              width: "55px",
+              height: "45px",
+              width: "45px",
             }}
           />
           <IconBtn
@@ -234,8 +279,8 @@ export default function RobotListingCard({ data,sharedRobot }) {
               boxShadow: "20px 20px 43px #fcfcfc, -20px -20px 54px #ffffff",
               background: theme.palette.ButtonColor[600],
               ml: 1,
-              height: "55px",
-              width: "55px",
+              height: "45px",
+              width: "45px",
             }}
             IconColor={ICON_COLOR}
           />
@@ -253,7 +298,7 @@ export default function RobotListingCard({ data,sharedRobot }) {
         </Box>
         
       </Box>
-      <ViewRobotModal data={data} model={model} setModel={setModel} />
+      <ViewRobotModal data={data} model={model} setModel={setModel} sharedRobot={sharedRobot} />
 
       <ShareBotDialogs modalOpen={modalOpen} setModalOpen={setModalOpen} nikName={data?.nickname} robotId={robotId} />
 

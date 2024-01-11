@@ -30,7 +30,7 @@ export default function CustomDataGrid({ callLogs }) {
     setDeleteDialogOpen(false);
   };
   const handleDelete = (logId,robotUuid,clearAll) => {
-    console.log(logId,robotUuid,clearAll);
+    // console.log(logId,robotUuid,clearAll);
 
     axios.post("/owner/clear-call-logs",{
       
@@ -80,39 +80,47 @@ export default function CustomDataGrid({ callLogs }) {
   const columns = [
     { field: "id", headerName: "ID", width: 90 },
     {
-      field: "owner",
-      headerName: "Last name",
-      flex: 1,
+      field: "usedUserName",
+      headerName: "Name",
+      // flex: 1,
+      width: 150
     },
     {
-      field: "uuid",
+      field: "nickname",
       headerName: "Tebo Name",
-      flex: 1,
+      // flex: 1,
+      width: 150
+
     },
 
-    {
+    {   
       field: "startDate",
       headerName: "Date",
       type: "number",
-      flex: 1,
+      // flex: 1,
+      width: 150
+
     },
     {
       field: "startTime",
       headerName: "Start Time",
       type: "number",
-      flex: 1,
+      // flex: 1,
+      width: 150,
     },
     {
       field: "endTime",
       headerName: "End Time",
       type: "number",
-      flex: 1,
+      // flex: 1,
+      width: 150,
     },
     {
       field: "Status",
-      headerName: "Status",
+      headerName: "Delete Logs",
       type: "number",
-      flex: 1,
+      // flex: 1,
+      width: 150,
       renderCell: (parms) => {
         return (
           <IconButton size="large" onClick={()=>deleteLogs(parms.row)} aria-label="search" color="inherit">
@@ -125,7 +133,7 @@ export default function CustomDataGrid({ callLogs }) {
   ];
   return (
     <Box sx={{ height: 1600, width: "100%" }}>
-    <Grid container justifyContent="flex-end" mb={5}>
+    <Grid container justifyContent="flex-end" mb={5} mt={{xs:3}}>
       <Grid item>
         <Button
         onClick={openDeleteDialog}

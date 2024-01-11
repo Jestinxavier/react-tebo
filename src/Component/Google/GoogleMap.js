@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import GoogleMapReact from 'google-map-react';
 import {
   Card,
@@ -7,17 +7,33 @@ import {
   CardActionArea,
   Skeleton,
 } from "@mui/material";
+import Image from "mui-image";
 
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
+const AnyReactComponent = ({ text }) => <div> <Image
+// src={data?.botImage}
+src="/images/robotMarker.gif"
+width={80}
+height={120}
+fit={"cover"}
+alignItems="flex-end"
+sx={{ pb: "5px" }}
+duration={0}
+/></div>;
 
 export default function GoogleMap({longitude,latitude}){
-  const defaultProps = {
-    center: {
-      lat: 55.311286,
-      lng: 55.311286
-    },
-    zoom: 11
-  };
+  const [defaultProps, setDefaultProps] = useState(null);
+  
+  useEffect(() => {
+    setDefaultProps((pre) => ({
+      center: {
+        lat: parseFloat(latitude,10),
+        lng: parseFloat(longitude,10)
+      },
+      zoom: 15
+    }));
+  }, [longitude, latitude]);
+  
+
 console.log('====================================');
 console.log(parseFloat(latitude,10),parseFloat(longitude,10));
 console.log('====================================');
@@ -25,7 +41,7 @@ console.log('====================================');
     // Important! Always set the container height explicitly
     <>
   { latitude && longitude ?<div style={{ height: "100%", width: '100%' }}>
-      <GoogleMapReact
+     { defaultProps?<GoogleMapReact
         bootstrapURLKeys={{ key: "AIzaSyDLg_VU_6t6k3GdnSDUr8_ExrBfKQ3k-2I" }}
         defaultCenter={defaultProps.center}
         defaultZoom={defaultProps.zoom}
@@ -37,7 +53,7 @@ console.log('====================================');
           text="My Marker"
 
         />
-      </GoogleMapReact>
+      </GoogleMapReact>:null}
             
     </div>:<Skeleton variant="rectangular" width="100%" height= "100%" />
 }

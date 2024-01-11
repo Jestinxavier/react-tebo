@@ -36,7 +36,6 @@ function VideoStreamControllerButtons({
     setName,
     leaveCall,
     callUser,
-    addUserId,
     disconnectUser,
     setType,
     otherUserId,
@@ -55,7 +54,7 @@ const navigate = useNavigate()
 const searchParms = new URLSearchParams(location.search);
 const { setMqttRequestForGotoHome,setMqttRequestForGotoDock,setMqttRequestForMeetingEnd } = useContext(SocketContext);
 const toIdUUID = searchParms.get("toId");
-
+const MyId = searchParms.get("myid")
 
 
   const gotoHomeHandler = () => {
@@ -93,7 +92,7 @@ const toIdUUID = searchParms.get("toId");
     setGotoHome(!gotoHome)
     // setMqttRequestForGotoHome(!gotoHome,toIdUUID)
 
-    setMqttRequestForMeetingEnd(!docking,toIdUUID)
+    setMqttRequestForMeetingEnd(!docking,toIdUUID,MyId)
     callEndedInfo(callerApiId)
     
     leaveCall().then(()=>{
@@ -155,14 +154,13 @@ const toIdUUID = searchParms.get("toId");
   return (
     <Box
       sx={{
-        background: "#0000004a",
+        background: {md:"#0000004a",xs:"#000"},
         border: "1px solid #00000005",
         display: "flex",
         flex: 1,
         border: "1px solid black",
-        borderRadius: 50,
+        borderRadius: {xs:0,md:50},
         padding: "10px",
-       
         justifyContent: 'space-around'
        
       }}
@@ -170,7 +168,7 @@ const toIdUUID = searchParms.get("toId");
       {callControlingButtonGroups.map((data, index) => (
         <Box
           sx={{
-            backgroundColor: theme.palette.blueGray[900],
+            backgroundColor: data.color,
             borderRadius: '40px',
             padding: '9px',
             margin: '1px',

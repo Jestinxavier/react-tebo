@@ -27,7 +27,7 @@ export default function NoRobotCard({ image, description, Heading, Status }) {
           <Typography gutterBottom variant="h5" component="div">
             {Heading}
           </Typography>
-          {console.log(Status, "Status****")}
+          
           {Status && <Typography>{Status}...</Typography>}
           <Typography
             variant="body2"

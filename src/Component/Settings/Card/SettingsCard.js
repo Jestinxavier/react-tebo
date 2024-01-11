@@ -116,7 +116,7 @@ export default function SettingsCard({ robotData, index }) {
           objectFit="contain"
           alt="green iguana"
           height="140"
-          image="/images/robot.png"
+          image="/images/robot.gif"
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">

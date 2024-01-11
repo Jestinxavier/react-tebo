@@ -1,6 +1,8 @@
 import React, { createContext, useState, useRef, useEffect } from "react";
 import { io } from "socket.io-client";
 import Peer from "simple-peer";
+import { v4 as uuid } from "uuid";
+import { validateSdpOffer } from "../Constant/herperFunction";
 
 const SocketContext = createContext();
 
@@ -28,7 +30,8 @@ const ContextProvider = ({ children }) => {
   const [localMicOn, setlocalMicOn] = useState(true);
   const [localWebcamOn, setlocalWebcamOn] = useState(true);
   const [first, setfirst] = useState(false);
-  const [alertWarningOnCall, setAlertWarningOnCall] = useState(null)
+  const [alertWarningOnCall, setAlertWarningOnCall] = useState(null);
+  const [readyStateMqtt, setReadyStateMqtt] = useState(true);
   const otherUserId = useRef(null);
 
   const [obstacle, setObstacle] = useState(false);
@@ -51,32 +54,61 @@ const ContextProvider = ({ children }) => {
         {
           urls: "stun:stun.l.google.com:19302",
         },
-        {urls: 'turn:172.31.83.246:3478?transport=tcp', credential: 'user', username: 'root'},
+        {
+          urls: "turn:172.31.83.246:3478?transport=tcp",
+          credential: "user",
+          username: "root",
+        },
 
         {
           urls: "stun:stun.relay.metered.ca:80",
         },
         {
-          urls: "turn:a.relay.metered.ca:80",
-          username: "3f1126a64ac64d04fae28a4e",
-          credential: "UrOud5yG1+sYkF8N",
+          urls: "turn:standard.relay.metered.ca:80",
+          username: "db83e42423856724c4d88f76",
+          credential: "kl1Pk+KOTc9SuN3w",
         },
         {
-          urls: "turn:a.relay.metered.ca:80?transport=tcp",
-          username: "3f1126a64ac64d04fae28a4e",
-          credential: "UrOud5yG1+sYkF8N",
+          urls: "turn:standard.relay.metered.ca:80?transport=tcp",
+          username: "db83e42423856724c4d88f76",
+          credential: "kl1Pk+KOTc9SuN3w",
         },
         {
-          urls: "turn:a.relay.metered.ca:443",
-          username: "3f1126a64ac64d04fae28a4e",
-          credential: "UrOud5yG1+sYkF8N",
+          urls: "turn:standard.relay.metered.ca:443",
+          username: "db83e42423856724c4d88f76",
+          credential: "kl1Pk+KOTc9SuN3w",
         },
         {
-          urls: "turn:a.relay.metered.ca:443?transport=tcp",
-          username: "3f1126a64ac64d04fae28a4e",
-          credential: "UrOud5yG1+sYkF8N",
+          urls: "turns:standard.relay.metered.ca:443?transport=tcp",
+          username: "db83e42423856724c4d88f76",
+          credential: "kl1Pk+KOTc9SuN3w",
         },
 
+        // old Turn
+        // {
+        //   urls: "stun:stun.relay.metered.ca:80",
+        // },
+        // {
+        //   urls: "turn:a.relay.metered.ca:80",
+        //   username: "3f1126a64ac64d04fae28a4e",
+        //   credential: "UrOud5yG1+sYkF8N",
+        // },
+        // {
+        //   urls: "turn:a.relay.metered.ca:80?transport=tcp",
+        //   username: "3f1126a64ac64d04fae28a4e",
+        //   credential: "UrOud5yG1+sYkF8N",
+        // },
+        // {
+        //   urls: "turn:a.relay.metered.ca:443",
+        //   username: "3f1126a64ac64d04fae28a4e",
+        //   credential: "UrOud5yG1+sYkF8N",
+        // },
+        // {
+        //   urls: "turn:a.relay.metered.ca:443?transport=tcp",
+        //   username: "3f1126a64ac64d04fae28a4e",
+        //   credential: "UrOud5yG1+sYkF8N",
+        // },
+        // old turn end
 
         // {
         //   urls: "stun:stun1.l.google.com:19302",
@@ -156,9 +188,9 @@ const ContextProvider = ({ children }) => {
 
       socket?.on("ICEcandidate", (data) => {
         let message = data.rtcMessage;
-        console.log('====================================');
-        console.log(peerConnection.current,"data after connection********");
-        console.log('====================================');
+        console.log("====================================");
+        console.log(peerConnection.current, "data after connection********");
+        console.log("====================================");
         if (peerConnection.current) {
           peerConnection?.current
             .addIceCandidate(
@@ -216,21 +248,26 @@ const ContextProvider = ({ children }) => {
       };
 
       socket?.on("obstacleDetected", (data) => {
-
         if (data == "1") {
           setObstacle(true);
         } else {
-
           setObstacle(false);
         }
       });
-      socket?.on("homeStatusChanged",(data)=>{
-        console.log("homeStatusChanged",data);
-        setAlertWarningOnCall(data)
-      })
+      socket?.on("readyState", (data) => {
+        if (data === "ready") {
+          setReadyStateMqtt(false);
+        }
+        console.log("readyState", { data });
+      });
+
+      socket?.on("homeStatusChanged", (data) => {
+        console.log("homeStatusChanged", data);
+        setAlertWarningOnCall(data);
+      });
 
       socket?.on("mapState", (data) => {
-        console.log('mapState',data);
+        console.log("mapState", data);
         setMapState(data);
       });
 
@@ -253,10 +290,10 @@ const ContextProvider = ({ children }) => {
       };
     }
 
-    socket?.on("mapStatusBroadcastMessage",(data)=>{
-      console.log(data,"data****");
-      setAllMapState(data)
-    })  
+    socket?.on("mapStatusBroadcastMessage", (data) => {
+      console.log(data, "data****");
+      setAllMapState(data);
+    });
     return () => {
       socket?.off("newCall");
       socket?.off("callAnswered");
@@ -268,16 +305,24 @@ const ContextProvider = ({ children }) => {
   async function processCall() {
     const sessionDescription = await peerConnection.current.createOffer();
     console.log("👺", sessionDescription);
+    const roomId = uuid();
+    const manageData = await validateSdpOffer(sessionDescription.sdp);
+    console.log({ manageData });
+    if (manageData) {
+      let localDiscripationdata =
+        await peerConnection.current.setLocalDescription(sessionDescription);
+      console.log({ localDiscripationdata }, { sessionDescription });
 
-    await peerConnection.current.setLocalDescription(sessionDescription);
-    console.log("otherUserId.current", sessionDescription, peerConnection);
-    // setTimeout(() => {
-    console.log("otherUserId.current", otherUserId.current);
-    sendCall({
-      calleeId: otherUserId.current,
-      // calleeId: 'TEBO-GOKUL-NOKIA-TABLET',
-      rtcMessage: sessionDescription,
-    });
+      console.log("otherUserId.current", sessionDescription, peerConnection);
+      // setTimeout(() => {
+      console.log("otherUserId.current", otherUserId.current);
+      sendCall({
+        calleeId: otherUserId.current,
+        // calleeId: 'TEBO-GOKUL-NOKIA-TABLET',
+        rtcMessage: sessionDescription,
+        roomId,
+      });
+    }
     // }, 5000);
     setfirst(true);
   }
@@ -290,7 +335,7 @@ const ContextProvider = ({ children }) => {
   }
 
   function startMapping(data) {
-    console.log("sdsdsd",data);
+    console.log("sdsdsd", data);
     socket?.emit("start-mapping", { id: data });
   }
 
@@ -303,28 +348,59 @@ const ContextProvider = ({ children }) => {
   }
 
   function sendCall(data) {
-    // console.log(data,socket,'sending call')
-    console.log();
-
+    //  start call is used for sending mqtt on start call time
     socket?.emit("start-call", { id: data.calleeId });
-
+    // sending call state mqtt on start meeting time
     socket?.emit("start-meeting", { id: data.calleeId });
     socket?.emit("call", data);
   }
 
-  const addUserId = (userId) => {
-    
-    setCallerId(userId);
-    socket?.emit("setMapUser", {
-      from: userId,
-      toId: otherUserId.current,
+  // const addUserId = (userId) => {
+  //   console.log({userId});
+  //   let socketResponse = false;
+  //   // setCallerId(userId);
+  //   socket?.emit("setMapUser", {
+  //     from: userId,
+  //     toId: otherUserId.current,
+  //   }, (response) => {
+  //     if (response.success) {
+  //       console.log("**Operation  successful:", response.success);
+  //       socketResponse = response.success
+  //     } else {
+  //       console.error("**Operation  successful:", response.success);
+  //       socketResponse = response.success
+  //     }
+  //   });
+  //   socket?.emit("sentUserId", userId);
+  //   return socketResponse;
+  // };
+
+  const addUserId = (userId, toId) => {
+    console.log("addUserId");
+    return new Promise((resolve, reject) => {
+      console.log({ userId });
+
+      socket?.emit(
+        "setMapUser",
+        {
+          from: userId,
+          toId: toId,
+        },
+        (response) => {
+          if (response.success) {
+            console.log("**Operation successful:", response);
+            resolve(response); // Resolve with the entire response object
+          } else {
+            console.log("**Operation failed:", response);
+            reject(response.error); // Reject with the error message
+          }
+        }
+      );
+
+      // Note: This will be executed immediately after the emit, not waiting for the callback.
+      socket?.emit("sentUserId", userId);
     });
-    socket?.emit("sentUserId", userId);
   };
-
-
- 
-  
 
   const callUser = async (id) => {
     otherUserId.current = id;
@@ -618,6 +694,15 @@ const ContextProvider = ({ children }) => {
     socket?.emit("move-manual", mqttData);
   };
 
+  const setMqttSpeedControl = (data, Id) => {
+    let mqttData = {
+      data,
+      Id,
+    };
+
+    socket?.emit("speedControl", mqttData);
+  };
+
   const setMqttRequestForTilting = (data, Id) => {
     let mqttData = {
       data,
@@ -648,10 +733,11 @@ const ContextProvider = ({ children }) => {
     socket?.emit("goto-Dock", mqttData);
   };
 
-  const setMqttRequestForMeetingEnd = (data, Id) => {
+  const setMqttRequestForMeetingEnd = (data, Id, myId) => {
     let mqttData = {
       data,
       Id,
+      myId,
     };
 
     console.log(mqttData);
@@ -686,7 +772,9 @@ const ContextProvider = ({ children }) => {
         stream,
         name,
         setName,
+        setCallerId,
         setMqttRequestToServer,
+        setMqttSpeedControl,
         callEnded,
         me,
         callUser,
@@ -705,6 +793,8 @@ const ContextProvider = ({ children }) => {
         stopMapping,
         deleteMap,
         mapState,
+        setObstacle,
+        readyStateMqtt,
       }}
     >
       {children}

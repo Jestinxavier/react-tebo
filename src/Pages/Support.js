@@ -18,9 +18,7 @@ import { getTicket } from "../redux/slices/robot";
 import { useSelector, dispatch } from "../redux/store";
 import { SupportForm } from "../Component/Support";
 import OceanWaves from "../Component/Animation/OceanWaves";
-import ListTicket from "../Component/Support/ListTicket"
-
-
+import ListTicket from "../Component/Support/ListTicket";
 
 function Support() {
   const {
@@ -32,7 +30,7 @@ function Support() {
     modalOpen,
   } = useDrawerContext();
   const theme = useTheme();
-  const ListData = useSelector((state) => state.robot.listTicket.tickets);
+  const ListData = useSelector((state) => state.robot.listTicket);
 
   useEffect(() => {
     dispatch(getTicket());
@@ -40,33 +38,42 @@ function Support() {
 
   console.log(ListData, "ListData****");
 
-
-    return (
-      <Box>
-        <PersistentDrawerRight
-          open={open}
-          setOpen={setOpen}
-          handleDrawerOpen={handleDrawerOpen}
-          handleDrawerClose={handleDrawerClose}
-          setModalOpen={setModalOpen}
-        />
-        <CustomContainer>
-          <Heading>Support</Heading>
-          {/* <Card sx={{ padding: 5 }}> */}
-            <SupportForm />
-          {/* </Card> */}
-         {ListData&&<AnimatedList animation={"grow"}>
-
-          {ListData?.map((data, index) => (
-            <ListTicket data={data} index={index} key={index} /> // Added key prop
-          ))}
-           </AnimatedList>}
-        </CustomContainer>
-      </Box>
-    );
-  }
-  
-  
-
+  return (
+    <Box>
+      <PersistentDrawerRight
+        open={open}
+        setOpen={setOpen}
+        handleDrawerOpen={handleDrawerOpen}
+        handleDrawerClose={handleDrawerClose}
+        setModalOpen={setModalOpen}
+      />
+      <CustomContainer  sx={{mx:8}}>
+        <Heading>Support</Heading>
+        {/* <Card sx={{ padding: 5 }}> */}
+        <SupportForm />
+        {/* </Card> */}
+        {/* {ListData && ( */}
+        {/* <AnimatedList animation={"grow"}> */}
+        {ListData?.default_tickets?.length>0&&<Typography variant="h6">All FAQ</Typography>}
+        
+            {ListData?.default_tickets?.map((data, index) => (
+              <ListTicket data={data} index={index} key={index} /> // Added key prop
+            ))}
+            {ListData?.answered?.length>0&&<Typography variant="h6">Answered</Typography>}
+            {ListData?.answered?.map((data, index) => (
+              <ListTicket data={data} index={index} key={index} /> // Added key prop
+            ))}
+            
+            {ListData?.not_answered?.length>0&&<Typography variant="h6">Not Answered</Typography>}
+            {ListData?.not_answered?.map((data, index) => (
+              <ListTicket data={data} index={index} key={index} /> // Added key prop
+            ))}
+           {/* </AnimatedList> */}
+        {/* )} */}
+        
+      </CustomContainer>
+    </Box>
+  );
+}
 
 export default Support;

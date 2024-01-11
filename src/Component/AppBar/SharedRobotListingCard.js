@@ -17,6 +17,7 @@ import IconBtn from "../CommonComponent/IconBtn";
 import ViewRobotModal from "../ViewRobotModel/ViewRobotModel";
 import ShareBotDialogs from "../../Component/Modal/ShareBotDialogs";
 import { useAuthContext } from "../../auth/useAuthContext";
+import {useSnackbar} from '../MUI/snackbar'
 const CustomCard = styled(Card)(({ theme }) => ({
   borderRadius: "20px",
   // boxShadow:
@@ -36,10 +37,40 @@ export default function SharedRobotListingCard({ data }) {
   const [modalOpen, setModalOpen] = useState(false)
   const [robotId, setRobotId] = useState(null)
   const { user } = useAuthContext();
+  const {enqueueSnackbar} = useSnackbar()
+  const connectRobot = async (myid, toId) => {
+    searchParams.set("sharedRobot", false);
+
+    if (sharedRobot) {
+      searchParams.set("sharedRobot", true);
+    }
+    searchParams.set("myid", myid);
+    searchParams.set("toId", toId);
+    // addUserId(myid)
+
+    try {
+      const data = await addUserId(myid,toId);
+  
+      console.log({ data: "mandan", success: data });
+  
+      if (data?.error) {
+      enqueueSnackbar('You cannot connect to Tebo right now, another person is currently using Tebo.',{variant:'error'});
+        console.log({ data: "mandan", success: data.error });
+      } else {
+        // Uncomment the following lines if you want to perform additional actions on success
+        callUser(toId);
+        console.log(searchParams);
+        navigate(`/conference-room?${searchParams.toString()}`);
+        processCall();
+      }
+    } catch (error) {
+      console.error({ error: "Error:", error });
+    }
+  };
   const handleConnect = () => {
     console.log("::::::):):)");
     connectRobot(user?.random_id, data?.robot?.uuid);
-    processCall()
+    // processCall()
   };
 
   const shareRobot = (id)=>{
@@ -81,7 +112,7 @@ export default function SharedRobotListingCard({ data }) {
               alt="green iguana"
               // height="140"
               // image={data.botImage}
-              image='/images/robot.png'
+              image='/images/robot.gif'
               sx={{ flex: 1 }}
               />
            

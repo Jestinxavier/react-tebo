@@ -28,13 +28,11 @@ export default function CarouselTeboMode({mockData,sharedRobot }) {
   // mockData
 
  
-  {
-    console.log(mockData,"mockData");
-  }
+ 
   const theme = useTheme();
 
   const carouselSettings = {
-    slidesToShow: 3,
+    slidesToShow: mockData.length>3?3:mockData.length,
     centerMode: true,
     Infinity: mockData.length>3,
     centerPadding: '60px',
@@ -83,8 +81,9 @@ export default function CarouselTeboMode({mockData,sharedRobot }) {
       >
         <Carousel ref={carouselRef} {...carouselSettings} >
           {mockData?.map((item,id) => (
-             
+           
             <Box key={id} sx={{ px: 1 }}>
+               
               <CarouselItem  item={item} sharedRobot={sharedRobot}/>
             </Box>
           ))}

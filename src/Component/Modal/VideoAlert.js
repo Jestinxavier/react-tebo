@@ -12,7 +12,7 @@ console.log('====================================');
     if (open) {
       interval = setInterval(() => {
         setTimer((prevTimer) => prevTimer - 1);
-      }, 10000);
+      }, 1000);
     }
 
     return () => {
@@ -27,7 +27,7 @@ console.log('====================================');
   }, [timer, onClose]);
 
   return (
-    <Modal open={open} onClose={onClose} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Modal open={open} closeOnBackdropClick={true} onClose={onClose} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ backgroundColor: '#2020205e', padding: '20px', textAlign: 'center', borderRadius: '8px' }}>
         <Typography variant="body1" style={{ color: '#fff' }}>
           {message}

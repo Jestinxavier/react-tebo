@@ -49,6 +49,7 @@ function RobotVideoConferenceInterface() {
   const searchParams = new URLSearchParams();
 
   // const toIdUUID = searchParms.get('toId');
+// Check orientation when the page loads
 
   const {
     name,
@@ -73,18 +74,18 @@ function RobotVideoConferenceInterface() {
     processCall,
   } = useContext(SocketContext);
 
-  const addUser = useCallback(() => {
-    addUserId("TEBO-BXAYP-H2WH5-IRONO");
-  }, [addUserId]);
+  // const addUser = useCallback(() => {
+  //   addUserId("TEBO-BXAYP-H2WH5-IRONO");
+  // }, [addUserId]);
 
   const DisConnectUser = () => {
     disconnectUser(userId);
   };
 
   useEffect(() => {
-    addUser();
+    // addUser();
 
-    searchParams.set("toId", "TEBO-BXAYP-H2WH5-IRONO");
+    // searchParams.set("toId", "TEBO-BXAYP-H2WH5-IRONO");
     navigate(`/RobotVideoConferenceInterface/?${searchParams.toString()}`);
     return () => {
       leaveCall();
@@ -128,132 +129,7 @@ function RobotVideoConferenceInterface() {
             Answer
           </Button>
         </div>
-      )}
-
-      {/* {call.isReceivingCall && !callAccepted && (
-        <div style={{ display: "flex", justifyContent: "space-around" }}>
-          <h1>{call.name} is calling:</h1>
-          <Button variant="contained" color="primary" onClick={answerCall}>
-            Answer
-          </Button>
-        </div>
-      )} */}
-
-      {/* {controls && (
-        <Grid
-          container
-          sx={{ position: "absolute", bottom: "0px" }}
-          spacing={2}
-        >
-          <VideoController
-          display="none"
-            CONTROLLER_ICON_BORDER_RADIUS={CONTROLLER_ICON_BORDER_RADIUS}
-            CONTROLLER_ICON_WRAPPER_SIZE={CONTROLLER_ICON_WRAPPER_SIZE}
-            CONTROLLER_ICON_SIZE={CONTROLLER_ICON_SIZE}
-            TiltController={TiltController}
-            TILT_CONTROLLER={TILT_CONTROLLER}
-            setControls={setControls}
-            controls={controls}
-            ICON_SIZE={ICON_SIZE}
-          />
-
-          // {/*--------- The below code is to do extra funcationality 
-
-          {me && (
-            <Grid container display="none">
-              <Grid item xs={12} md={6}>
-                <Typography gutterBottom variant="h6">
-                  Account Info
-                </Typography>
-                <TextField
-                  label="Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  fullWidth
-                />
-                {console.log(myId, "myId")}
-                <input
-                  ref={myId}
-                  value={me}
-                  style={{ border: "1px solid red" }}
-                ></input>
-                // <CopyToClipboard text={me}> 
-                <Button variant="contained" color="primary" fullWidth>
-                  Copy Your ID {me}
-                </Button>
-                // </CopyToClipboard> 
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography gutterBottom variant="h6">
-                  Make a call
-                </Typography>
-                <TextField
-                  label="ID to call"
-                  value={idToCall}
-                  onChange={(e) => setIdToCall(e.target.value)}
-                  fullWidth
-                />
-                <TextField
-                  label="Sent Id"
-                  onChange={(e) => setUserId(e.target.value)}
-                  fullWidth
-                />
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  fullWidth
-                  onClick={addUser}
-                >
-                  sendUser Id
-                </Button>
-
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  fullWidth
-                  onClick={DisConnectUser}
-                >
-                  DissConnect User
-                </Button>
-
-                {callAccepted && !callEnded ? (
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    fullWidth
-                    onClick={leaveCall}
-                  >
-                    Hang Up
-                  </Button>
-                ) : (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={() => callUser(idToCall)}
-                  >
-                    Call
-                  </Button>
-                )}
-                {call.isReceivingCall && !callAccepted && (
-                  <div
-                    style={{ display: "flex", justifyContent: "space-around" }}
-                  >
-                    <h1>{call.name} is calling:</h1>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={answerCall}
-                    >
-                      Answer
-                    </Button>
-                  </div>
-                )}
-              </Grid>
-            </Grid>
-          )}
-        </Grid>
-      )} */}
+      )}     
     </div>
   );
 }

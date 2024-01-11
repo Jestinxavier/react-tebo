@@ -112,7 +112,12 @@ function SupportForm() {
       })
       .then((res) => {
         setSuggestedQuestion(res?.data?.data);
+       
       });
+      if(searchResult==""){
+        setSuggestedQuestion([])
+      }
+      
   }, [searchResult]);
   const handleSuggestClick = (data) => {
     console.log(data, "clicked");
@@ -129,40 +134,20 @@ function SupportForm() {
 
   return (
     <>
-      <Grid container spacing={2} sx={{ padding: 3 }}>
+    <Box sx={{
+      position: "-webkit-sticky",
+      top: "48px",
+      left: "0",
+      background: "white",
+      position: "sticky",
+      zIndex: "999",
+      padding: "10px"
+  }}>
+      <Grid container spacing={2} sx={{ padding: {md:3,xs:0},marginTop:{xs:2} }}>
         <Grid item md={12} sm={12}>
           <Card>
             <Stack flexDirection="row">
-              {/* <RHFTextField
-            fullWidth
-            type="textarea"
-            sx={{
-              margin: "10px",
-
-              borderRadius: "15px",
-              marginTop: "20px",
-              "& fieldset": {
-                borderRadius: "15px",
-              },
-              "& input": {
-                borderRadius: "0px !important",
-
-                height: "12px",
-                paddingBottom: "25px",
-              },
-              " & input textarea:focus, input:focus":{
-                outline: 'none',
-            }
-
-            }}
-            name="ticket_content"
-            label=""
-            variant="outlined"
-            placeholder="Enter your complaints here"
-            // multiline
-            // rows={5}
-            rowsMax={10}
-          /> */}
+              
 
               <IconButton sx={{ p: "10px" }} aria-label="menu">
                 <MenuIcon />
@@ -215,7 +200,7 @@ function SupportForm() {
         </Grid>
       </Grid>
 
-      <Stack display="flex" alignItems="flex-end" mt={5}>
+      <Stack display="flex" alignItems="flex-end" mt={{md:5,xs:1}}>
         {suggestedQuestion.length == 0 && (
           <Button
             onClick={() => {
@@ -241,6 +226,7 @@ function SupportForm() {
           </Button>
         )}
       </Stack>
+      </Box>
       <FaqAnswerDialogs
         modalOpen={modal}
         setModalOpen={setModal}

@@ -6,7 +6,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
+import {Box,Container} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
@@ -98,12 +98,14 @@ function Login() {
         backgroundPosition: "initial",
       }}
     >
+   
+
       <Box>
         <Box>
           <Logo />
         </Box>
       </Box>
-
+      {/* <Container component="main" maxWidth="md"> */}
       <Stack
         justifyContent="flex-end"
         direction={{ xs: "column", sm: "row" }}
@@ -172,7 +174,7 @@ function Login() {
             </Box>
 
             <Stack
-              direction="row"
+              direction={{md:"row",sm:'column'}}
               divider={<Divider orientation="vertical" flexItem />}
               spacing={2}
               sx={{ p: 3 }}
@@ -229,7 +231,9 @@ function Login() {
           </Box>
         </Box>
       </Stack>
+      {/* </Container> */}
     </Stack>
+
   );
 }
 

@@ -64,7 +64,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
     minHeight: "100%",
   },
   "@media (max-width: 780px)": {
-    minHeight: 128,
+    minHeight: {md:128},
   },
 }));
 
@@ -112,7 +112,9 @@ console.log(user,"user");
               navigate('/home')
             }}
           >
+            <Box sx={{width:'80%'}}>
             <AppBarLogo />
+            </Box>
           </Stack>
 
           {/* <CutomFlexBox> */}
@@ -134,8 +136,8 @@ console.log(user,"user");
                 height: "45px",
                 width: "45px",
                 cursor: "pointer",
-                mx: "3px",
-                padding: "3px",
+                mx: "1px",
+                padding: "2px",
                 alignItems: "center",
                 borderRadius: "200px",
               }}

@@ -3,10 +3,10 @@ import { Box } from "@mui/system";
 import React from "react";
 import styled from "styled-components";
 import Google from "../../Pages/Authatication/AuthaticationGoogle";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import MyFacebookButton from "../../Pages/Authatication/MyFacebookButton";
 import FacebookAuth from "react-facebook-auth";
 import FacebookLogin from '@greatsumini/react-facebook-login';
+import Authatication from '../../Pages/Authatication/Authatication'
 
 const ImageWrapper = styled("img")(({ theme }) => ({
   cursor: "pointer",
@@ -40,13 +40,13 @@ function SocialButton() {
       alignItems="center"
       spacing={1}
     >
-      {/* <GoogleOAuthProvider clientId="873869484443-ac9ncvoc6vif5vc67pn619g1ba1jjogq.apps.googleusercontent.com"> 
-        <ImageWrapper src={`./images/${data}`} />
-       
-      </GoogleOAuthProvider>  */}
-
+      {/* <GoogleOAuthProvider clientId="873869484443-ac9ncvoc6vif5vc67pn619g1ba1jjogq.apps.googleusercontent.com">  */}
+        {/* <ImageWrapper src={`./images/${data}`} /> */}
+        {/* <Authatication /> */}
       <Google />
-<FacebookLogin
+      {/* </GoogleOAuthProvider>  */}
+
+{/* <FacebookLogin
   appId="1326090128300626"
   style={{
     backgroundColor: '#4267b2',
@@ -56,7 +56,7 @@ function SocialButton() {
     border: 'none',
     borderRadius: '4px',
   }}
-/>
+/> */}
     </Stack>
   );
 }

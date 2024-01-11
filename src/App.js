@@ -11,6 +11,7 @@ import {
 // import { ThemeProvider } from "@mui/material/styles";
 import { AuthProvider } from "./auth/JwtContext";
 import { DrawerProvider } from './Context/DrawerContext';
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import ThemeProvider from "./theme";
 
@@ -35,6 +36,7 @@ import SnackbarProvider from './Component/MUI/snackbar';
 
 function App() {
   return (
+    <GoogleOAuthProvider clientId="873869484443-ac9ncvoc6vif5vc67pn619g1ba1jjogq.apps.googleusercontent.com"> 
     <AuthProvider>
       <SnackbarProvider>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -55,6 +57,8 @@ function App() {
         </LocalizationProvider>
       </SnackbarProvider>
     </AuthProvider>
+    </GoogleOAuthProvider> 
+
   );
 }
 

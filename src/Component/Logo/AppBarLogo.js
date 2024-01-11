@@ -4,7 +4,7 @@ const LogoImage = styled("img")(({ theme }) => ({
   width: { sm: "50%", md: "100%", xs: "30%" },
   height: "auto",
   objectFit: "cover",
-  marginLeft: 10,
+  marginLeft: {md:10,sm:0},
   marginTop: 6,
  
 }));

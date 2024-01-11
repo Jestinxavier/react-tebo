@@ -19,6 +19,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import useArrowKeyHandlers from "../../hooks/useArrowKeyHandlers";
 
 export default function VideoPlayerForConference({
   ICON_SIZE,
@@ -38,6 +39,83 @@ export default function VideoPlayerForConference({
   const { enqueueSnackbar } = useSnackbar();
   const [callerApiId, setCallerApiId] = useState(null);
   const smBreakpoint = theme.breakpoints.values.sm; // Get the value of the sm breakpoint
+  const {
+    myVideo,
+    userVideo,
+    remoteRef,
+    localRef,
+    PageTrigger,
+    setPageTrigger,setMqttRequestToServer,
+    myId,
+    me,
+    localStream,
+    remoteStream,
+    processCall,
+    obstacle,
+    setObstacle,readyState
+  } = useContext(SocketContext);
+
+  const handleUp = (isPressed) => {
+    if (isPressed) {
+      console.log("Up arrow pressed");
+      setMqttRequestToServer("forward", toIdUUID);
+
+      // Your logic for up arrow key press
+    } else {
+      console.log("Up arrow released");
+      setMqttRequestToServer("stop", toIdUUID);
+
+      // Your logic for up arrow key release
+    }
+  };
+
+  const handleDown = (isPressed) => {
+    if (isPressed) {
+      console.log("Down arrow pressed");
+      setMqttRequestToServer("back", toIdUUID);
+      // Your logic for down arrow key press
+    } else {
+      console.log("Down arrow released");
+      setMqttRequestToServer("stop", toIdUUID);
+
+      // Your logic for down arrow key release
+    }
+  };
+
+  const handleRight = (isPressed) => {
+    if (isPressed) {
+      console.log("Right arrow pressed");
+      setMqttRequestToServer("right", toIdUUID);
+
+      // Your logic for right arrow key press
+    } else {
+      console.log("Right arrow released");
+      setMqttRequestToServer("stop", toIdUUID);
+
+      // Your logic for right arrow key release
+    }
+  };
+
+  const handleLeft = (isPressed) => {
+    if (isPressed) {
+      console.log("Left arrow pressed");
+      setMqttRequestToServer("left", toIdUUID);
+
+      // Your logic for left arrow key press
+    } else {
+      console.log("Left arrow released");
+      setMqttRequestToServer("stop", toIdUUID);
+
+      // Your logic for left arrow key release
+    }
+  };
+  useArrowKeyHandlers({
+    up: handleUp,
+    down: handleDown,
+    right: handleRight,
+    left: handleLeft,
+  });
+  
   const objectStyleAlert = {
     boxShadow: "red 91px 34px 102px 120px inset",
     marginLeft: 0,
@@ -59,20 +137,7 @@ export default function VideoPlayerForConference({
 
   const iconSize = smBreakpoint <= 700 ? 35 : ICON_SIZE;
 
-  const {
-    myVideo,
-    userVideo,
-    remoteRef,
-    localRef,
-    PageTrigger,
-    setPageTrigger,
-    myId,
-    me,
-    localStream,
-    remoteStream,
-    processCall,
-    obstacle,
-  } = useContext(SocketContext);
+
   const regularVideoStyles = {
     width: controls ? "50%" : "100vw",
     height: controls ? "50%" : "100vh",
@@ -129,6 +194,7 @@ export default function VideoPlayerForConference({
     if (remoteStream && remoteRef.current) {
       remoteRef.current.srcObject = remoteStream;
       callStartInfo(toIdUUID).then((data) => {
+        console.log({DataLogger:data});
         setCallerApiId(data);
       });
     }
@@ -139,12 +205,14 @@ export default function VideoPlayerForConference({
     };
   }, [localStream, remoteStream]);
 
-  console.log(localStream, remoteStream, "localStream, remoteStream");
 
   useEffect(() => {
     if (obstacle) {
       enqueueSnackbar("There is an obstacle you cant move", {
-        variant: "error",
+        variant: "error",onClose:()=>{
+          console.log("im sorry");
+          setObstacle(false)
+        }
       });
     }
   }, [obstacle]);

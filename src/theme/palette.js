@@ -42,8 +42,14 @@ const SECONDARY = {
 };
 
 const blueGray = {
-  900: '#021521',
+ 800: '#021521',
+  900: '#004497',
+
 };
+const bgImage = {
+  primary: "linear-gradient(93deg, #008cc6, #004497)",
+
+}
 
 const INFO = {
   lighter: '#CAFDF5',
@@ -94,6 +100,7 @@ const COMMON = {
   ButtonColor,
   green,
   blueGray,
+  bgImage,
   divider: alpha(GREY[500], 0.24),
   action: {
     hover: alpha(GREY[500], 0.08),

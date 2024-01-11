@@ -1,0 +1,77 @@
+import * as React from "react";
+import Button from "@mui/material/Button";
+import { styled } from "@mui/material/styles";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import Typography from "@mui/material/Typography";
+import { CardMedia } from "@mui/material";
+import LinearProgress from '@mui/material/LinearProgress';
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiDialogContent-root": {
+    padding: theme.spacing(2),
+  },
+  "& .MuiDialogActions-root": {
+    padding: theme.spacing(1),
+  },
+  "& .MuiBackdrop-root": {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    invisible: true,
+  },
+}));
+
+export default function ReadyStateDialogBox({
+  handleClickOpen,
+  handleClose,
+  open,
+}) {
+  return (
+    <React.Fragment>
+      <BootstrapDialog
+        onClose={handleClose}
+        aria-labelledby="customized-dialog-title"
+        open={open}
+      >
+        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+          Tebo Preparations: Environment Check Before Activation
+        </DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <DialogContent dividers>
+          <Typography gutterBottom>
+            The robot is getting ready to start. It's carefully looking around
+            and checking the environment to make sure everything is good to go."
+          </Typography>
+          <CardMedia
+              component="img"
+              alt="green iguana"
+              height="140"
+              // image={data.botImage}
+              image='/images/robot.gif'
+              sx={{ flex: 1,objectFit: 'contain' }}
+              />
+               <LinearProgress />
+        </DialogContent>
+        <DialogActions>
+          {/* <Button autoFocus onClick={handleClose}>
+            Save changes
+          </Button> */}
+        </DialogActions>
+      </BootstrapDialog>
+    </React.Fragment>
+  );
+}

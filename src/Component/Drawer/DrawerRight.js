@@ -149,7 +149,7 @@ export default function DrawerRight({ setOpenMenu, OpenMenu, setModalOpen }) {
 
         {
           icon: "/images/icon-setting.png",
-          name: "SETTING",
+          name: "SETTINGS",
           funcation: showSetting,
         },
         {
@@ -243,13 +243,13 @@ export default function DrawerRight({ setOpenMenu, OpenMenu, setModalOpen }) {
         }}
       >
         {NavigationData.map((data) => (
-          <Box sx={{ padding: 1, flex: "50%", width: "100%" }}>
+          <Box sx={{ padding: 1, flex: "50%", width: "100%", }}>
             <ContentBox
               onClick={() => {
                 data.funcation();
               }}
               className="ook"
-              sx={{ display: "flex", flexDirection: "row" }}
+              sx={{ display: "flex", flexDirection: "row",    cursor: "pointer" }}
             >
               <Box sx={{ flex: 1 }}>
                 <Box

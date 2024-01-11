@@ -353,7 +353,7 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
         ) : (
           <>
             <Box display="flex" flexDirection="column" mr={4} ml={2} mb={2}>
-              <Typography mb={1}>Enter the Uniq Tebo Id</Typography>
+              <Typography mb={1}>Enter your unique Tebo Id</Typography>
               <TextField
                 id="outlined-basic"
                 label=""

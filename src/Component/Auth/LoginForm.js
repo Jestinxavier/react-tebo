@@ -60,7 +60,16 @@ function LoginForm() {
       reset()
       
     } catch (error) {
+      if(error.message=="Cannot destructure property 'owner' of '(intermediate value)(intermediate value)(intermediate value)' as it is undefined."){
+        enqueueSnackbar('Incorrect Username or Password. Please try again.The selected owner email is invalid.',{variant:'error'})
+        return 
+      }else if(error.message=="Cannot read properties of undefined (reading 'owner')"){
+        enqueueSnackbar('Incorrect Username or Password. Please try again.The selected owner email is invalid.',{variant:'error'})
+        return
+      }else{
       enqueueSnackbar(error.message,{variant:'error'})
+      }
+
     }
 
     // try {
@@ -100,7 +109,7 @@ function LoginForm() {
               color: theme.palette.secondary.contrastText,
             }}
           >
-            Username
+            Email
           </Typography>
           <RHFTextField
             fullWidth

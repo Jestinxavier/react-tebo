@@ -22,6 +22,28 @@ function Profile() {
     
   }, [])
 
+  function checkOrientation() {
+    console.log('window.orientation====================================')
+    console.log("window.orientation",window.orientation)
+    console.log('====================================')
+    // alert(window.orientation)
+    if (window.orientation === undefined) {
+      // window.orientation is not supported, use other methods if needed
+      console.log("Orientation not supported");
+    } else {
+      if (window.orientation === 0 || window.orientation === 180) {
+        console.log("Portrait orientation");
+      } else {
+        console.log("Landscape orientation");
+      }
+    }
+  }
+  
+  // Call the function when the page loads
+  checkOrientation();
+  
+  // Listen for orientation changes
+  window.addEventListener("orientationchange", checkOrientation);
   return (
     <Box>
       <PersistentDrawerRight
@@ -33,7 +55,7 @@ function Profile() {
       />
       <CustomContainer>
         <Heading>Profile</Heading>
-        <Card sx={{ padding: 10 }}>
+        <Card sx={{ padding: {md:10,xs:1} }}>
           <ProfileForm />
         </Card>
       </CustomContainer>

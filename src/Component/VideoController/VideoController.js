@@ -12,8 +12,10 @@ import { LongPressEventType, useLongPress } from "use-long-press";
 import useArrowKeyHandlers from "../../hooks/useArrowKeyHandlers";
 import { useLocation } from "react-router-dom";
 import { SocketContext } from "../../Context/SocketContext";
-
+import BottomDrawer from "../VideoConference/BottomDrawer";
 // import { CopyToClipboard } from 'react-copy-to-clipboard';
+import TiltController from '../VideoConference/TiltController'
+import { TILT_CONTROLLER } from "../../Constant/defaultValue";
 
 import {
   IconButton,
@@ -24,14 +26,15 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
+import TiltControlAndReload from "./TiltControlAndReload";
 
 function VideoController({
   CONTROLLER_ICON_BORDER_RADIUS,
   CONTROLLER_ICON_WRAPPER_SIZE,
   CONTROLLER_ICON_SIZE,
-  TiltController,
+  
   setControls,
-  TILT_CONTROLLER,
+  
   controls,
   ICON_SIZE,
   callerApiId,
@@ -44,10 +47,10 @@ function VideoController({
 
   const [enabled, setEnabled] = React.useState(true);
   const [longPressed, setLongPressed] = React.useState(false);
-  
+
   const location = useLocation();
   const searchParms = new URLSearchParams(location.search);
-  const { setMqttRequestToServer,processCall } = useContext(SocketContext);
+  const { setMqttRequestToServer, processCall } = useContext(SocketContext);
   const toIdUUID = searchParms.get("toId");
 
   const callback = React.useCallback(() => {
@@ -118,15 +121,22 @@ function VideoController({
 
   return (
     <>
-      <Grid container sx={{ position: "absolute", bottom: "0px", 
-    display: 'flex' }} spacing={2}>
+      <Grid
+        container
+        sx={{ position: "absolute", bottom: "0px", display: "flex" }}
+        spacing={2}
+      >
         <Grid
-          sx={{ display: "flex", alignItems: "flex-end" }}
+          sx={{
+            display: "flex",
+            alignItems: "flex-end",
+            display: { xs: "none", md: "flex" },
+          }}
           item
           md={4}
           xs={12}
         >
-          <div>
+          {/* <div>
             <div
             // style={{ position: "absolute",
             // bottom: 0 }}
@@ -211,7 +221,9 @@ function VideoController({
                 </Stack>
               </div>
             </div>
-          </div>
+          </div> */}
+          <TiltControlAndReload setControls={setControls} controls={controls} />
+
         </Grid>
         <Grid
           sx={{ display: "flex", alignItems: "flex-end" }}
@@ -223,23 +235,47 @@ function VideoController({
             flexDirection="row"
             alignItems="center"
             justifyContent="center"
-           
+            sx={{ display: { xs: "none", md: "flex" } }}
             width="100%"
           >
-            <VideoStreamControllerButtons 
-             CONTROLLER_ICON_BORDER_RADIUS  = {CONTROLLER_ICON_BORDER_RADIUS}
-             CONTROLLER_ICON_WRAPPER_SIZE = {CONTROLLER_ICON_WRAPPER_SIZE}
-             CONTROLLER_ICON_SIZE = {CONTROLLER_ICON_SIZE}
-             callerApiId={callerApiId}
+            <VideoStreamControllerButtons
+              CONTROLLER_ICON_BORDER_RADIUS={CONTROLLER_ICON_BORDER_RADIUS}
+              CONTROLLER_ICON_WRAPPER_SIZE={CONTROLLER_ICON_WRAPPER_SIZE}
+              CONTROLLER_ICON_SIZE={CONTROLLER_ICON_SIZE}
+              callerApiId={callerApiId}
             />
           </Stack>
         </Grid>
-        <Grid item md={4} xs={12} className='robotController'>
+        <Grid item md={4} xs={12} className="robotController">
+          <Box sx={{display:{md:'block',xs:'none'}}}>
+        <RobotController
+            CONTROLLER_ICON_BORDER_RADIUS={CONTROLLER_ICON_BORDER_RADIUS}
+            CONTROLLER_ICON_WRAPPER_SIZE={iconSize}
+            CONTROLLER_ICON_SIZE={CONTROLLER_ICON_SIZE}
+          />
+          </Box>
+          <Stack flexDirection='row' justifyContent="space-around" sx={{ display: { xs: "flex", md: "none" } }}>
+          <TiltController TiltController={TILT_CONTROLLER} />
           <RobotController
             CONTROLLER_ICON_BORDER_RADIUS={CONTROLLER_ICON_BORDER_RADIUS}
             CONTROLLER_ICON_WRAPPER_SIZE={iconSize}
             CONTROLLER_ICON_SIZE={CONTROLLER_ICON_SIZE}
           />
+            <BottomDrawer>
+              <VideoStreamControllerButtons
+                CONTROLLER_ICON_BORDER_RADIUS={CONTROLLER_ICON_BORDER_RADIUS}
+                CONTROLLER_ICON_WRAPPER_SIZE={CONTROLLER_ICON_WRAPPER_SIZE}
+                CONTROLLER_ICON_SIZE={CONTROLLER_ICON_SIZE}
+                callerApiId={callerApiId}
+              />
+            </BottomDrawer>
+            {/* <BottomDrawer>
+              <TiltControlAndReload
+                setControls={setControls}
+                controls={controls}
+              />
+            </BottomDrawer> */}
+          </Stack>
         </Grid>
       </Grid>
     </>

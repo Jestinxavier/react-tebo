@@ -117,6 +117,8 @@ function Home() {
     modalOpen,
   } = useDrawerContext();
 
+const {setCallerId} = useContext(SocketContext);
+
   const theme = useTheme();
   const [Form, setForm] = useState([]);
   const [robotList, setRobotList] = useState(mockData);
@@ -171,7 +173,8 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    addUserId(user?.random_id);
+    // addUserId(user?.random_id);
+    setCallerId(user?.random_id);
   }, [user])
   
 
@@ -238,7 +241,7 @@ function Home() {
         alignItems="center"
         spacing={2}
       >
-        <Box m={5}>
+        <Box sx={{marginTop:{md:1,xs:1},marginRight:{xs:3}} } >
           <Button
             variant="outlined"
             color="error"

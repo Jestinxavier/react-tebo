@@ -18,10 +18,6 @@ function ShareRobotList() {
     modalOpen,
   } = useDrawerContext();
   const ShareRobotList = useSelector((state) => state.robot.shareRobotList);
-
-  console.log('ShareRobotList====================================');
-  console.log(ShareRobotList,"ShareRobotList");
-  console.log('====================================');
   useEffect(() => {
     dispatch(getSharedToRobot());
   }, []);
@@ -29,7 +25,7 @@ function ShareRobotList() {
 
   
   return (
-    <Box>
+    <Box sx={{marginTop:{xs:6,md:0}}}>
       <PersistentDrawerRight
         open={open}
         setOpen={setOpen}

@@ -22,6 +22,7 @@ import NoRobotCard from "../../Component/Homepage/NoRobotCard";
 import { getRobot } from "../../redux/slices/robot";
 import { IMAGE_PATH } from "../../config-global";
 import Swal from "sweetalert2";
+import MappingInstructionsDialog from "./Modal/MappingInstructionsDialog";
 
 function MapPage() {
   const {
@@ -33,8 +34,9 @@ function MapPage() {
     modalOpen,
     mapState,
   } = useDrawerContext();
-  const navigate = useNavigate()
-  const { startMapping, stopMapping, allMapState,deleteMap } = useContext(SocketContext);
+  const navigate = useNavigate();
+  const { startMapping, stopMapping, allMapState, deleteMap } =
+    useContext(SocketContext);
   const location = useLocation();
   const [startMap, setStartMap] = useState(false);
   const [mapExisist, setmapExisist] = useState(false);
@@ -42,17 +44,28 @@ function MapPage() {
   const searchParams = new URLSearchParams(location.search);
   const [currentMapStatus, setCurrentMapStatus] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
-  const robotList = useSelector(state=>state.robot.robots.robots)
+  const robotList = useSelector((state) => state.robot.robots.robots);
   const teboId = searchParams.get("teboId");
-  const [description, setDescription] = useState("Alright, team! It's robot mapping time – let's uncover the hidden treasures of our digital world, one pixel at a time, and sprinkle a dash of adventure into our robotic escapades!")
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const [description, setDescription] = useState(
+    "Alright, team! It's robot mapping time – let's uncover the hidden treasures of our digital world, one pixel at a time, and sprinkle a dash of adventure into our robotic escapades!"
+  );
   const AddMap = () => {
     // const teboId = searchParams.get("teboId");
     startMapping(teboId);
     setStartMap(true);
   };
 
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
 
-  const removeMap = (data,id) => {
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const removeMap = (id) => {
     // navigate(`/robot-map?${searchParams.toString()}`);
     Swal.fire({
       title: "Are you sure?",
@@ -64,14 +77,15 @@ function MapPage() {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       deleteMap(id);
-      dispatch(getRobot())
+      dispatch(getRobot());
+      navigate(`/robot-map`);
       if (result.isConfirmed) {
         Swal.fire("Deleted!", "Your file has been deleted.", "success");
       }
     });
   };
 
-console.log(robotList,"robotList***");
+  console.log(robotList, "robotList***");
   const stopMappingProcess = () => {
     // const teboId = searchParams.get("teboId");
     startMapping(teboId);
@@ -80,69 +94,65 @@ console.log(robotList,"robotList***");
   };
 
   useEffect(() => {
-    console.log(imageUrl,"imageUrl");
-  }, [imageUrl])
-  
+    console.log(imageUrl, "imageUrl");
+  }, [imageUrl]);
 
   const DeleteMapData = () => {
     // const teboId = searchParams.get("teboId");
     startMapping(teboId);
     setStartMap(true);
   };
-  
-
-
-
 
   useEffect(() => {
-    
-    
     if (allMapState) {
       let Id = Object.keys(allMapState)[0];
 
-      console.log(allMapState[Id], "allMapState.Id","Id:",Id,"teboId:",teboId,Id == teboId);
+      console.log(
+        allMapState[Id],
+        "allMapState.Id",
+        "Id:",
+        Id,
+        "teboId:",
+        teboId,
+        Id == teboId
+      );
       if (Id == teboId) {
         setCurrentMapStatus(allMapState[Id]);
       }
     }
   }, [allMapState]);
 
-
-
-  const filterData = ()=>{
-     return robotList.filter(item=>item.robot.uuid==teboId)
-  }
+  const filterData = () => {
+    return robotList.filter((item) => item?.robot?.uuid == teboId);
+  };
 
   useEffect(() => {
-    console.log('====================================');
+    console.log("id&====================================");
     console.log(filterData()[0]?.robot?.map_status);
-    console.log('====================================');
-    setCurrentMapStatus(filterData()[0]?.robot?.map_status)
-  }, [])
-  
+    console.log("====================================");
+    setCurrentMapStatus(filterData()[0]?.robot?.map_status);
+  }, []);
 
   useEffect(() => {
-    console.log('filterData()====================================');
-    console.log(filterData(),currentMapStatus);
-    console.log('====================================');
+    console.log("filterData()====================================");
+    console.log(filterData(), currentMapStatus);
+    console.log("====================================");
     if (currentMapStatus == "finished mapping") {
       setmapExisist(true);
       setStartMap(true);
       setDescription("");
-    
+
       setImageUrl(filterData());
-    
     }
     if (currentMapStatus == "map exists") {
       setmapExisist(true);
       setStartMap(true);
-      dispatch(getRobot())
+      dispatch(getRobot());
       setDescription("");
-      console.log('filterData()====================================');
+      console.log("filterData()====================================");
       console.log(filterData());
-      console.log('====================================');
+      console.log("====================================");
       setImageUrl(filterData());
-
     }
   }, [currentMapStatus]);
 
@@ -159,34 +169,39 @@ console.log(robotList,"robotList***");
       />
       <CustomContainer>
         <Heading>Tebo Map</Heading>
-        {
-            console.log(imageUrl,"imageUrl")
-          }
         {startMap ? (
-          
           <Box>
-            {mapExisist?<Box>
-           
-             <img src={`${IMAGE_PATH}${imageUrl[0].robot.map_path}`} alt="mapImage" />
-             <Button
-            variant="outlined"
-            color="error"
-            sx={{
-              mt: 5,
-            }}
-            startIcon={<Iconify icon="mdi:map-marker-remove-outline" />}
-            onClick={() => {
-              removeMap(teboId);
-            }}
-          >
-           Delete Map
-          </Button>
-            </Box>:<NoRobotCard
-              image="/images/mapping.gif"
-              Heading="Mapping Started"
-              Status={currentMapStatus}
-              description={description}
-            />}
+            {mapExisist ? (
+              <Box>
+                <img
+                  src={`${IMAGE_PATH}${imageUrl[0].robot.map_path}`}
+                  alt="mapImage"
+                />
+                <Button
+                  variant="outlined"
+                  color="error"
+                  sx={{
+                    mt: 5,
+                  }}
+                  startIcon={<Iconify icon="mdi:map-marker-remove-outline" />}
+                  onClick={() => {
+                    console.log("====================================");
+                    console.log(teboId, "teboId");
+                    console.log("====================================");
+                    removeMap(teboId);
+                  }}
+                >
+                  Delete Map
+                </Button>
+              </Box>
+            ) : (
+              <NoRobotCard
+                image="/images/mapping.gif"
+                Heading="Mapping Started"
+                Status={currentMapStatus}
+                description={description}
+              />
+            )}
             {/* <Typography>{mapState}</Typography> */}
           </Box>
         ) : (
@@ -194,7 +209,6 @@ console.log(robotList,"robotList***");
             <div style={{ paddingTop: "27%" }} />
           </Skeleton>
         )}
-
         {/* {mapExisist?  <Button
             variant="outlined"
             color="error"
@@ -209,22 +223,28 @@ console.log(robotList,"robotList***");
             Delete Map
           </Button>
           : */}
-        {startMap ? (<>
-          {!mapExisist&&<Button
-            variant="outlined"
-            color="error"
-            sx={{
-              mt: 5,
-            }}
-            startIcon={<Iconify icon="gala:add" />}
-            onClick={() => {
-              stopMappingProcess();
-            }}
-          >
-            Stop Mapping
-          </Button>}
+        {startMap ? (
+          <>
+            {!mapExisist && (
+              <Button
+                variant="outlined"
+                color="error"
+                sx={{
+                  mt: 5,
+                }}
+                startIcon={<Iconify icon="gala:add" />}
+                onClick={() => {
+                  stopMappingProcess();
+                }}
+              >
+                Stop Mapping
+              </Button>
+            )}
           </>
         ) : (
+         
+         
+         
           <Button
             variant="outlined"
             color="error"
@@ -232,14 +252,28 @@ console.log(robotList,"robotList***");
               mt: 5,
             }}
             startIcon={<Iconify icon="gala:add" />}
-            onClick={() => {
-              AddMap();
-            }}
+            // onClick={() => {
+            //   AddMap();
+            // }}
+            onClick={handleOpenDialog}
           >
             Add Map
           </Button>
         )}
+         {/* <Button
+          variant="outlined"
+          color="error"
+          sx={{
+            mt: 5,
+          }}
+          startIcon={<Iconify icon="gala:add" />}
+          onClick={handleOpenDialog}
+        >
+        Add Map
+        </Button> */}
       </CustomContainer>
+      <MappingInstructionsDialog open={openDialog} onClose={handleCloseDialog}   AddMap={AddMap} />
+
     </Box>
   );
 }

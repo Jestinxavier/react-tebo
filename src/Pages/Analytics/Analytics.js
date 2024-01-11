@@ -75,13 +75,16 @@ function Analytics() {
             <Grid item xs={12} md={12}>
               <Card dir="ltr">
                 <CardHeader title="Call Analytics" />
+               { !(robotState?.xaxisData?.length>0)?
+               <Typography p={4} textAlign="center" color="error.main">No analytics data for your account, Please add a tebo to generate the analytics.</Typography>:
                 <CardContent>
+                 
                   {robotState &&
                    <CallStatusChartColumnSingle
                     filterAnalyticData={robotState?.filterAnalyticData}
                     xaxisData={robotState?.xaxisData}
                   />}
-                </CardContent>
+                </CardContent>}
               </Card>
             </Grid>
           </Grid>

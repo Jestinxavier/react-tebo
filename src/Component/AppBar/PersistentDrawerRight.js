@@ -178,7 +178,7 @@ const NavigationData = [
   },
   {
     icon: "/images/icon-setting.png",
-    name: "SETTING",
+    name: "SETTINGS",
   },
   {
     icon: "/images/icon-suppot.png",

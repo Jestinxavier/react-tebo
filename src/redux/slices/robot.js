@@ -8,7 +8,7 @@ import {
 } from "../../utils/momentformat";
 // utils
 import axios from "../../utils/axios";
-import {ADMIN} from '../../config-global'
+import { ADMIN } from "../../config-global";
 
 // ----------------------------------------------------------------------
 
@@ -24,6 +24,8 @@ const initialState = {
   product: null,
   shareRobotList: [],
   callAnalytics: null,
+  takeAtour: false,
+  speedControl:1,
   checkout: {
     activeStep: 0,
     cart: [],
@@ -55,6 +57,15 @@ const slice = createSlice({
     getProductsSuccess(state, action) {
       state.isLoading = false;
       state.products = action.payload;
+    },
+
+    setTour(state, action) {
+      state.isLoading = false;
+      state.takeAtour = action.payload;
+    },
+    setSpeed(state, action) {
+      state.isLoading = false;
+      state.speedControl = action.payload;
     },
 
     getRobotList(state, action) {
@@ -328,13 +339,18 @@ export function getCallLogs() {
         let result = response?.data?.data?.logs?.map((res) => ({
           ...res,
           uuid: res.robot?.uuid,
+          nickname:res?.robot?.owned_robot[0]?.nickname,
           owner: response?.data?.data?.owner?.name,
-          startDate: formatDateToYYYYMMDD(res.session_start),
-          startTime: formatDateTohmms(res.session_start),
-          endTime: formatDateTohmms(res.session_end),
-
+          startDate: formatDateToYYYYMMDD(res?.local_time?.local_end),
+          startTime: formatDateTohmms(res?.local_time?.local_start),
+          endTime: formatDateTohmms(res?.local_time?.local_end),
+          usedUserName: res.used_by_shared_owner
+            ? res.accepted_owner.name
+            : response?.data?.data?.owner?.name,
+          used_by_shared_owner: res.used_by_shared_owner,
           //  session_start
         }));
+        
         console.log(result, "response.data.data");
 
         if (result) {
@@ -397,7 +413,9 @@ export function getTicket() {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.post(ADMIN?"/admin/list-all-tickets":"/owner/list-ticket");
+      const response = await axios.post(
+        ADMIN ? "/admin/list-all-tickets" : "/owner/list-ticket"
+      );
       if (response) {
         dispatch(slice.actions.setTicket(response.data.data));
       }
@@ -413,17 +431,54 @@ export function getCallAnalytics() {
     try {
       const response = await axios.post("/owner/call-analytics");
       if (response) {
-        console.log('response.data.data====================================');
-        console.log(response?.data?.data?.calls_count_to_robots);
-        console.log('====================================');
-        
-let filterAnalyticData = response?.data?.data?.calls_count_to_robots.map((item, index) => item.count);
-let xaxisData = response?.data?.data?.calls_count_to_robots.map((item, index) =>item?.robot?.nickname )
-console.log('response.data.data====================================');
-console.log(filterAnalyticData);
-console.log('====================================');
-        dispatch(slice.actions.setCallAnalytics({filterAnalyticData,xaxisData}));
+        let filterAnalyticData =
+          response?.data?.data?.calls_count_to_robots.map(
+            (item, index) => item.count
+          );
+        let xaxisData = response?.data?.data?.calls_count_to_robots.map(
+          (item, index) => item?.robot?.nickname
+        );
+        dispatch(
+          slice.actions.setCallAnalytics({ filterAnalyticData, xaxisData })
+        );
       }
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+export function TourController(data) {
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+        dispatch(
+          slice.actions.setTour(data)
+        );
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+export function postTourController() {
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      const response = await axios.post("/owner/call-analytics");
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+export function postSpeed(data) {
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      dispatch(
+        slice.actions.setSpeed(data)
+      );
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

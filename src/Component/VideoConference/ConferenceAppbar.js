@@ -9,10 +9,17 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import DrawerRight from "../Drawer/DrawerRight";
 import { useTheme } from "@mui/material/styles";
+import Image from "mui-image";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch, dispatch } from "../../redux/store";
+import Iconify from "../../Component/MUI/iconify";
+import { useAuthContext } from "../../auth/useAuthContext";
 
-import Image from "mui-image";
+import { TourController, postTourController } from "../../redux/slices/robot";
+import axios from "../../utils/axios";
+import VideoAlert from "../Modal/VideoAlert";
+import ReadyStateDialogBox from "../Modal/ReadyStateDialogBox";
+import { SocketContext } from "../../Context/SocketContext";
 const CustomAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: "#e7e7e700 !important",
   boxShadow:
@@ -20,14 +27,39 @@ const CustomAppBar = styled(AppBar)(({ theme }) => ({
 }));
 export default function ConferenceAppBar({ AppBarHeight }) {
   const [OpenMenu, setOpenMenu] = React.useState(false);
-  const [robot, setRobot] = React.useState(null);
+  const [robot, setRobot] = React.useState([]);
+  const [alertModal, setAlertModal] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState("");
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const teboId = searchParams.get("toId");
-  const robotList = useSelector((state) => state.robot.robots.robots);
+  const sharedRobot = searchParams.get("sharedRobot");
+  const [readyState, setReadyState] = React.useState(true);
+  const {readyStateMqtt} = React.useContext(SocketContext);
+  const { user } = useAuthContext();
+  const robotList = useSelector((state) => state?.robot?.robots?.robots);
+  const sharedList = useSelector((state) => state?.robot?.sharedRobot?.robots);
+  
+  const handleClickOpen = () => {
+    setReadyState(true);
+  };
+  // const handleClose = () => {
+  //   setReadyState(false);
+  // };
+  const handleClose = (event, reason) => {
+    if (reason && reason === "backdropClick") {
+      return;
+    }
+    setReadyState(false);
+  };
+
   const theme = useTheme();
   const filterData = () => {
-    setRobot(robotList.filter((item) => item.robot.uuid == teboId));
+    if (sharedRobot) {
+      setRobot(sharedList?.filter((item) => item?.robot?.uuid == teboId));
+    } else {
+      setRobot(robotList?.filter((item) => item?.robot?.uuid == teboId));
+    }
   };
   const imageData = [
     {
@@ -67,15 +99,37 @@ export default function ConferenceAppBar({ AppBarHeight }) {
     let filterData = imageData.filter(
       (item) => Number(item.percentage) <= data
     );
-    console.log("====================================");
-    console.log(filterData, "filterData");
-    console.log("====================================");
     return filterData[0].image;
   };
+  const takeATour = (data) => {
+    dispatch(TourController(data));
+  };
+
   React.useEffect(() => {
     filterData();
+    console.log({ user });
   }, []);
+  React.useEffect(() => {
+   if(!readyStateMqtt){
+    setReadyState(false)
+   }
+  }, [readyStateMqtt]);
+  
+  React.useEffect(() => {
+    if (robot.length > 0) {
+      console.log("robot[0]?.robot?.map_status", robot[0]?.robot?.map_status);
+      if (robot[0]?.robot?.map_status == "no map") {
+        setAlertMessage(
+          "It is essential to map the room first. We strongly recommend mapping the area before initiating Tebo movement. If you don't map the area, automatic docking will not be possible, and you will need to do it manually."
+        );
+        setAlertModal(true);
+      }
+    }
+  }, [robot]);
 
+  const closeModal = () => {
+    setAlertModal(false);
+  };
   return (
     <Box
       sx={{
@@ -103,7 +157,7 @@ export default function ConferenceAppBar({ AppBarHeight }) {
               spacing={2}
             >
               <Image src="/images/PureLogo.png" width={50} />
-              {console.log(robot, "robot**")}
+
               {robot?.map((item) => (
                 <Stack
                   direction="row"
@@ -117,13 +171,27 @@ export default function ConferenceAppBar({ AppBarHeight }) {
                     width={18}
                     fit={"contain"}
                   />
-                  <Typography variant="caption" color="success.main" >
+                  <Typography variant="caption" color="success.main">
                     {item?.robot.battery_charge}%
                   </Typography>
                 </Stack>
               ))}
+              <Box
+              // sx={{border:'1px solid black',borderRadius:30,width:36,height:36}}
+              >
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  sx={{ mr: 2, color: theme.palette.secondary.contrastText }}
+                  onClick={() => takeATour(true)}
+                >
+                  <Image src="/images/takeatour.png" width={50} />
+                </IconButton>
+              </Box>
             </Stack>
-            <IconButton
+            {/* <IconButton
               size="large"
               edge="start"
               color="inherit"
@@ -132,10 +200,20 @@ export default function ConferenceAppBar({ AppBarHeight }) {
               onClick={() => setOpenMenu(true)}
             >
               <MenuIcon />
-            </IconButton>
+            </IconButton> */}
           </Stack>
         </Toolbar>
         <DrawerRight OpenMenu={OpenMenu} setOpenMenu={setOpenMenu} />
+        <VideoAlert
+          open={alertModal}
+          onClose={closeModal}
+          message={alertMessage}
+        />
+        <ReadyStateDialogBox
+          handleClickOpen={handleClickOpen}
+          handleClose={handleClose}
+          open={readyState}
+        />
       </CustomAppBar>
     </Box>
   );

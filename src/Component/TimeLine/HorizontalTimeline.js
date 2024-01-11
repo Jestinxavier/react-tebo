@@ -25,7 +25,7 @@ export default function HorizontalTimeline({status}) {
   //   userApproval:true,
   // })
   return (
-    <Box width="500px">
+    <Box width={{md:"500px",xs:'350px'}}>
     <Timeline position="alternate">
       <TimelineItem>
         {/* <TimelineOppositeContent

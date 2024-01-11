@@ -55,7 +55,7 @@ function ListTicket({ index, data }) {
           </Typography>
           <Typography variant="p" sx={{ fontWeight: "bold",pl:2 }}>
             {" "}
-            {data.ticket} ?
+            {data.ticket} 
           </Typography>
         </Stack>
         <Stack flexDirection="row">
@@ -75,7 +75,7 @@ function ListTicket({ index, data }) {
           >
             A.{" "}
           </Typography>
-          {data?.answers?.length > 0?<Typography variant="p" sx={{ color: "gray", pl: 5,pr: 5,pb: 5,pt: 2 }}>
+          {data?.answers?.length > 0?<Typography variant="p" sx={{ color: "gray", pl: 2,pr: 5,pb: 5,pt: 2 }}>
             {" "}
             {data?.answers[0]?.answer}
           </Typography>:

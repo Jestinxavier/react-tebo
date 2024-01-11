@@ -1,22 +1,30 @@
 import PropTypes from "prop-types";
 import { useFormContext, Controller } from "react-hook-form";
 import { TextField } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DesktopDatePicker } from "@mui/x-date-pickers";
-
+import dayjs from 'dayjs';
 RHFDatePicker.propTypes = {
   name: PropTypes.string,
   helperText: PropTypes.node,
 };
 
-export default function RHFDatePicker({ name, label,helperText, ...other }) {
-  const { control, setValue } = useFormContext(); // Added setValue
-  const [value, setValueState] = useState(new Date());
+export default function RHFDatePicker({ name, label,helperText,value, ...other }) {
+  const { control, setValue,watch } = useFormContext(); // Added setValue
+ const getValue = watch()
+  const [values, setValueState] = useState(null);
+  useEffect(() => {  
+    setValueState(dayjs(getValue[name]).$d)
+  }, [getValue])
+
+  
+  console.log(values,"value ", getValue[name],dayjs(getValue[name]).$d)
 
   return (
     <DesktopDatePicker
       label={label}
-      value={value}
+      value={values}
+      defaultValue={dayjs(getValue[name])}
       fullWidth
       sx={{
         width: "100%",
@@ -39,7 +47,7 @@ export default function RHFDatePicker({ name, label,helperText, ...other }) {
               fullWidth
               {...other}
               {...field}
-              value={value} // Pass the value here
+              value={values} // Pass the value here
               error={!!error}
               helperText={error ? error?.message : helperText}
               name="dateTime"

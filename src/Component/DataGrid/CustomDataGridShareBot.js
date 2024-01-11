@@ -89,18 +89,25 @@ export default function CustomDataGridShareBot({ ShareRobotList }) {
     {
       field: "name",
       headerName: "Name",
-      flex: 1,
+      // flex: 1,
+      
+      width: 120,
     },
     {
       field: "location_name",
       headerName: "Location",
-      flex: 1,
+      // flex: 1,
+      width: 120,
+
+      
     },
 
     {
       field: "robotName",
       headerName: "Tebo Name",
-      flex: 1,
+      // flex: 1,
+      width: 120,
+
     },
     // {
     //   field: "robotId",
@@ -112,7 +119,9 @@ export default function CustomDataGridShareBot({ ShareRobotList }) {
       field: "Status",
       headerName: "Status",
       type: "number",
-      flex: 1,
+      // flex: 1,
+      width: 120,
+
       renderCell: (parms) => {
         return (
           <IconButton
