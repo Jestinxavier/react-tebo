@@ -14,6 +14,7 @@ import Swal from "sweetalert2";
 import { SocketContext, } from "../../../Context/SocketContext";
 import { dispatch } from "../../../redux/store";
 import { getRobot } from "../../../redux/slices/robot";
+import { getUserDetails } from "../../../redux/slices/userdetail";
 const useStyles = makeStyles((theme) => {
   console.log(theme, "theme,****123");
   return {
@@ -88,23 +89,41 @@ export default function SettingsCard({ robotData, index }) {
       },
     ];
 
-    if (robotData.robot.map_status === "no map") {
+    if (
+      robotData.robot.map_status === "map exists" ||
+      robotData.robot.map_status === "finished mapping" ||
+      robotData.robot.map_status === "saving map"
+    ){
+      let filterIcon = iconSet.filter(
+        
+        (item) => item.iconName !== "tabler:map-plus" 
+        
+      );
+      console.log({filterIcon})
+      // If the condition is not met, set the original iconSet
+      setSettingsIconData(filterIcon);
+    }
+    // if (robotData.robot.map_status === "no map") 
+   else {
       // Filter the iconSet array to remove the object with iconName "tabler:map-off"
       let filterIcon = iconSet.filter(
-        (item) => item.iconName !== "tabler:map-off"
+        (item) =>  item.iconName !== "tabler:map-off"
+
       );
       console.log("filterIcon================filterIcon====================");
       console.log(filterIcon);
       console.log("====================================");
       setSettingsIconData(filterIcon);
-    } else if (robotData.robot.map_status === "map exists" ||"finished mapping" ||'saving map') {
-      let filterIcon = iconSet.filter(
-        (item) => item.iconName !== "tabler:map-plus"
-      );
-      // If the condition is not met, set the original iconSet
-      setSettingsIconData(filterIcon);
-    }
+    } 
   }, [robotData]);
+
+  useEffect(() => {
+    dispatch(getUserDetails());
+    dispatch(getRobot())
+  }, [])
+  
+
+
 
   return (
     <Box>

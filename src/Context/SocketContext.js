@@ -35,6 +35,7 @@ const ContextProvider = ({ children }) => {
   const otherUserId = useRef(null);
 
   const [obstacle, setObstacle] = useState(false);
+  const [obstacleData, setObstacleData] = useState("");
   const [mapState, setMapState] = useState(null);
   const [allMapState, setAllMapState] = useState(null);
 
@@ -125,25 +126,19 @@ const ContextProvider = ({ children }) => {
   );
 
   useEffect(() => {
-    if (callerId) {
-      console.log("====================================");
-
-      console.log(callerId, "callerId,");
-      console.log("====================================");
-      // "https://tebo.devlacus.com"
-      const socketInstance = io(
-        // "http://localhost:5000",
-        "https://tebo.devlacus.com",
-        {
-          // transports: ["websocket"],
-          query: {
-            callerId,
-          },
-        }
-      );
-      setSocket(socketInstance);
-    }
-  }, [callerId]);
+    // "https://tebo.devlacus.com"
+    const socketInstance = io(
+      // "http://localhost:5000",
+      "https://tebo.devlacus.com",
+      {
+        // transports: ["websocket"],
+        query: {
+          callerId,
+        },
+      }
+    );
+    setSocket(socketInstance);
+  }, []);
 
   useEffect(() => {
     console.log(remoteStream, "remoteStream");
@@ -248,10 +243,39 @@ const ContextProvider = ({ children }) => {
       };
 
       socket?.on("obstacleDetected", (data) => {
-        if (data == "1") {
-          setObstacle(true);
-        } else {
+        if (data == "0") {
+          setObstacleData("");
           setObstacle(false);
+        } else {
+          
+          switch (data) {
+            case "0":
+              setObstacleData("");
+              break;
+            case "1":
+              setObstacleData(
+                "Obstacle detected on the front side of the robot.You can't move."
+              );
+              break;
+            case "2":
+              setObstacleData(
+                "Obstacle detected on the right side of the robot.You can't move."
+              );
+              break;
+            case "3":
+              setObstacleData(
+                "Obstacle detected on the left side of the robot.You can't move."
+              );
+              break;
+            case "4":
+              setObstacleData(
+                "Obstacle detected on the back side of the robot.You can't move."
+              );
+              break;
+            default:
+              break;
+          }
+          setObstacle(true);
         }
       });
       socket?.on("readyState", (data) => {
@@ -292,7 +316,7 @@ const ContextProvider = ({ children }) => {
 
     socket?.on("mapStatusBroadcastMessage", (data) => {
       console.log(data, "data****");
-      setAllMapState(data);
+      setAllMapState((prevState) => ({ ...prevState, ...data }));
     });
     return () => {
       socket?.off("newCall");
@@ -786,6 +810,7 @@ const ContextProvider = ({ children }) => {
         PageTrigger,
         setPageTrigger,
         myId,
+        obstacleData,
         addUserId,
         disconnectUser,
         sendMessage,

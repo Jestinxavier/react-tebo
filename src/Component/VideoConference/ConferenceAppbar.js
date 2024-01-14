@@ -35,11 +35,11 @@ export default function ConferenceAppBar({ AppBarHeight }) {
   const teboId = searchParams.get("toId");
   const sharedRobot = searchParams.get("sharedRobot");
   const [readyState, setReadyState] = React.useState(true);
-  const {readyStateMqtt} = React.useContext(SocketContext);
+  const { readyStateMqtt } = React.useContext(SocketContext);
   const { user } = useAuthContext();
   const robotList = useSelector((state) => state?.robot?.robots?.robots);
   const sharedList = useSelector((state) => state?.robot?.sharedRobot?.robots);
-  
+
   const handleClickOpen = () => {
     setReadyState(true);
   };
@@ -110,11 +110,11 @@ export default function ConferenceAppBar({ AppBarHeight }) {
     console.log({ user });
   }, []);
   React.useEffect(() => {
-   if(!readyStateMqtt){
-    setReadyState(false)
-   }
+    if (!readyStateMqtt) {
+      setReadyState(false);
+    }
   }, [readyStateMqtt]);
-  
+
   React.useEffect(() => {
     if (robot.length > 0) {
       console.log("robot[0]?.robot?.map_status", robot[0]?.robot?.map_status);
@@ -126,6 +126,13 @@ export default function ConferenceAppBar({ AppBarHeight }) {
       }
     }
   }, [robot]);
+
+  React.useEffect(() => {
+    if (!readyState) {
+      setAlertMessage("Tebo is ready to use");
+      setAlertModal(true);
+    }
+  }, [readyState]);
 
   const closeModal = () => {
     setAlertModal(false);

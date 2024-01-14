@@ -9,7 +9,8 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 import { CardMedia } from "@mui/material";
-import LinearProgress from '@mui/material/LinearProgress';
+import LinearProgress from "@mui/material/LinearProgress";
+import VideoAlert from "../Modal/VideoAlert";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -24,11 +25,13 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+
 export default function ReadyStateDialogBox({
   handleClickOpen,
   handleClose,
   open,
 }) {
+
   return (
     <React.Fragment>
       <BootstrapDialog
@@ -36,10 +39,10 @@ export default function ReadyStateDialogBox({
         aria-labelledby="customized-dialog-title"
         open={open}
       >
-        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Tebo Preparations: Environment Check Before Activation
-        </DialogTitle>
-        <IconButton
+        {/* <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+          Tebo Preparations
+        </DialogTitle> */}
+        {/* <IconButton
           aria-label="close"
           onClick={handleClose}
           sx={{
@@ -50,21 +53,20 @@ export default function ReadyStateDialogBox({
           }}
         >
           <CloseIcon />
-        </IconButton>
+        </IconButton> */}
         <DialogContent dividers>
           <Typography gutterBottom>
-            The robot is getting ready to start. It's carefully looking around
-            and checking the environment to make sure everything is good to go."
+            Hold on.TEBO is getting ready.
           </Typography>
           <CardMedia
-              component="img"
-              alt="green iguana"
-              height="140"
-              // image={data.botImage}
-              image='/images/robot.gif'
-              sx={{ flex: 1,objectFit: 'contain' }}
-              />
-               <LinearProgress />
+            component="img"
+            alt="green iguana"
+            height="140"
+            // image={data.botImage}
+            image="/images/robot.gif"
+            sx={{ flex: 1, objectFit: "contain" }}
+          />
+          <LinearProgress />
         </DialogContent>
         <DialogActions>
           {/* <Button autoFocus onClick={handleClose}>
@@ -72,6 +74,7 @@ export default function ReadyStateDialogBox({
           </Button> */}
         </DialogActions>
       </BootstrapDialog>
+
     </React.Fragment>
   );
 }

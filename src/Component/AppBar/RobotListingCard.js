@@ -1,10 +1,11 @@
-import React, { useState, useCallback,useContext } from "react";
+import React, { useState, useCallback, useContext,useEffect } from "react";
 import {
   Card,
   CardMedia,
   Typography,
   CardActionArea,
   Skeleton,
+  Tooltip,
 } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -16,10 +17,10 @@ import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import IconBtn from "../CommonComponent/IconBtn";
 import ViewRobotModal from "../ViewRobotModel/ViewRobotModel";
-import ShareBotDialogs from "../../Component/Modal/ShareBotDialogs"
+import ShareBotDialogs from "../../Component/Modal/ShareBotDialogs";
 import { useAuthContext } from "../../auth/useAuthContext";
 import { SocketContext } from "../../Context/SocketContext";
-import {useSnackbar} from '../MUI/snackbar'
+import { useSnackbar } from "../MUI/snackbar";
 import { dispatch } from "../../redux/store";
 import { getProducts, getSharedRobotList } from "../../redux/slices/robot";
 const CustomCard = styled(Card)(({ theme }) => ({
@@ -35,17 +36,16 @@ const CustomCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-export default function RobotListingCard({ data,sharedRobot }) {
+export default function RobotListingCard({ data, sharedRobot }) {
   const [model, setModel] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false)
-  const [robotId, setRobotId] = useState(null)
-  const navigate = useNavigate()
-  const {user} = useAuthContext()
-  const {processCall, addUserId, callUser } = useContext(SocketContext);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [robotId, setRobotId] = useState(null);
+  const [online, setOnline] = useState(false)
+  const navigate = useNavigate();
+  const { user } = useAuthContext();
+  const { processCall, addUserId, callUser } = useContext(SocketContext);
   const searchParams = new URLSearchParams();
- const {enqueueSnackbar} = useSnackbar()
-
-
+  const { enqueueSnackbar } = useSnackbar();
 
   // const connectRobot = (myid, toId) => {
   //   searchParams.set("myid", myid);
@@ -56,13 +56,11 @@ export default function RobotListingCard({ data,sharedRobot }) {
   //     searchParams.set("sharedRobot", true);
   //   }
 
-
   //   addUserId(myid);
   //   callUser(toId)
 
   //   navigate(`/conference-room?${searchParams.toString()}`);
   // };
-
 
   const connectRobot = async (myid, toId) => {
     searchParams.set("sharedRobot", false);
@@ -76,11 +74,14 @@ export default function RobotListingCard({ data,sharedRobot }) {
 
     try {
       const data = await addUserId(myid);
-  
+
       console.log({ data: "mandan", success: data });
-  
+
       if (data?.error) {
-      enqueueSnackbar('You cannot connect to Tebo right now, another person is currently using Tebo.',{variant:'error'});
+        enqueueSnackbar(
+          "You cannot connect to Tebo right now, another person is currently using Tebo.",
+          { variant: "error" }
+        );
         console.log({ data: "mandan", success: data.error });
       } else {
         // Uncomment the following lines if you want to perform additional actions on success
@@ -94,71 +95,81 @@ export default function RobotListingCard({ data,sharedRobot }) {
     }
   };
   const handleConnect = () => {
-    connectRobot(user?.random_id, data?.robot?.uuid);
+    
+    if (data?.robot_online_status && data.screen_online_status) {
+      connectRobot(user?.random_id, data?.robot?.uuid);
     // processCall()
+    }else{
+      enqueueSnackbar("The Tebo is not Online.", { variant: "error" });
+    }
   };
-  const shareRobot = (id)=>{
-    setRobotId(id)
-    setModalOpen(true)
-
-  }
+  const shareRobot = (id) => {
+    setRobotId(id);
+    setModalOpen(true);
+  };
   const theme = useTheme();
   const ICON_COLOR = theme.palette.text.secondary;
 
-  const handleButton = useCallback((data) => {
-    console.log(data.robot_online_status, data.screen_online_status
-    )
-    if(data.robot_online_status&&data.screen_online_status){
-    setModel(true);
-    }else{
-      enqueueSnackbar('The Tebo is not Online.',{variant:'error'});
-      dispatch(getProducts())
-      dispatch(getSharedRobotList())
-    }
-  }, [setModel]);
-
+  const handleButton = useCallback(
+    (data) => {
+      console.log(data?.robot_online_status, data.screen_online_status);
+      if (data?.robot_online_status && data.screen_online_status) {
+        setModel(true);
+      } else {
+        enqueueSnackbar("The Tebo is not Online.", { variant: "error" });
+        dispatch(getProducts());
+        dispatch(getSharedRobotList());
+      }
+    },
+    [setModel]
+  );
 
   const imageData = [
     {
-      percentage: "100" ,
+      percentage: "100",
       image: "/images/hundredPercentage.png",
     },
     {
       percentage: "90",
-      image:"/images/ninetypercentage.png"
+      image: "/images/ninetypercentage.png",
     },
     {
-      percentage: "80" ,
-      image:"/images/Eightypercentage.png"
-
-      
+      percentage: "80",
+      image: "/images/Eightypercentage.png",
     },
     {
-      percentage: "30" ,
-      image:"/images/Thirtypercentage.png"
+      percentage: "30",
+      image: "/images/Thirtypercentage.png",
     },
     {
-      percentage: "20" ,
-      image:"/images/Twintypercentage.png"
+      percentage: "20",
+      image: "/images/Twintypercentage.png",
     },
     {
-      percentage: "10" ,
-      image:"/images/tenpercentage.png"
+      percentage: "10",
+      image: "/images/tenpercentage.png",
     },
     {
-      percentage: "5" ,
-      image:"/images/tenpercentage.png"
+      percentage: "5",
+      image: "/images/tenpercentage.png",
     },
     {
-      percentage: "0" ,
-      image:"/images/tenpercentage.png"
+      percentage: "0",
+      image: "/images/tenpercentage.png",
     },
-  ]
+  ];
+useEffect(() => {
+  if((data.robot_online_status && data.screen_online_status)===1 ){
+    setOnline(true)
+  }
+}, [data])
 
   const imageFilter = (data) => {
-    let filterData = imageData.filter((item) => Number(item.percentage) <= data);
-    
-   return filterData[0].image
+    let filterData = imageData.filter(
+      (item) => Number(item.percentage) <= data
+    );
+
+    return filterData[0].image;
   };
   return (
     <Box sx={{ maxWidth: "290px" }}>
@@ -176,22 +187,45 @@ export default function RobotListingCard({ data,sharedRobot }) {
 
           justifyContent: "space-between",
         }}
-        
       >
-       
         <CardActionArea onClick={() => handleButton(data)}>
           <Box sx={{ position: "relative" }}>
-            
-           <CardMedia
+            {console.log({ onlineData: data })}
+            {online?<Tooltip title="Online" arrow>
+            <Box
+              sx={{
+                background: "#38e053",
+                width: "10px",
+                height: "10px",
+                position: "absolute",
+                left: "13px",
+                top: "11px",
+                borderRadius: "10px",
+              }}
+            ></Box>
+            </Tooltip>:<Tooltip title="Offline" arrow>
+            <Box
+              sx={{
+                background: "#adadad",
+                width: "10px",
+                height: "10px",
+                position: "absolute",
+                left: "13px",
+                top: "11px",
+                borderRadius: "10px",
+              }}
+            ></Box>
+            </Tooltip>}
+            <CardMedia
               component="img"
               alt="green iguana"
               // height="140"
               // image={data.botImage}
-              image='/images/robot.gif'
+              image="/images/robot.gif"
               sx={{ flex: 1 }}
-              />
-           
-             {/* <Skeleton variant="rectangular" width={"100%"} height={261} /> */}
+            />
+
+            {/* <Skeleton variant="rectangular" width={"100%"} height={261} /> */}
 
             <Box
               display="flex"
@@ -209,9 +243,9 @@ export default function RobotListingCard({ data,sharedRobot }) {
             >
               {/* data?.robot?.battery_charge? */}
               {/* <Box className="mavi" sx={{ width: "100%" }}> */}
-              {data?.robot?.battery_charge? (
+              {data?.robot?.battery_charge ? (
                 <Image
-                  src={'/images/spark-green.png'}
+                  src={"/images/spark-green.png"}
                   width={18}
                   fit={"contain"}
                   alignItems="flex-end"
@@ -222,12 +256,15 @@ export default function RobotListingCard({ data,sharedRobot }) {
               )}
               <Box>
                 <Box sx={{ height: "30px", pb: "5px" }}>
-                {data?.robot?.battery_charge? (
-                <Image
-                  src={imageFilter(data?.robot.battery_charge)}
-                  width={18} fit={"contain"}
-                />):<></>}
-                  
+                  {data?.robot?.battery_charge ? (
+                    <Image
+                      src={imageFilter(data?.robot.battery_charge)}
+                      width={18}
+                      fit={"contain"}
+                    />
+                  ) : (
+                    <></>
+                  )}
                 </Box>
               </Box>
               <Box sx={{ height: "10px" }}>
@@ -247,7 +284,7 @@ export default function RobotListingCard({ data,sharedRobot }) {
             // background: theme.palette.ButtonColor[900],
             display: "flex",
             justifyContent: "center",
-            alignItems:'flex-end',
+            alignItems: "flex-end",
             flex: 1,
             padding: "16px",
           }}
@@ -270,7 +307,7 @@ export default function RobotListingCard({ data,sharedRobot }) {
           />
           <IconBtn
             label="my button"
-            onClick={()=>shareRobot(data.robot.uuid)}
+            onClick={() => shareRobot(data.robot.uuid)}
             icon="ic:sharp-share"
             buttonStyle={{
               border: "solid 1px ",
@@ -290,18 +327,45 @@ export default function RobotListingCard({ data,sharedRobot }) {
         sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
       >
         <Box sx={{ display: "flex" }}>
-          <Typography sx={{fontWeight:'bolder',color:theme.palette.text.secondary}}>Robot: {data?.nickname}</Typography>
+          <Typography
+            sx={{ fontWeight: "bolder", color: theme.palette.text.secondary }}
+          >
+            Robot: {data?.nickname}
+          </Typography>
           {/* <Typography sx={{ fontWeight: "bolder" }}></Typography> */}
         </Box>
-        <Box sx={{ display: "flex",textAlign:'center'}}>
-         { !sharedRobot&&<Typography><Box component="span" sx={{fontWeight:'bolder',color:theme.palette.text.secondary}}>Location: </Box> { data?.robot?.ownedrobot[0]?.location_name?.match(/, (.*$)|- (.*)$/)?.slice(1, 5)}</Typography> }         
+        <Box sx={{ display: "flex", textAlign: "center" }}>
+          {!sharedRobot && (
+            <Typography>
+              <Box
+                component="span"
+                sx={{
+                  fontWeight: "bolder",
+                  color: theme.palette.text.secondary,
+                }}
+              >
+                Location:{" "}
+              </Box>{" "}
+              {data?.robot?.ownedrobot[0]?.location_name
+                ?.match(/, (.*$)|- (.*)$/)
+                ?.slice(1, 5)}
+            </Typography>
+          )}
         </Box>
-        
       </Box>
-      <ViewRobotModal data={data} model={model} setModel={setModel} sharedRobot={sharedRobot} />
+      <ViewRobotModal
+        data={data}
+        model={model}
+        setModel={setModel}
+        sharedRobot={sharedRobot}
+      />
 
-      <ShareBotDialogs modalOpen={modalOpen} setModalOpen={setModalOpen} nikName={data?.nickname} robotId={robotId} />
-
+      <ShareBotDialogs
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        nikName={data?.nickname}
+        robotId={robotId}
+      />
     </Box>
   );
 }

@@ -52,7 +52,7 @@ export default function VideoPlayerForConference({
     remoteStream,
     processCall,
     obstacle,
-    setObstacle,readyState
+    setObstacle,readyState,obstacleData,
   } = useContext(SocketContext);
 
   const handleUp = (isPressed) => {
@@ -208,14 +208,14 @@ export default function VideoPlayerForConference({
 
   useEffect(() => {
     if (obstacle) {
-      enqueueSnackbar("There is an obstacle you cant move", {
+      enqueueSnackbar(obstacleData, {
         variant: "error",onClose:()=>{
-          console.log("im sorry");
+         
           setObstacle(false)
         }
       });
     }
-  }, [obstacle]);
+  }, [obstacle,obstacleData]);
 
   return (
     <div
