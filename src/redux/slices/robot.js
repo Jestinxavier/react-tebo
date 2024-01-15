@@ -24,8 +24,9 @@ const initialState = {
   product: null,
   shareRobotList: [],
   callAnalytics: null,
+  totalAnalytics: null,
   takeAtour: false,
-  speedControl:1,
+  speedControl: 1,
   checkout: {
     activeStep: 0,
     cart: [],
@@ -85,6 +86,9 @@ const slice = createSlice({
     setCallAnalytics(state, action) {
       state.isLoading = false;
       state.callAnalytics = action.payload;
+    },
+    setTotalAnalytics(state, action) {
+      state.totalAnalytics = action.payload;
     },
     geSingletRobot(state, action) {
       state.isLoading = false;
@@ -339,7 +343,7 @@ export function getCallLogs() {
         let result = response?.data?.data?.logs?.map((res) => ({
           ...res,
           uuid: res.robot?.uuid,
-          nickname:res?.robot?.owned_robot[0]?.nickname,
+          nickname: res?.robot?.owned_robot[0]?.nickname,
           owner: response?.data?.data?.owner?.name,
           startDate: formatDateToYYYYMMDD(res?.local_time?.local_end),
           startTime: formatDateTohmms(res?.local_time?.local_start),
@@ -350,7 +354,7 @@ export function getCallLogs() {
           used_by_shared_owner: res.used_by_shared_owner,
           //  session_start
         }));
-        
+
         console.log(result, "response.data.data");
 
         if (result) {
@@ -431,6 +435,7 @@ export function getCallAnalytics() {
     try {
       const response = await axios.post("/owner/call-analytics");
       if (response) {
+        let totalAnalytics = response?.data?.data;
         let filterAnalyticData =
           response?.data?.data?.calls_count_to_robots.map(
             (item, index) => item.count
@@ -441,6 +446,7 @@ export function getCallAnalytics() {
         dispatch(
           slice.actions.setCallAnalytics({ filterAnalyticData, xaxisData })
         );
+        dispatch(slice.actions.setTotalAnalytics(totalAnalytics))
       }
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -452,9 +458,7 @@ export function TourController(data) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-        dispatch(
-          slice.actions.setTour(data)
-        );
+      dispatch(slice.actions.setTour(data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -476,9 +480,7 @@ export function postSpeed(data) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      dispatch(
-        slice.actions.setSpeed(data)
-      );
+      dispatch(slice.actions.setSpeed(data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
