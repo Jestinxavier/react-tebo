@@ -128,8 +128,8 @@ const ContextProvider = ({ children }) => {
   useEffect(() => {
     // "https://tebo.devlacus.com"
     const socketInstance = io(
-      // "http://localhost:5000",
-      "https://tebo.devlacus.com",
+      "http://localhost:5000",
+      // "https://tebo.devlacus.com",
       {
         // transports: ["websocket"],
         query: {
@@ -140,9 +140,7 @@ const ContextProvider = ({ children }) => {
     setSocket(socketInstance);
   }, []);
 
-  useEffect(() => {
-    console.log(remoteStream, "remoteStream");
-  }, [remoteStream]);
+
 
   async function processAccept() {
     peerConnection.current.setRemoteDescription(
@@ -737,6 +735,11 @@ const ContextProvider = ({ children }) => {
     socket?.emit("tilt-camera", mqttData);
   };
 
+  const sentZoomCredentials = (data,userId) => {
+    console.log("hhhh",data,userId);
+    let zoomData = {data,id:userId}
+    socket?.emit("zoomData", zoomData);
+  };
   const setMqttRequestForGotoHome = (data, Id) => {
     let mqttData = {
       data,
@@ -773,6 +776,7 @@ const ContextProvider = ({ children }) => {
       value={{
         alertWarningOnCall,
         obstacle,
+        sentZoomCredentials,
         allMapState,
         call,
         callAccepted,

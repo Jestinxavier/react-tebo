@@ -39,6 +39,8 @@ import DonutGraph from "../../Component/Dashboard/DonutGraph";
 import PieGraph from "../../Component/Dashboard/PieGraph";
 import AreaGraph from "../../Component/Dashboard/AreaGraph";
 import CallsCountToRobots from "../../Component/Dashboard/CallsCountToRobots";
+import CallsCountToRobotsClone from "../../Component/Dashboard/CallsCountToRobotsClone";
+import MonthlyReport from "../../Component/Dashboard/MonthlyReport";
 
 function Analytics() {
   const {
@@ -66,8 +68,8 @@ function Analytics() {
       />
       <CustomContainer>
         <Heading>Analytics</Heading>
-        <Container sx={{ my: 10 }}>
-          <Grid container spacing={3}>
+        <Container sx={{ my: 10, }}>
+          <Grid container spacing={3}  sx={{justifyContent: "space-around",flexBasis:'32%',}}>
             {/* <Grid item xs={12} md={6}>
               <Card dir="ltr">
                 <CardHeader title="Battery Charger Analytics" />
@@ -77,8 +79,7 @@ function Analytics() {
               </Card>
             </Grid> */}
             {console.log({ robotState })}
-            <Grid item xs={12} md={4} spacing={3}>
-              <TotalRobot ownedRobotsCount={robotState?.owned_robots_count} />
+            <Grid item xs={12} md={4} spacing={1}>
               <Box sx={{ mt: 3 }}>
                 <DonutGraph
                   ownedRobotsCount={robotState?.total_calls_from_beginning}
@@ -90,7 +91,37 @@ function Analytics() {
                 />
               </Box>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={3} >
+              <CallsCountToRobotsClone
+                robotsData={robotState?.calls_count_to_robots}
+                title={"Call To Owned Robots"}
+                subheader={
+                  "The number of calls made to each robots."
+                }
+              />
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <AreaGraph
+                title={"Monthly Call Count Overview"}
+                subheader={
+                  "The number of calls made this month."
+                }
+                graphData={robotState?.line_graph?.graph_data}
+              />
+            </Grid>
+         
+            <Grid item xs={12} md={4} spacing={3} sx={{my:5}}>
+              <TotalRobot ownedRobotsCount={robotState?.owned_robots_count} />
+            </Grid>
+            <Grid item xs={12} md={8} spacing={3} sx={{my:5}}>
+              <MonthlyReport ownedRobotsCount={robotState?.owned_robots_count}  title={"Monthly Call Activity Overview"}
+                subheader={
+                  "The number of calls made this month"
+                }
+                callInAnInterval={robotState?.calls_within_an_interval}
+                 />
+            </Grid>
+            {/* <Grid item xs={12} md={6}>
               <PieGraph
                 ownedRobotsCount={robotState?.calls_within_an_interval}
                 title={"Monthly Call Activity Overview"}
@@ -99,22 +130,7 @@ function Analytics() {
                 }
                 graphLabel={["Completed Calls", "Incomplete Calls"]}
               />
-            </Grid>
-            <Grid item xs={12} md={12}>
-              <AreaGraph
-                title={"Monthly Call Count Overview"}
-                subheader={
-                  "The number of calls made this month or within a specific interval."
-                }
-                graphData={robotState?.line_graph?.graph_data}
-              />
-            </Grid>
-            <Grid item xs={12} md={12}>
-              <CallsCountToRobots robotsData={robotState?.calls_count_to_robots} title={"Monthly Call Count Overview"}
-                subheader={
-                  "The number of calls made this month or within a specific interval."
-                }/>
-            </Grid>
+            </Grid> */}
 
             {/* <Grid item xs={12} md={12}>
               <Card dir="ltr">

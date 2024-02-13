@@ -31,11 +31,19 @@ export default function AreaGraph({ title, subheader, graphData }) {
   }, [graphData]);
 
   const chartOptions = useChart({
-    colors: [theme?.palette?.success?.main, theme?.palette?.warning?.main],
+    colors: [theme?.palette?.blueGray[700], theme?.palette?.warning?.main],
 
     xaxis: {
       type: "datetime",
       categories: graphDate,
+      title: {
+        text: 'Date',
+      },
+    },
+    yaxis: {
+      title: {
+        text: 'Calls',
+      },
     },
     tooltip: {
       x: {
@@ -45,8 +53,8 @@ export default function AreaGraph({ title, subheader, graphData }) {
   });
 
   return (
-    <Card>
-      <CardHeader title={title} subheader={subheader} />
+    <Card sx={{maxHeight: '800px',mt:3,minHeight:'500px'}}>
+      <CardHeader title={title} subheader={subheader} sx={{mb:3}} />
       {graphDate?.length > 0 && (
         <Chart
           type="area"

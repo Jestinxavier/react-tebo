@@ -42,19 +42,20 @@ export default function ReadyStateDialogBox({
         {/* <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
           Tebo Preparations
         </DialogTitle> */}
-        {/* <IconButton
+        <IconButton
           aria-label="close"
           onClick={handleClose}
           sx={{
             position: "absolute",
             right: 8,
             top: 8,
+           
             color: (theme) => theme.palette.grey[500],
           }}
         >
           <CloseIcon />
-        </IconButton> */}
-        <DialogContent dividers>
+        </IconButton>
+        <DialogContent sx={{ mt:4,}} dividers>
           <Typography gutterBottom>
             Hold on.TEBO is getting ready.
           </Typography>

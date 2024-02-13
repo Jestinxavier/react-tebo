@@ -71,7 +71,7 @@ export default function DonutGraph({
 
   const chartOptions = useChart({
     labels:label,
-    colors: [theme?.palette?.success?.main, theme?.palette?.warning?.main],
+    colors: [theme?.palette?.blueGray[700], theme?.palette?.secondary.main],
 
     stroke: {
       show: false,

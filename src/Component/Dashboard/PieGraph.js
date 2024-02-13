@@ -89,10 +89,10 @@ export default function PieGraph({
   });
 
   return (
-    <Card>
-      <CardHeader title={title} subheader={subheader} />
+    <Card sx={{mt: 3,}}>
+      <CardHeader  title={title} subheader={subheader} />
       
-      <StyledChart dir="ltr">
+      <StyledChart dir="ltr" >
         {series.length > 0 && (
           <Chart
             type="pie"

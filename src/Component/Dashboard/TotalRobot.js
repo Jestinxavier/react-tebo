@@ -9,6 +9,7 @@ function TotalRobot({ownedRobotsCount}) {
         justifyContent="space-around"
         alignItems="space-around"
         spacing={2}
+        sx={{my:6,py:2}}
       >
         <Box>
           <CardMedia

@@ -18,9 +18,9 @@ export default function CallsCountToRobots({ robotsData, title, subheader }) {
     <Card sx={{ mt: 3, p: 2 }}>
       <CardHeader title={title} subheader={subheader} />
       <Grid container spacing={3} sx={{mt: 3}}>
-        {Data.map((item) => (
+        {Data?.map((item) => (
           <Grid item xs={12} md={3}>
-            <Card sx={{ p: 5 }}>
+            <Card sx={{ p: 5,maxHeight: '500px', minHeight: '500px' }}>
               <Stack
                 direction="column"
                 justifyContent="center"

@@ -24,6 +24,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@zegocloud/zego-uikit-prebuilt": "^1.8.10",
+    "@zoom/videosdk": "^1.10.7",
     "apexcharts": "^3.44.0",
     "axios": "^1.2.3",
     "date-fns": "^2.30.0",
