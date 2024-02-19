@@ -27,6 +27,7 @@ const initialState = {
   totalAnalytics: null,
   takeAtour: false,
   speedControl: 1,
+muteMic: true,
   checkout: {
     activeStep: 0,
     cart: [],
@@ -187,7 +188,9 @@ const slice = createSlice({
       const step = action.payload;
       state.checkout.activeStep = step;
     },
-
+muteToggle(state, action) {
+      state.muteMic = !state.muteMic;
+    },
     increaseQuantity(state, action) {
       const productId = action.payload;
 
@@ -244,6 +247,7 @@ export default slice.reducer;
 // Actions
 export const {
   getCart,
+muteToggle,
   addToCart,
   resetCart,
   gotoStep,
@@ -484,5 +488,11 @@ export function postSpeed(data) {
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
+  };
+}
+
+export function muteFunctionality() {
+  return async (dispatch) => {
+    dispatch(slice.actions.muteToggle());
   };
 }
