@@ -12,6 +12,8 @@ import { SocketContext } from "../../Context/SocketContext";
 import { Box } from "@mui/material";
 import Iconify from "../../Component/MUI/iconify";
 import {callEndedInfo} from "../../Api/callApi"
+ import { muteFunctionality,leaveMeeting } from "../../redux/slices/robot";
+import { dispatch } from "../../redux/store";
 
 function VideoStreamControllerButtons({
   CONTROLLER_ICON_BORDER_RADIUS,
@@ -76,22 +78,26 @@ const MyId = searchParms.get("myid")
   
     if (mute) {
       setMuteButtonName("ic:sharp-mic");
-      toggleMic()
+      // toggleMic()
+// stream.muteAudio()
+      dispatch(muteFunctionality());
       setMute(!mute);
     }else{
       setMuteButtonName("material-symbols:mic-off");
       setMute(!mute);
-      toggleMic()
+      dispatch(muteFunctionality());
+      // stream.unmuteAudio()
+      // toggleMic()
     }
 
   };
 
   const callControl = () => {
-    console.log("mute");
+   
     
     setGotoHome(!gotoHome)
     // setMqttRequestForGotoHome(!gotoHome,toIdUUID)
-
+    dispatch(leaveMeeting())
     setMqttRequestForMeetingEnd(!docking,toIdUUID,MyId)
     callEndedInfo(callerApiId)
     

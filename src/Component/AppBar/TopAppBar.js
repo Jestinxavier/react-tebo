@@ -32,7 +32,6 @@ import iconify from "../iconify";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => {
-  console.log(theme, "theme,****123");
   return {
     iconifycolor: {
       "&:hover": {
@@ -95,7 +94,6 @@ function TopAppBar({ open, setOpen, handleDrawerOpen, handleDrawerClose }) {
   const theme = useTheme();
   const {user} = useAuthContext()
   const navigate = useNavigate()
-console.log(user,"user");
   return (
     <div>
       <CssBaseline />

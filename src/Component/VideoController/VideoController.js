@@ -59,12 +59,12 @@ function VideoController({
 
   const handleUp = (isPressed) => {
     if (isPressed) {
-      console.log("Up arrow pressed");
+      // console.log("Up arrow pressed");
       setMqttRequestToServer("forward", toIdUUID);
 
       // Your logic for up arrow key press
     } else {
-      console.log("Up arrow released");
+      // console.log("Up arrow released");
       setMqttRequestToServer("stop", toIdUUID);
 
       // Your logic for up arrow key release
@@ -73,11 +73,11 @@ function VideoController({
 
   const handleDown = (isPressed) => {
     if (isPressed) {
-      console.log("Down arrow pressed");
+      // console.log("Down arrow pressed");
       setMqttRequestToServer("back", toIdUUID);
       // Your logic for down arrow key press
     } else {
-      console.log("Down arrow released");
+      // console.log("Down arrow released");
       setMqttRequestToServer("stop", toIdUUID);
 
       // Your logic for down arrow key release
@@ -86,12 +86,12 @@ function VideoController({
 
   const handleRight = (isPressed) => {
     if (isPressed) {
-      console.log("Right arrow pressed");
+      // console.log("Right arrow pressed");
       setMqttRequestToServer("right", toIdUUID);
 
       // Your logic for right arrow key press
     } else {
-      console.log("Right arrow released");
+      // console.log("Right arrow released");
       setMqttRequestToServer("stop", toIdUUID);
 
       // Your logic for right arrow key release
@@ -100,12 +100,12 @@ function VideoController({
 
   const handleLeft = (isPressed) => {
     if (isPressed) {
-      console.log("Left arrow pressed");
+      // console.log("Left arrow pressed");
       setMqttRequestToServer("left", toIdUUID);
 
       // Your logic for left arrow key press
     } else {
-      console.log("Left arrow released");
+      // console.log("Left arrow released");
       setMqttRequestToServer("stop", toIdUUID);
 
       // Your logic for left arrow key release

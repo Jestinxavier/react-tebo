@@ -107,7 +107,7 @@ export default function ConferenceAppBar({ AppBarHeight }) {
 
   React.useEffect(() => {
     filterData();
-    console.log({ user });
+
   }, []);
   React.useEffect(() => {
     if (!readyStateMqtt) {
@@ -117,7 +117,7 @@ export default function ConferenceAppBar({ AppBarHeight }) {
 
   React.useEffect(() => {
     if (robot.length > 0) {
-      console.log("robot[0]?.robot?.map_status", robot[0]?.robot?.map_status);
+     
       if (robot[0]?.robot?.map_status == "no map") {
         setAlertMessage(
           "It is essential to map the room first. We strongly recommend mapping the area before initiating Tebo movement. If you don't map the area, automatic docking will not be possible, and you will need to do it manually."

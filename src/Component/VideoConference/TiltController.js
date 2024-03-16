@@ -49,9 +49,7 @@ export default function TiltController({TiltController}) {
 
   function preventHorizontalKeyboardNavigation(event) {
     handleChange()
-    console.log('====================================');
-    console.log(event,"event");
-    console.log('====================================');
+   
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       
       event.preventDefault();
@@ -72,9 +70,7 @@ export default function TiltController({TiltController}) {
 
   const handleChange = (data)=>{
     // data.preventDefault();
-    console.log('====================================');
-    console.log(data);
-    console.log('====================================');
+   
     setMqttRequestForTilting(data,toIdUUID)
   }
 

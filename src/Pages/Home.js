@@ -34,7 +34,7 @@ import ProminentAppBar from "../Component/AppBar/ProminentAppBar";
 import PersistentDrawerRight from "../Component/AppBar/PersistentDrawerRight";
 import { mockData } from "../Constant/MockData";
 import Iconify from "../Component/MUI/iconify/Iconify";
-import { getRobot,getSharedRobotList } from "../redux/slices/robot";
+import { getRobot,getSharedRobotList, getZoomCredentials } from "../redux/slices/robot";
 import { useDispatch, useSelector } from "../redux/store";
 import { SocketContext } from "../Context/SocketContext";
 import { useDrawerContext } from "../Context/DrawerContext";
@@ -154,7 +154,7 @@ const {setCallerId} = useContext(SocketContext);
 
   useEffect(() => {
     setShareRobotList(sharedRobots)
-    console.log(sharedRobots,"sharedRobots");
+    // console.log(sharedRobots,"sharedRobots");
   }, [sharedRobots])
   
 
@@ -168,6 +168,7 @@ const {setCallerId} = useContext(SocketContext);
   useEffect(() => {
     dispatch(getRobot());
     dispatch(getSharedRobotList());
+    dispatch(getZoomCredentials());
    
     sendMessage("testing from Tebo");
   }, []);

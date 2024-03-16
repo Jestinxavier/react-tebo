@@ -34,9 +34,6 @@ export default function GoogleMap({longitude,latitude}){
   }, [longitude, latitude]);
   
 
-console.log('====================================');
-console.log(parseFloat(latitude,10),parseFloat(longitude,10));
-console.log('====================================');
   return (
     // Important! Always set the container height explicitly
     <>

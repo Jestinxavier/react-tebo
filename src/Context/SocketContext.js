@@ -38,7 +38,7 @@ const ContextProvider = ({ children }) => {
   const [obstacleData, setObstacleData] = useState("");
   const [mapState, setMapState] = useState(null);
   const [allMapState, setAllMapState] = useState(null);
-
+  const [zoomAcknowledgementData, setZoomAcknowledgementData] = useState(false)
   const [isScreenSharing, setIsScreenSharing] = useState(false); // New state for screen sharing
 
   const myVideo = useRef();
@@ -128,8 +128,9 @@ const ContextProvider = ({ children }) => {
   useEffect(() => {
     // "https://tebo.devlacus.com"
     const socketInstance = io(
-      "http://localhost:5000",
+      // "http://localhost:5000",
       // "https://tebo.devlacus.com",
+      'https://jestinxavier.click/',
       {
         // transports: ["websocket"],
         query: {
@@ -160,30 +161,37 @@ const ContextProvider = ({ children }) => {
     let currentStreamCopy = null;
     if (PageTrigger && socket && otherUserId) {
       socket?.on("newCall", (data) => {
-        console.log(data, "newCall");
+        // console.log(data, "newCall");
         remoteRTCMessage.current = data.rtcMessage;
         otherUserId.current = data.callerId;
         setType("INCOMING_CALL");
       });
 
       socket?.on("callAnswered", (data) => {
-        console.log("callAnswered", data);
+        // console.log("callAnswered", data);
         remoteRTCMessage.current = data.rtcMessage;
-        console.log(peerConnection, "peerConnection");
-        peerConnection.current.setRemoteDescription(
-          new RTCSessionDescription(remoteRTCMessage.current)
-        );
-        setType("WEBRTC_ROOM");
+        // console.log(peerConnection, "peerConnection");
+        // peerConnection.current.setRemoteDescription(
+        //   new RTCSessionDescription(remoteRTCMessage.current)
+        // );
+        // setType("WEBRTC_ROOM");
       });
       socket.on("call-state", (data) => {
-        console.log(data, "call-state");
+        // console.log(data, "call-state");
       });
+      socket.on("CredentialAcknowledgement", (data) => {
+        console.log(data, "CredentialAcknowledgement");
+        setZoomAcknowledgementData(data)
+      });
+      socket.on("mobileLogData", (data) => {
+        console.log("mobileLogData📲📲📲",data);
+     
+      });
+      
 
       socket?.on("ICEcandidate", (data) => {
         let message = data.rtcMessage;
-        console.log("====================================");
-        console.log(peerConnection.current, "data after connection********");
-        console.log("====================================");
+     
         if (peerConnection.current) {
           peerConnection?.current
             .addIceCandidate(
@@ -235,8 +243,8 @@ const ContextProvider = ({ children }) => {
         });
 
       peerConnection.current.onaddstream = (event) => {
-        console.log(event, "onaddStream****");
-        console.log("onaddstream", event.stream);
+        // console.log(event, "onaddStream****");
+        // console.log("onaddstream", event.stream);
         setRemoteStream(event.stream);
       };
 
@@ -280,16 +288,16 @@ const ContextProvider = ({ children }) => {
         if (data === "ready") {
           setReadyStateMqtt(false);
         }
-        console.log("readyState", { data });
+        // console.log("readyState", { data });
       });
 
       socket?.on("homeStatusChanged", (data) => {
-        console.log("homeStatusChanged", data);
+        // console.log("homeStatusChanged", data);
         setAlertWarningOnCall(data);
       });
 
       socket?.on("mapState", (data) => {
-        console.log("mapState", data);
+        // console.log("mapState", data);
         setMapState(data);
       });
 
@@ -313,7 +321,7 @@ const ContextProvider = ({ children }) => {
     }
 
     socket?.on("mapStatusBroadcastMessage", (data) => {
-      console.log(data, "data****");
+      
       setAllMapState((prevState) => ({ ...prevState, ...data }));
     });
     return () => {
@@ -326,18 +334,18 @@ const ContextProvider = ({ children }) => {
 
   async function processCall() {
     const sessionDescription = await peerConnection.current.createOffer();
-    console.log("👺", sessionDescription);
+    // console.log("👺", sessionDescription);
     const roomId = uuid();
     const manageData = await validateSdpOffer(sessionDescription.sdp);
-    console.log({ manageData });
+    // console.log({ manageData });
     if (manageData) {
       let localDiscripationdata =
         await peerConnection.current.setLocalDescription(sessionDescription);
-      console.log({ localDiscripationdata }, { sessionDescription });
+      // console.log({ localDiscripationdata }, { sessionDescription });
 
-      console.log("otherUserId.current", sessionDescription, peerConnection);
+      // console.log("otherUserId.current", sessionDescription, peerConnection);
       // setTimeout(() => {
-      console.log("otherUserId.current", otherUserId.current);
+      // console.log("otherUserId.current", otherUserId.current);
       sendCall({
         calleeId: otherUserId.current,
         // calleeId: 'TEBO-GOKUL-NOKIA-TABLET',
@@ -357,7 +365,7 @@ const ContextProvider = ({ children }) => {
   }
 
   function startMapping(data) {
-    console.log("sdsdsd", data);
+    // console.log("sdsdsd", data);
     socket?.emit("start-mapping", { id: data });
   }
 
@@ -398,9 +406,9 @@ const ContextProvider = ({ children }) => {
   // };
 
   const addUserId = (userId, toId) => {
-    console.log("addUserId");
+    // console.log("addUserId");
     return new Promise((resolve, reject) => {
-      console.log({ userId });
+      // console.log({ userId });
 
       socket?.emit(
         "setMapUser",
@@ -410,10 +418,10 @@ const ContextProvider = ({ children }) => {
         },
         (response) => {
           if (response.success) {
-            console.log("**Operation successful:", response);
+            // console.log("**Operation successful:", response);
             resolve(response); // Resolve with the entire response object
           } else {
-            console.log("**Operation failed:", response);
+            // console.log("**Operation failed:", response);
             reject(response.error); // Reject with the error message
           }
         }
@@ -509,10 +517,6 @@ const ContextProvider = ({ children }) => {
       console.log("Received new MQTT message on the frontend:", payload);
     });
 
-    // socket?.on("mqttMessageReceived", (payload) => {
-    //   console.log("Received new MQTT message on the frontend:", payload);
-
-    // });
     const haldleSocket = (data) => {
       console.log(data, "data****");
       socket?.emit("setuuid", data);
@@ -538,146 +542,10 @@ const ContextProvider = ({ children }) => {
       screenShareStream.getTracks().forEach((track) => track.stop());
       setIsScreenSharing(false);
 
-      // Restore the original video stream
-      // myVideo.current.srcObject = stream;
     }
   };
 
-  // const answerCall = () => {
-  //   setCallAccepted(true);
-
-  //   const peer = new Peer({
-  //     initiator: false,
-  //     trickle: false,
-  //     stream,
-  //     config: {
-  //       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-
-  //       sdpTransform: (sdp) => {
-  //         sdp = sdp.replace(
-  //           /a=mid:video\r\n/g,
-  //           "a=mid:video\r\nb=AS:56000\r\n"
-  //         ); // Adjust maxBitrate to 56000 kbps (56 Mbps)
-  //         return sdp;
-  //       },
-  //     },
-  //   });
-
-  //   peer.on("signal", (data) => {
-  //     console.log('==================={ signal: data, to: call.from }=================');
-  //     console.log({ signal: data, to: call.from });
-  //     console.log('====================================');
-  //     socket?.emit("answerCall", { signal: data, to: call.from });
-  //   });
-
-  //   peer.on("stream", (currentStream) => {
-  //     userVideo.current.srcObject = currentStream;
-  //   });
-
-  //   peer.signal(call.signal);
-
-  //   connectionRef.current = peer;
-  // };
-
-  // const answerCall = () => {
-  //   setCallAccepted(true);
-
-  //   const peer = new Peer({
-  //     initiator: false,
-  //     trickle: false,
-  //     stream,
-  //     config: {
-  //       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-  //       sdpTransform: (sdp) => {
-  //         sdp = sdp.replace(
-  //           /a=mid:video\r\n/g,
-  //           "a=mid:video\r\nb=AS:56000\r\n"
-  //         ); // Adjust maxBitrate to 56000 kbps (56 Mbps)
-  //         return sdp;
-  //       },
-  //     },
-  //   });
-
-  //   peer.on("signal", (data) => {
-  //     console.log("Answering call and emitting signal:", data);
-  //     socket?.emit("answerCall", { signal: data, to: call.from });
-  //   });
-
-  //   peer.on("stream", (currentStream) => {
-  //     userVideo.current.srcObject = currentStream;
-  //   });
-
-  //   // Log events for debugging
-  //   peer.on("connect", () => {
-  //     console.log("Peer connection established.");
-  //   });
-
-  //   peer.on("data", (data) => {
-  //     console.log("Received data from peer:", data);
-  //   });
-
-  //   peer.on("error", (error) => {
-  //     console.error("Peer connection error:", error);
-  //   });
-
-  //   peer.signal(call.signal);
-
-  //   connectionRef.current = peer;
-  // };
-
-  // const callUser = async (id) => {
-  //   try {
-  //     socket?.emit("getSocketId", id);
-
-  //     const userSocketId = await new Promise((resolve) => {
-  //       socket?.on("getSocketId", (socketId) => {
-  //         // socketId = socketIdFromBackent;
-  //         resolve(socketId);
-  //       });
-  //     });
-
-  //     const peer = new Peer({
-  //       initiator: true,
-  //       trickle: false,
-  //       stream,
-  //       config: {
-  //         iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-  //         sdpTransform: (sdp) => {
-  //           sdp = sdp.replace(
-  //             /a=mid:video\r\n/g,
-  //             "a=mid:video\r\nb=AS:56000\r\n"
-  //           ); // Adjust maxBitrate to 56000 kbps (56 Mbps)
-  //           return sdp;
-  //         },
-  //       },
-  //     });
-  //     console.log(peer, "SocketIdFromBackend", userSocketId);
-
-  //     peer.on("signal", (data) => {
-  //       socket?.emit("callUser", {
-  //         userToCall: userSocketId,
-  //         signalData: data,
-  //         from: me,
-  //         name,
-  //       });
-  //     });
-
-  //     peer.on("stream", (currentStream) => {
-  //       userVideo.current.srcObject = currentStream;
-  //     });
-
-  //     socket?.on("callAccepted", (signal) => {
-  //       setCallAccepted(true);
-
-  //       peer.signal(signal);
-  //     });
-
-  //     connectionRef.current = peer;
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
-
+ 
   const disconnectUser = (userId) => {
     socket?.emit("disconnect-user", userId);
   };
@@ -688,9 +556,9 @@ const ContextProvider = ({ children }) => {
     stream?.getTracks().forEach((track) => track.stop());
 
     if (connectionRef.current) {
-      console.log("===================connectionRef.current=================");
-      console.log(connectionRef.current);
-      console.log("====================================");
+      // console.log("===================connectionRef.current=================");
+      // console.log(connectionRef.current);
+      // console.log("====================================");
       connectionRef.current.destroy();
     }
 
@@ -704,7 +572,7 @@ const ContextProvider = ({ children }) => {
 
   const sendMessage = (message) => {
     // socket?.emit("sentTo", message);
-    console.log("::::");
+    // console.log("::::");
   };
 
   const setMqttRequestToServer = (data, Id) => {
@@ -731,14 +599,15 @@ const ContextProvider = ({ children }) => {
       Id,
     };
 
-    console.log(mqttData);
+    // console.log(mqttData);
     socket?.emit("tilt-camera", mqttData);
   };
 
   const sentZoomCredentials = (data,userId) => {
-    console.log("hhhh",data,userId);
+    // console.log("hhhh",data,userId);
     let zoomData = {data,id:userId}
     socket?.emit("zoomData", zoomData);
+    return true 
   };
   const setMqttRequestForGotoHome = (data, Id) => {
     let mqttData = {
@@ -746,7 +615,7 @@ const ContextProvider = ({ children }) => {
       Id,
     };
 
-    console.log(mqttData);
+    // console.log(mqttData);
     socket?.emit("goto-home", mqttData);
   };
 
@@ -756,7 +625,7 @@ const ContextProvider = ({ children }) => {
       Id,
     };
 
-    console.log(mqttData);
+    // console.log(mqttData);
     socket?.emit("goto-Dock", mqttData);
   };
 
@@ -767,7 +636,7 @@ const ContextProvider = ({ children }) => {
       myId,
     };
 
-    console.log(mqttData);
+    // console.log(mqttData);
     socket?.emit("meeting-end", mqttData);
   };
 
@@ -803,7 +672,7 @@ const ContextProvider = ({ children }) => {
         setCallerId,
         setMqttRequestToServer,
         setMqttSpeedControl,
-        callEnded,
+        callEnded,zoomAcknowledgementData,
         me,
         callUser,
         leaveCall,
@@ -823,7 +692,7 @@ const ContextProvider = ({ children }) => {
         deleteMap,
         mapState,
         setObstacle,
-        readyStateMqtt,
+        readyStateMqtt,setZoomAcknowledgementData,
       }}
     >
       {children}

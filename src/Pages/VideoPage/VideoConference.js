@@ -288,7 +288,6 @@ const {user} = useAuthContext()
   };
 
   const handleJoyrideCallback = (data) => {
-    console.log({data});
     const { status, type,action } = data;
     const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
     if (action ===  'close') {
@@ -301,7 +300,7 @@ const {user} = useAuthContext()
     }
 
     console.groupCollapsed(type);
-    console.log(data);
+
     console.groupEnd();
   };
 
@@ -312,7 +311,6 @@ const {user} = useAuthContext()
   };
 
   useEffect(() => {
-    console.log({takeAtour});
     // setJoyRide(takeAtour)
 
     

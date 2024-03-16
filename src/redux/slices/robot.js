@@ -27,7 +27,10 @@ const initialState = {
   totalAnalytics: null,
   takeAtour: false,
   speedControl: 1,
-muteMic: true,
+  muteMic: true,
+  callState: false,
+  zoomCredentials: {},
+  zoomSdkCredentials: {},
   checkout: {
     activeStep: 0,
     cart: [],
@@ -70,6 +73,29 @@ const slice = createSlice({
       state.speedControl = action.payload;
     },
 
+    setSpeed(state, action) {
+      state.isLoading = false;
+      state.speedControl = action.payload;
+    },
+    setZoomSdkCredentials(state, action) {
+      state.isLoading = false;
+      state.zoomSdkCredentials = action.payload;
+      try {
+        localStorage.setItem('zoomCredentials', JSON.stringify(action.payload));
+     } catch (error) {
+        console.error('Failed to save zoomCredentials to local storage', error);
+     }
+    },
+
+    setZoomCredentials(state, action) {
+      state.isLoading = false;
+      state.zoomCredentials = action.payload;
+    //   try {
+    //     localStorage.setItem('zoomCredentials', JSON.stringify(action.payload));
+    //  } catch (error) {
+    //     console.error('Failed to save zoomCredentials to local storage', error);
+    //  }
+    },
     getRobotList(state, action) {
       state.isLoading = false;
       state.robots = action.payload;
@@ -188,8 +214,11 @@ const slice = createSlice({
       const step = action.payload;
       state.checkout.activeStep = step;
     },
-muteToggle(state, action) {
+    muteToggle(state, action) {
       state.muteMic = !state.muteMic;
+    },
+    callEndToggle(state, action) {
+      state.callState = !state.callState;
     },
     increaseQuantity(state, action) {
       const productId = action.payload;
@@ -247,7 +276,8 @@ export default slice.reducer;
 // Actions
 export const {
   getCart,
-muteToggle,
+  muteToggle,
+  callEndToggle,
   addToCart,
   resetCart,
   gotoStep,
@@ -359,7 +389,7 @@ export function getCallLogs() {
           //  session_start
         }));
 
-        console.log(result, "response.data.data");
+        // console.log(result, "response.data.data");
 
         if (result) {
           dispatch(slice.actions.setCallLogs([...result]));
@@ -380,11 +410,11 @@ export function getSharedToRobot() {
       const response = await axios.post("/owner/my-robots");
       if (response) {
         const result = response?.data?.data?.robots;
-        console.log(result, "smily **");
+        // console.log(result, "smily **");
 
         if (result) {
           // Debugging logs
-          console.log("Destructuring data...");
+          // console.log("Destructuring data...");
           const destructuredResult = result
             ?.map((item) =>
               item.robot.sharing_with?.map((res) => ({
@@ -398,11 +428,11 @@ export function getSharedToRobot() {
             )
             .flat()
             .filter((item) => item !== null);
-          console.log(destructuredResult, "DestructuredResult**");
+          // console.log(destructuredResult, "DestructuredResult**");
 
           if (destructuredResult) {
             // Debugging log
-            console.log("Dispatching data to Redux...");
+            // console.log("Dispatching data to Redux...");
             dispatch(slice.actions.setSharedToRobotList(destructuredResult));
           }
         } else {
@@ -450,7 +480,7 @@ export function getCallAnalytics() {
         dispatch(
           slice.actions.setCallAnalytics({ filterAnalyticData, xaxisData })
         );
-        dispatch(slice.actions.setTotalAnalytics(totalAnalytics))
+        dispatch(slice.actions.setTotalAnalytics(totalAnalytics));
       }
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -494,5 +524,59 @@ export function postSpeed(data) {
 export function muteFunctionality() {
   return async (dispatch) => {
     dispatch(slice.actions.muteToggle());
+  };
+}
+
+export function leaveMeeting() {
+  return async (dispatch) => {
+    dispatch(slice.actions.callEndToggle());
+  };
+}
+
+export function storZoomCredentials(data) {
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      dispatch(slice.actions.setZoomCredentials(data));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+export function updateZoomCredentials(data) {
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      const response = await axios.post("/owner/put-zoom-keys", data);
+      if (response) {
+        const responseData = await axios.post("/owner/get-zoom-keys");
+     
+        if (responseData) {
+          dispatch(slice.actions.setZoomSdkCredentials(responseData.data.data.zoom_data));
+        }
+      }
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+        console.error('Failed to load zoomCredentials from local storage', error);
+    }
+  };
+}
+
+export function getZoomCredentials() {
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+     
+        const responseData = await axios.post("/owner/get-zoom-keys");
+     
+        if (responseData) {
+          dispatch(slice.actions.setZoomSdkCredentials(responseData.data.data.zoom_data));
+        }
+      
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+        console.error('Failed to load zoomCredentials from local storage', error);
+    }
   };
 }

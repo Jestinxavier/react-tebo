@@ -30,7 +30,7 @@ const socialImage = [
 ];
 function SocialButton() {
   const authenticate = (response) => {
-    console.log(response);
+   
     // Api call to server so we can validate the token
   };
   return (

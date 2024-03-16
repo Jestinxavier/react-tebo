@@ -51,7 +51,7 @@ function RobotController({
 
   useEffect(() => {
     
-    console.log(speedRate,"incrementSpeed");
+    // console.log(speedRate,"incrementSpeed");
     setIncrementSpeed(speedRate)
   }, [speedRate])
   
@@ -79,12 +79,12 @@ function RobotController({
 
     const handleUpArrowPress = () => {
       // Logic for when Up arrow is pressed
-      console.log("Up arrow pressed");
+      // console.log("Up arrow pressed");
     };
 
     const handleUpArrowRelease = () => {
       // Logic for when Up arrow is released
-      console.log("Up arrow released");
+      // console.log("Up arrow released");
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -135,9 +135,9 @@ function RobotController({
   const bind = useLongPress(enabled ? callback : null, {
     onStart: (event, meta) => {
       meta[meta.context] = true;
-      console.log("Press started", { ...meta });
+      // console.log("Press started", { ...meta });
       let momentControllerData = setInterval(() => {
-        console.log("Press started", meta);
+        // console.log("Press started", meta);
         sentMqttControlMessage(meta);
       }, 100);
       setStart(momentControllerData);
@@ -151,12 +151,12 @@ function RobotController({
       sentMqttControlMessage(meta);
       // sentMqttControlMessage({meta})
       clearInterval(start);
-      console.log("Long press finished", meta);
+      // console.log("Long press finished", meta);
     },
     onCancel: (event, meta) => {
       meta[meta.context] = false;
       clearInterval(start);
-      console.log("moving forward is stoped", meta);
+      // console.log("moving forward is stoped", meta);
       sentMqttControlMessage(meta);
     },
     //onMove: () => console.log("Detected mouse or touch movement"),

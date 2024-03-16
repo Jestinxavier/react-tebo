@@ -99,13 +99,12 @@ function SettingsForm() {
       let updatedData = null
 
   
-      console.log(image.imageFile.file, "image");
+   
 
         let profile_pic = image.imageFile.file;
          updatedData = {...data,profile_pic:profile_pic }
       
-      
-      console.log(data, "data**");
+
       if(updatedData){
         const responseData = await addProfile(data);
         if (responseData) {

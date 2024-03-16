@@ -12,6 +12,7 @@ import { LongPressEventType, useLongPress } from "use-long-press";
 import useArrowKeyHandlers from "../../hooks/useArrowKeyHandlers";
 import { useLocation } from "react-router-dom";
 import { SocketContext } from "../../Context/SocketContext";
+
 import {
   IconButton,
   Stack,
@@ -32,34 +33,45 @@ import {
   CONTROLLER_ICON_BORDER_RADIUS,
 } from "../../Constant/defaultValue";
 import TiltController from "../VideoConference/TiltController";
+import { useSelector } from "../../redux/store";
 
 function TiltControlAndReload({ setControls, controls }) {
   const theme = useTheme();
-  const { processCall, remoteStream } = useContext(SocketContext);
+  const {zoomUserData, toIdUUID} = useSelector((state) => state?.robot?.zoomCredentials);
+  const zoomCredentials = useSelector((state) => state?.robot?.zoomSdkCredentials)
+
+  const { processCall, remoteStream,sentZoomCredentials } = useContext(SocketContext);
   const reconnectButton = useRef(null);
-  useEffect(() => {
-    let intervalId;
 
-    const checkAndReconnect = () => {
-      if (remoteStream === null) {
-        console.log("Reconnecting...");
-        reconnectButton.current.click();
-      } else {
-        console.log("Remote stream is not null. Stopping interval.");
-        clearInterval(intervalId);
-      }
-    };
+  // useEffect(() => {
+  //   let intervalId;
 
-    // Initial check
-    checkAndReconnect();
+  //   const checkAndReconnect = () => {
+  //     if (remoteStream === null) {
+  //       console.log("Reconnecting...");
+  //       // reconnectButton.current.click();
+  //     } else {
+  //       console.log("Remote stream is not null. Stopping interval.");
+  //       clearInterval(intervalId);
+  //     }
+  //   };
 
-    // Set up the interval to check every 3 seconds
-    intervalId = setInterval(checkAndReconnect, 5000);
+  //   // Initial check
+  //   checkAndReconnect();
 
-    // Clean up the interval when the component is unmounted or remoteStream changes
-    return () => clearInterval(intervalId);
-  }, [remoteStream]);
+  //   // Set up the interval to check every 3 seconds
+  //   intervalId = setInterval(checkAndReconnect, 5000);
 
+  //   // Clean up the interval when the component is unmounted or remoteStream changes
+  //   return () => clearInterval(intervalId);
+  // }, [remoteStream]);
+
+  const reConnectStream = ()=>{
+  let zoomData = {zoomUserData, toIdUUID,zoomCredentials}
+
+    // console.log("reConnectStream",{zoomData, toIdUUID});
+    sentZoomCredentials(zoomData, toIdUUID)
+  }
   return (
     <div>
       <div
@@ -133,7 +145,8 @@ function TiltControlAndReload({ setControls, controls }) {
                   }}
                   onClick={() => {
                     console.log("clicked*****");
-                    processCall();
+                    reConnectStream();
+                    
                   }}
                 >
                   <Icon

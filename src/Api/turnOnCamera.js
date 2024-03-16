@@ -14,7 +14,7 @@ export const turnOnCamera = (id, email) => {
     })
     .then((stream) => {
       // Got stream!
-      console.log(stream.getTracks(), "Got stream!");
+      // console.log(stream.getTracks(), "Got stream!");
 
       setlocalStream(stream);
 

@@ -51,7 +51,6 @@ export default function CustomDataGrid({ callLogs }) {
   
   
   const deleteLogs = (parms) => {
-    console.log(parms.robot.owned_robot[0].nickname,"parms");
 
     Swal.fire({
       title: `Do you want to Delete the Call Log of ${parms.robot.owned_robot[0].nickname} ?`,

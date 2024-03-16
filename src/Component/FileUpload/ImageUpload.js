@@ -5,13 +5,13 @@ import { UploadAvatar, Upload, UploadBox } from '../upload';
 
 function ImageUpload({ name, setImage, image, ImageUpdate, setImageUpdate }) {
   function getImageFileObject(imageFile) {
-    console.log({ imageFile });
+    // console.log({ imageFile });
     setImage({ imageFile, upload: true });
   
   }
 
   function runAfterImageDelete(imageFile) {
-    console.log({ imageFile });
+    // console.log({ imageFile });
     setImage({ imageFile, upload: false });
  
   }

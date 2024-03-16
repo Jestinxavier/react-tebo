@@ -82,14 +82,14 @@ function MapPage() {
       dispatch(getRobot());
 
       if (currentMapStatus === "map deleted") {
-        console.log("im in ***");
+        // console.log("im in ***");
         // Swal.fire("Deleted!", "we are sent the message .", "success");
         navigate(`/settings`);
       }
     });
   };
 
-  console.log(robotList, "robotList***");
+  // console.log(robotList, "robotList***");
   const stopMappingProcess = () => {
     // const teboId = searchParams.get("teboId");
     startMapping(teboId);
@@ -111,15 +111,15 @@ function MapPage() {
     if (allMapState) {
       let Id = Object.keys(allMapState)[0];
 
-      console.log(
-        allMapState[Id],
-        "allMapState.Id",
-        "Id:",
-        Id,
-        "teboId:",
-        teboId,
-        Id == teboId
-      );
+      // console.log(
+      //   allMapState[Id],
+      //   "allMapState.Id",
+      //   "Id:",
+      //   Id,
+      //   "teboId:",
+      //   teboId,
+      //   Id == teboId
+      // );
       if (Id == teboId) {
         setCurrentMapStatus(allMapState[Id]);
       }
@@ -144,13 +144,7 @@ function MapPage() {
   }, []);
 
   useEffect(() => {
-    console.log("filterData()====================================");
-    console.log(
-      filterData(),
-      currentMapStatus,
-      currentMapStatus === "map exists"
-    );
-    console.log("====================================");
+   
     switch (currentMapStatus) {
       case "robot not docked":
         setStatus("interrupted");
@@ -214,9 +208,7 @@ function MapPage() {
         setStartMap(true);
         dispatch(getRobot());
         setDescription("");
-        console.log("map exists() ====================================");
-        console.log(filterData());
-        console.log("====================================");
+      
         setImageUrl(filterData());
         navigate(`/robot-map?${searchParams.toString()}`);
         enqueueSnackbar(`The mapping is saved in Tebo`, {
@@ -229,9 +221,7 @@ function MapPage() {
         setStartMap(true);
         dispatch(getRobot());
         setDescription("");
-        console.log("filterData() ====================================");
-        console.log(filterData());
-        console.log("====================================");
+       
         setImageUrl(filterData());
         navigate(`/robot-map?${searchParams.toString()}`);
         break;
@@ -256,7 +246,7 @@ function MapPage() {
     }
   }, [currentMapStatus]);
 
-  console.log(currentMapStatus, "mapState");
+  // console.log(currentMapStatus, "mapState");
 
   return (
     <Box>
@@ -271,7 +261,7 @@ function MapPage() {
         <Heading>Tebo Map</Heading>
         {startMap ? (
           <Box>
-            {console.log({ mapExisist })}
+            {/* {console.log({ mapExisist })} */}
             {mapExisist ? (
               <Box>
                 <img
@@ -286,9 +276,7 @@ function MapPage() {
                   }}
                   startIcon={<Iconify icon="mdi:map-marker-remove-outline" />}
                   onClick={() => {
-                    console.log("====================================");
-                    console.log(teboId, "teboId");
-                    console.log("====================================");
+                   
                     removeMap(teboId);
                   }}
                 >

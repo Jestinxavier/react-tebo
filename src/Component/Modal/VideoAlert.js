@@ -6,9 +6,6 @@ const VideoAlert = ({ open, onClose, message }) => {
 
   useEffect(() => {
     let interval;
-console.log('=openopen===================================');
-console.log(open);
-console.log('====================================');
     if (open) {
       interval = setInterval(() => {
         setTimer((prevTimer) => prevTimer - 1);

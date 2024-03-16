@@ -89,9 +89,6 @@ function SignupForm() {
       //   });
 
       await new Promise((resolve) => setTimeout(resolve, 500));
-      console.log("DATA:", {
-        email: data.email,
-      });
 
       // ... (other code)
     } catch (error) {

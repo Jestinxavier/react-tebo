@@ -34,7 +34,6 @@ const ContentBox = styled(Box)(({ theme }) => ({
 }));
 
 const useStyles = makeStyles((theme) => {
-  console.log(theme, "theme,****123");
   return {
     iconifycolor: {
       color: theme.palette.secondary.light,
@@ -75,10 +74,10 @@ export default function DrawerRight({ setOpenMenu, OpenMenu, setModalOpen }) {
       //   Swal.fire("Changes are not saved", "", "info");
       // }
     });
-    console.log("im logOut in the");
+  
   };
   const notification = () => {
-    console.log("im in thenotification ");
+
     navigate("/home");
   };
   const mail = () => {
@@ -92,7 +91,6 @@ export default function DrawerRight({ setOpenMenu, OpenMenu, setModalOpen }) {
   };
 
   const showAnalytics = () => {
-    console.log("showAnalytics called");
     navigate("/analytics");
     setOpenMenu(false);
   };
@@ -101,7 +99,6 @@ export default function DrawerRight({ setOpenMenu, OpenMenu, setModalOpen }) {
     setOpenMenu(false);
   };
   const showLogsInBot = () => {
-    console.log("showLogsInBot called");
     navigate("/call-logs");
     setOpenMenu(false);
   };
@@ -109,20 +106,17 @@ export default function DrawerRight({ setOpenMenu, OpenMenu, setModalOpen }) {
     navigate("/settings");
     setOpenMenu(false);
 
-    console.log("showSetting called");
   };
   const showSupport = () => {
-    console.log("showSupport called");
+ 
     navigate("/support");
     setOpenMenu(false);
   };
   const showAdminSupport = () => {
-    console.log("showSupport called");
     navigate("/admin-support");
     setOpenMenu(false);
   };
   const showProfile = () => {
-    console.log("showProfile called");
     navigate("/profile");
     setOpenMenu(false);
   };
@@ -185,7 +179,6 @@ export default function DrawerRight({ setOpenMenu, OpenMenu, setModalOpen }) {
   useEffect(() => {
     if (OpenMenu) {
       setState({ ...state, right: OpenMenu });
-      console.log("if(!state.right");
     }
   }, [OpenMenu]);
 

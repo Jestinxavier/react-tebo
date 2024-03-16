@@ -67,7 +67,8 @@ const {enqueueSnackbar} = useSnackbar()
   const dispatch = useDispatch();
   const searchGetParms = new URLSearchParams(location.search);
   const Robots = useSelector((state) => state.robot?.robots?.singleRobot);
-
+  const zoomCredentials = localStorage.getItem('zoomCredentials');
+  
   useEffect(() => {
     const userUUID = searchGetParms.get("robot-Id");
 
@@ -94,10 +95,16 @@ const {enqueueSnackbar} = useSnackbar()
   const handleClose = () => {
     setOpen(false);
   };
-
   const connectRobot = async (myid, toId) => {
-    searchParams.set("sharedRobot", false);
+   if(!zoomCredentials){
+    enqueueSnackbar('Video credentials is not added to your tebo.',{variant:'error'});
 
+    return 
+   }
+ 
+
+    searchParams.set("sharedRobot", false);
+    
     if (sharedRobot) {
       searchParams.set("sharedRobot", true);
     }
@@ -108,15 +115,12 @@ const {enqueueSnackbar} = useSnackbar()
     try {
       const data = await addUserId(myid,toId);
   
-      console.log({ data: "mandan", success: data });
   
       if (data?.error) {
       enqueueSnackbar('You cannot connect to Tebo right now, another person is currently using Tebo.',{variant:'error'});
-        console.log({ data: "mandan", success: data.error });
       } else {
         // Uncomment the following lines if you want to perform additional actions on success
         callUser(toId);
-        console.log(searchParams);
         navigate(`/conference-room?${searchParams.toString()}`);
         processCall();
       }
@@ -124,17 +128,7 @@ const {enqueueSnackbar} = useSnackbar()
       console.error({ error: "Error:", error });
     }
   };
-  // addUserId(myid)
-  // .then((data) => {
-  //   console.log({ data: "data.....", success: data })}
-  //   if(data.error){
-  //   console.log({ data: "data.....", success: data })
-  //   }).catch((error) => console.error({ error: "Error:", error }));
 
-  //   // callUser(toId)
-  //   // console.log(searchParams);
-  //   // navigate(`/conference-room?${searchParams.toString()}`);
-  // };
 
   const descriptionElementRef = React.useRef(null);
   React.useEffect(() => {
@@ -179,16 +173,7 @@ const {enqueueSnackbar} = useSnackbar()
           {/* <DialogTitle id="scroll-dialog-title">Subscribe</DialogTitle> */}
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
-              {/* <Box
-                component="img"
-                src={data.botImage}
-                sx={{
-                  height: 333,
-                  width: 400,
-                  maxHeight: { xs: 233, md: 443 },
-                  maxWidth: { xs: 350, md: 250 },
-                }}
-              /> */}
+              
 
               <Stack
                 direction="column"
@@ -247,30 +232,7 @@ const {enqueueSnackbar} = useSnackbar()
                   </Typography>
                 </Stack>
 
-                <ContentBox>
-                  {/* <Stack
-                    direction="row"
-                    justifyContent="flex-start"
-                    alignItems="center"
-                    spacing={2}
-                  >
-                    <Typography>Support</Typography>
-                    <Typography sx={{ ml: "10px !important" }}>
-                      1 Year Support
-                    </Typography>
-                  </Stack> */}
-
-                  {/* <Stack
-                    direction="row"
-                    // justifyContent="space-between"
-                    // alignItems="center"
-                    spacing={2}
-                  >
-                    <Typography variant="caption">
-                      Ends on: 12 December 2023
-                    </Typography>
-                  </Stack> */}
-                </ContentBox>
+              
 
                 <ContentBox>
                   <Stack
@@ -374,10 +336,7 @@ const {enqueueSnackbar} = useSnackbar()
                     >
                       Battery Level
                     </Typography>
-                    {console.log(
-                      data?.robot?.battery_charge,
-                      "data?.robot?.battery_charge"
-                    )}
+                 
                     <BatteryLevel
                       color={theme.palette.green[100]}
                       // battery_charge

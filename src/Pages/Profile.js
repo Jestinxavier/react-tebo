@@ -6,7 +6,7 @@ import { Heading, CustomContainer } from "../Component/CustomComponent";
 
 import { getUserDetails } from "../redux/slices/userdetail";
 import { useSelector, useDispatch } from "../redux/store";
-import { ProfileForm } from "../Component/Profile";
+import { ProfileForm } from "./sections/Profile";
 function Profile() {
   const {
     handleDrawerOpen,
@@ -22,28 +22,6 @@ function Profile() {
     
   }, [])
 
-  function checkOrientation() {
-    console.log('window.orientation====================================')
-    console.log("window.orientation",window.orientation)
-    console.log('====================================')
-    // alert(window.orientation)
-    if (window.orientation === undefined) {
-      // window.orientation is not supported, use other methods if needed
-      console.log("Orientation not supported");
-    } else {
-      if (window.orientation === 0 || window.orientation === 180) {
-        console.log("Portrait orientation");
-      } else {
-        console.log("Landscape orientation");
-      }
-    }
-  }
-  
-  // Call the function when the page loads
-  checkOrientation();
-  
-  // Listen for orientation changes
-  window.addEventListener("orientationchange", checkOrientation);
   return (
     <Box>
       <PersistentDrawerRight

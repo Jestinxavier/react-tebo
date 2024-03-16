@@ -86,7 +86,7 @@ export function AuthProvider({ children }) {
       const accessToken = storageAvailable
         ? localStorage.getItem("accessToken")
         : "";
-      console.log(accessToken, "accessToken");
+      // console.log(accessToken, "accessToken");
 
       // if (accessToken && isValidToken(accessToken)) {
       if (accessToken) {
@@ -137,9 +137,6 @@ export function AuthProvider({ children }) {
       owner_email: email,
       owner_password: password,
     });
-    console.log('====================================');
-    console.log(response.data?.data);
-    console.log('====================================');
     const { owner } = response?.data?.data;
     setSession(owner?.api_token);
 
@@ -193,7 +190,7 @@ export function AuthProvider({ children }) {
       },
     })
       .then(function (response) {
-        console.log("Success:", response.data);
+        // console.log("Success:", response.data);
         dispatch({
           type: "UPDATE",
           payload: {

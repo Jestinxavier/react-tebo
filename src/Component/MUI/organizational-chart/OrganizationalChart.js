@@ -33,8 +33,8 @@ export default function OrganizationalChart({ data, variant = 'simple', sx, ...o
           <StandardNode
             sx={sx}
             node={data}
-            onEdit={() => console.log('EDIT', data.name)}
-            onDelete={() => console.log('DELETE', data.name)}
+            // onEdit={() => console.log('EDIT', data.name)}
+            // onDelete={() => console.log('DELETE', data.name)}
           />
         )) ||
         (variant === 'group' && <GroupNode sx={sx} node={data} />)

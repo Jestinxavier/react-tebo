@@ -8,7 +8,7 @@ import VideoController from "../../Component/VideoController/VideoController";
 import { callStartInfo, callEndedInfo } from "../../Api/callApi";
 import { useSnackbar } from "../../Component/MUI/snackbar";
 import ConferenceModal from "../../Modals/Conference/Conference";
-import ZoomVideo from "@zoom/videosdk";
+import ZoomVideo, { VideoQuality } from "@zoom/videosdk";
 
 import {
   IconButton,
@@ -23,6 +23,19 @@ import { useTheme } from "@mui/material/styles";
 import useArrowKeyHandlers from "../../hooks/useArrowKeyHandlers";
 import { v4 as uuidv4 } from "uuid";
 import { useAuthContext } from "../../auth/useAuthContext";
+import { dispatch, useSelector } from "../../redux/store";
+import {  storZoomCredentials  } from "../../redux/slices/robot";
+
+let videoCanvas = document.querySelector("#participant-videos-canvas");
+const vidHeight = 270;
+const vidWidth = 480;
+const getVideoXandY = (index, totalUser) => {
+  const gridSize = Math.ceil(Math.sqrt(totalUser));
+  const x = (index % gridSize) * vidWidth;
+  const y = (gridSize - Math.floor(index / gridSize) - 1) * vidHeight;
+  return { x, y };
+};
+
 export default function VideoPlayerForConference({
   ICON_SIZE,
   APP_BAR_HEIGHT,
@@ -48,7 +61,14 @@ export default function VideoPlayerForConference({
   const participantVideoCanvasRef = useRef(null);
   const [userId, setUserId] = useState(null);
   const [participantUserIds, setParticipantUserIds] = useState([]);
+  const [audioStarted, setAudioStarted] = useState(false);
+  const micStatus = useSelector((state) => state?.robot?.muteMic);
+  const callState = useSelector((state) => state?.robot?.callState);
+  const zoomCredentials = useSelector((state) => state?.robot?.zoomSdkCredentials)
 
+  // const zoomCredentials = localStorage.getItem('zoomCredentials');
+
+  console.log({ micStatus });
   //  --------------------------
 
   const {
@@ -59,7 +79,7 @@ export default function VideoPlayerForConference({
     PageTrigger,
     setPageTrigger,
     setMqttRequestToServer,
-    sentZoomCredentials,
+    sentZoomCredentials,zoomAcknowledgementData,setZoomAcknowledgementData,
     myId,
     me,
     localStream,
@@ -82,29 +102,39 @@ export default function VideoPlayerForConference({
 
   // Zoom Functions --------------------------------
   const joinSession = async () => {
-    await sentZoomCredentials(zoomUserData, toIdUUID);
+console.log("api Fetching 999",zoomCredentials);
+
+    // let zoomCredentialsData = JSON.parse(zoomCredentials)
+   
 
     try {
       // Initialize the Zoom client
       await client.init("en-US", "Global", { patchJsMedia: true });
-
       // Fetch the signature from your backend
-      const response = await fetch("http://localhost:5000/generateSignature", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          sessionName: zoomUserData.sessionName,
-          role: zoomUserData.role, // 0 for attendee, 1 for host
-          sessionKey: zoomUserData.sessionKey,
-          userIdentity: zoomUserData.userIdentity,
-        }),
-      });
+      const response = await fetch(
+        "https://jestinxavier.click/generateSignature",
+        // "http://localhost:5000/generateSignature",
+      // "https://tebo.devlacus.com/generateSignature",
+            
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sdkKey:zoomCredentials.zoom_account_id,
+            sdkSecret:zoomCredentials.zoom_secret_key,
+            sessionName: zoomUserData.sessionName,
+            role: zoomUserData.role, // 0 for attendee, 1 for host
+            sessionKey: zoomUserData.sessionKey,
+            userIdentity: zoomUserData.userIdentity,
+          }),
+        }
+      );
       const { signature } = await response.json();
 
       // Join the session using the generated signature
-      await client.join(
+     const joinRes =  await client.join(
         `${zoomUserData.sessionName}`,
         signature,
         `${user.name}`,
@@ -115,10 +145,13 @@ export default function VideoPlayerForConference({
       const mediaStream = client.getMediaStream();
       setStream(mediaStream);
       const userInfo = client.getCurrentUserInfo();
+      const sessionId = await client.getSessionInfo().sessionId;
+      
       setUserId(userInfo.userId);
 
       // Fetch and set the current users
       const currentUsers = await client.getAllUser();
+     
       setParticipantUserIds(currentUsers.map((user) => user.userId));
     } catch (error) {
       console.error("Error joining the Zoom session:", error);
@@ -129,6 +162,7 @@ export default function VideoPlayerForConference({
     try {
       if (stream) {
         if (stream.isRenderSelfViewWithVideoElement()) {
+          
           await stream.startVideo({
             videoElement: document.querySelector("#my-self-view-video"),
           });
@@ -157,11 +191,11 @@ export default function VideoPlayerForConference({
               client.on("video-capturing-change", (payload) => {
                 try {
                   if (payload.state === "Started") {
-                    console.log("Capture started");
+                    // console.log("Capture started");
                   } else if (payload.state === "Stopped") {
-                    console.log("Capture stopped");
+                    // console.log("Capture stopped");
                   } else {
-                    console.log("Stop capturing Failed");
+                    // console.log("Stop capturing Failed");
                   }
                 } catch (error) {
                   console.log(error);
@@ -177,7 +211,7 @@ export default function VideoPlayerForConference({
             console.log(error);
           }
         }
-        console.log("Video started");
+        // console.log("Video started");
       }
     } catch (error) {
       console.error("Error starting video:", error);
@@ -188,12 +222,134 @@ export default function VideoPlayerForConference({
     try {
       if (stream) {
         await stream.stopVideo();
-        console.log("Video stopped");
+        // console.log("Video stopped");
       }
     } catch (error) {
       console.error("Error stopping video:", error);
     }
   };
+  let audioDecode;
+  let audioEncode;
+  const startAudioButton = async () => {
+    var isSafari = window.safari !== undefined;
+
+    // Ensure stream is not null before trying to call methods on it
+    if (stream) {
+      if (isSafari) {
+        if (audioEncode && audioDecode) {
+          await stream?.startAudio(); // Using optional chaining
+          setAudioStarted(true);
+        } else {
+          console.log("safari audio has not finished initializing");
+        }
+      } else {
+        await stream?.startAudio(); // Using optional chaining
+        setAudioStarted(true);
+      }
+    } else {
+      console.log("Stream is not initialized.");
+    }
+  };
+
+  const audioController = async () => {
+    if (stream) {
+      // Check if stream is initialized
+      if (audioStarted) {
+        if (micStatus) {
+          // console.log("mute audio**********");
+          // Your logic when micStatus is true
+          await stream.unmuteAudio();
+        } else {
+          // console.log("unmute audio*********");
+          // Your logic when micStatus is false
+          await stream.muteAudio();
+        }
+      } else {
+        // Initialize or handle the absence of stream appropriately
+      }
+      startAudioButton();
+    } else {
+      console.log("Stream is not initialized.");
+    }
+  };
+
+  const renderVideo = async (event) => {
+    const mediaStream = client.getMediaStream();
+    if (event?.action === "Stop") {
+      await mediaStream.stopRenderVideo(videoCanvas, event.userId);
+    }
+    const usersWithVideo = client
+      .getAllUser()
+      .filter((e) => e.bVideoOn)
+      .reverse();
+    const numberOfUser = usersWithVideo.length;
+    for await (const [index, user] of usersWithVideo.entries()) {
+      const { x, y } = getVideoXandY(index, numberOfUser);
+      if (event.userId === user.userId && user.bVideoOn) {
+        await mediaStream.renderVideo(
+          videoCanvas,
+          user.userId,
+          vidWidth,
+          vidHeight,
+          x,
+          y,
+          2
+        );
+      } else if (user.bVideoOn) {
+        await mediaStream
+          .adjustRenderedVideoPosition(
+            videoCanvas,
+            user.userId,
+            vidWidth,
+            vidHeight,
+            x,
+            y
+          )
+          .catch((e) => console.log(e));
+      }
+    }
+    const canvasHeight =
+      numberOfUser > 4
+        ? vidHeight * 3
+        : numberOfUser > 1
+        ? vidHeight * 2
+        : vidHeight;
+    const canvasWidth =
+      numberOfUser > 4
+        ? vidWidth * 3
+        : numberOfUser > 1
+        ? vidWidth * 2
+        : vidWidth;
+    try {
+      videoCanvas.height = canvasHeight;
+      videoCanvas.width = canvasWidth;
+    } catch (e) {
+      mediaStream?.updateVideoCanvasDimension(
+        videoCanvas,
+        canvasWidth,
+        canvasHeight
+      );
+    }
+  };
+
+  const toggleVideo = async () => {
+    const mediaStream = client.getMediaStream();
+    if (mediaStream.isCapturingVideo()) {
+      await mediaStream.stopVideo();
+      await renderVideo({
+        action: "Stop",
+        userId: client.getCurrentUserInfo().userId,
+      });
+    } else {
+      await mediaStream.startVideo();
+      await renderVideo({
+        action: "Start",
+        userId: client.getCurrentUserInfo().userId,
+      });
+    }
+  };
+
+  // your start audio button click
 
   const leaveMeeting = async () => {
     try {
@@ -207,8 +363,26 @@ export default function VideoPlayerForConference({
   };
 
   useEffect(() => {
-    joinSession();
-
+    if (callState) {
+      leaveMeeting();
+    }
+  }, [callState, leaveMeeting]);
+const passCredentialToApp = async () => {
+  let zoomData = {zoomUserData, toIdUUID,zoomCredentials}
+  dispatch(storZoomCredentials(zoomData))
+  const zoomAknowlegment = await sentZoomCredentials(zoomData, toIdUUID)
+  setZoomAcknowledgementData(true)
+  return zoomAknowlegment
+}
+  useEffect(() => {
+    // const clientSideTelemetry = client?.getLoggerClient()
+    const fetchData = async () => {
+      let Aknowlegment = await passCredentialToApp();
+      if (Aknowlegment) {
+        joinSession();
+      }
+    };
+    
     const onUserAdded = (payload) => {
       setParticipantUserIds((prevIds) => [
         ...new Set([...prevIds, payload.userId]),
@@ -221,30 +395,36 @@ export default function VideoPlayerForConference({
       );
     };
 
+    client.on("network-quality-change", (payload) => {
+      console.log({ networkQualityChange: payload });
+      // enqueueSnackbar(payload,{variant:"info"})
+    });
     client.on("user-added", onUserAdded);
     client.on("user-removed", onUserRemoved);
-
+    // clientSideTelemetry.reportToGlobalTracing()
+    fetchData()
     return () => {
       client.off("user-added", onUserAdded);
       client.off("user-removed", onUserRemoved);
     };
   }, []);
+  useEffect(() => {
+    // console.log({zoomAcknowledgementData});
+  if(!zoomAcknowledgementData){
+    passCredentialToApp()
+  }
+  }, [zoomAcknowledgementData])
+  
 
   useEffect(() => {
     const onPeerVideoStateChange = async (payload) => {
       if (payload.action === "Start") {
         // Assume a function to get video stream (this is an example and might not exist in the SDK)
         const HDVideo = await stream?.isSupportHDVideo();
-        console.log(HDVideo, "HDVideo");
-        stream.subscribeVideoStatisticData();
-
-        client.on("video-statistic-data-change", (payload) => {
-          console.log(payload.height,"HD"); // 720 or 360
-        });
+        // console.log(HDVideo, "HDVideo");
+        
         const videoStream = await client.getAllUser();
-        {
-          console.log({ videoStream });
-        }
+
         // client.on("video-aspect-ratio-change", async (payload) => {
         //   const { userId, aspectRatio } = payload;
         //   console.log({aspectRatio}, "Aspect Ratio Log");
@@ -260,40 +440,64 @@ export default function VideoPlayerForConference({
         //   );
         // });
 
-        console.log({ stream }, "stream******&&&&&");
+        // console.log({ stream }, "stream******&&&&&");
+        // console.log({participant:videoStream});
         videoStream.forEach((user) => {
           if (user.bVideoOn) {
             stream.renderVideo(
               document.querySelector("#participant-videos-canvas"),
               user.userId,
-              400,
-              200,
+              1920,
+              1080,
               0,
               0,
-              3
+              VideoQuality.Video_1080P
+
             );
           }
         });
       }
     };
 
-    if (client && stream) {
-      client.on("peer-video-state-change", onPeerVideoStateChange);
-      client.on("video-statistic-data-change", (payload) => {
-        console.log("height of the video", payload.height); // 720 or 360
+   
+      stream?.subscribeVideoStatisticData();
+      stream?.subscribeAudioStatisticData()
+
+      client?.on("peer-video-state-change", onPeerVideoStateChange);
+      client?.on("video-statistic-data-change", (payload) => {
+        
+        const label = payload.encoding
+          ? "Sending video statistic:"
+          : "Receiving video statistic:";
+        console.log(payload,)
       });
-      stream.startAudio({ backgroundNoiseSuppression: true });
-      stream.enableBackgroundNoiseSuppression(true)
+      client.on('audio-statistic-data-change', (payload) => {
+        // console.log({'audio-statistic-data-change':payload})
+       })
+      
+
+
+      // stream.enableBackgroundNoiseSuppression(true)
+      // stream.muteAudio()
+
       // stream.startAudio();
       handleVideoStart();
-    }
+    
 
     return () => {
       if (client) {
         client.off("peer-video-state-change", onPeerVideoStateChange);
+        client.off("video-statistic-data-change")
       }
     };
-  }, [client, stream]);
+  }, [client, stream, userId]);
+
+  useEffect(() => {
+    // console.log(micStatus, "micStatus************************");
+    if (stream) {
+      audioController();
+    }
+  }, [audioController, micStatus, stream]);
 
   // Zoom Function ended --------------------------
 
@@ -301,12 +505,12 @@ export default function VideoPlayerForConference({
 
   const handleUp = (isPressed) => {
     if (isPressed) {
-      console.log("Up arrow pressed");
+      // console.log("Up arrow pressed");
       setMqttRequestToServer("forward", toIdUUID);
 
       // Your logic for up arrow key press
     } else {
-      console.log("Up arrow released");
+      // console.log("Up arrow released");
       setMqttRequestToServer("stop", toIdUUID);
 
       // Your logic for up arrow key release
@@ -315,11 +519,11 @@ export default function VideoPlayerForConference({
 
   const handleDown = (isPressed) => {
     if (isPressed) {
-      console.log("Down arrow pressed");
+      // console.log("Down arrow pressed");
       setMqttRequestToServer("back", toIdUUID);
       // Your logic for down arrow key press
     } else {
-      console.log("Down arrow released");
+      // console.log("Down arrow released");
       setMqttRequestToServer("stop", toIdUUID);
 
       // Your logic for down arrow key release
@@ -328,12 +532,12 @@ export default function VideoPlayerForConference({
 
   const handleRight = (isPressed) => {
     if (isPressed) {
-      console.log("Right arrow pressed");
+      // console.log("Right arrow pressed");
       setMqttRequestToServer("right", toIdUUID);
 
       // Your logic for right arrow key press
     } else {
-      console.log("Right arrow released");
+      // console.log("Right arrow released");
       setMqttRequestToServer("stop", toIdUUID);
 
       // Your logic for right arrow key release
@@ -342,12 +546,12 @@ export default function VideoPlayerForConference({
 
   const handleLeft = (isPressed) => {
     if (isPressed) {
-      console.log("Left arrow pressed");
+      // console.log("Left arrow pressed");
       setMqttRequestToServer("left", toIdUUID);
 
       // Your logic for left arrow key press
     } else {
-      console.log("Left arrow released");
+      // console.log("Left arrow released");
       setMqttRequestToServer("stop", toIdUUID);
 
       // Your logic for left arrow key release
@@ -437,7 +641,7 @@ export default function VideoPlayerForConference({
     if (remoteStream && remoteRef.current) {
       remoteRef.current.srcObject = remoteStream;
       callStartInfo(toIdUUID).then((data) => {
-        console.log({ DataLogger: data });
+        // console.log({ DataLogger: data });
         setCallerApiId(data);
       });
     }
@@ -484,9 +688,8 @@ export default function VideoPlayerForConference({
             id="participant-videos-canvas"
             ref={participantVideoCanvasRef}
             style={videoStyles}
-            muted
-            // width="1920"
-            // height="1080"
+            width="1920"
+            height="1080"
           ></canvas>
         </div>
         <div style={{ position: "absolute", top: "0", width: "100%" }}>
@@ -533,6 +736,8 @@ export default function VideoPlayerForConference({
                   muted
                   autoPlay
                 />
+
+                {/* <Box onClick={()=>startAudioButton()}>oosspp</Box> */}
 
                 {/* <button onClick={() => processCall()}>onevent</button> */}
               </div>
@@ -593,6 +798,7 @@ export default function VideoPlayerForConference({
         setOpen={setOpen}
         processCall={processCall}
       />
+      {/* <button onClick={() => toggleVideo()}>toggleVideo</button> */}
     </div>
   );
 }

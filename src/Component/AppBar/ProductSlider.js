@@ -50,7 +50,6 @@ import Image from "mui-image";
 function ProductSlider({ mockData, name }) {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const buttonHandler = (sliderId) => {
-    console.log(activeSlideIndex);
     if (sliderId === "forward" && activeSlideIndex < mockData.length) {
       return setActiveSlideIndex(activeSlideIndex + 1);
     } else {

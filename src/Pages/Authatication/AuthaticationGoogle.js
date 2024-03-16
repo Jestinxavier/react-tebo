@@ -20,9 +20,9 @@ function AuthaticationGoogle() {
         const { data } = response;
         setCallbackUrl(data.url);
         googleLoginUrlRef.current.href = data.url;
-        console.log("======data.url==============================");
-        console.log(data.url);
-        console.log("====================================");
+        // console.log("======data.url==============================");
+        // console.log(data.url);
+        // console.log("====================================");
       })
       .catch((error) => {
         console.error("Error fetching data:", error);

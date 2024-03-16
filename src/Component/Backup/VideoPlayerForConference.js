@@ -70,7 +70,9 @@ const [ObjectDetectAlert, setObjectDetectAlert] = useState(false);
       }}
     >
      
-      <div style={{transform: "scaleX(-1)"}}>
+      <div 
+      // style={{transform: "scaleX(-1)"}}
+      >
        <video
           src="/Video/Demo.mp4"
 

@@ -51,15 +51,12 @@ export default function SharedRobotListingCard({ data }) {
     try {
       const data = await addUserId(myid,toId);
   
-      console.log({ data: "mandan", success: data });
   
       if (data?.error) {
       enqueueSnackbar('You cannot connect to Tebo right now, another person is currently using Tebo.',{variant:'error'});
-        console.log({ data: "mandan", success: data.error });
       } else {
         // Uncomment the following lines if you want to perform additional actions on success
         callUser(toId);
-        console.log(searchParams);
         navigate(`/conference-room?${searchParams.toString()}`);
         processCall();
       }
@@ -68,7 +65,6 @@ export default function SharedRobotListingCard({ data }) {
     }
   };
   const handleConnect = () => {
-    console.log("::::::):):)");
     connectRobot(user?.random_id, data?.robot?.uuid);
     // processCall()
   };

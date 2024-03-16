@@ -22,9 +22,7 @@ const DeleteDilogbox = ({ open, onClose,handleDelete }) => {
   }, [])
 
   const handleChange = (event) => {
-    console.log('====================================');
-    console.log(event.target.value, "🤔");
-console.log('====================================');
+  
     setSelectedValue(event.target.value)
    
   };

@@ -38,7 +38,7 @@ function AdminSupport() {
     dispatch(getTicket());
   }, []);
 
-  console.log(ListData, "ListData****");
+  // console.log(ListData, "ListData****");
 
 
     return (

@@ -95,7 +95,6 @@ export default function ShareBotDialogs({
     const addBotRepeatedly = () => {
       shareRobot(id, name)
         .then((data) => {
-          console.log("Data updated:", data.message);
           dispatch(getRobot());
 
           enqueueSnackbar(data.message, { variant: "success" });

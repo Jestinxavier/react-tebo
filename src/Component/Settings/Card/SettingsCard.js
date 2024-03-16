@@ -16,7 +16,7 @@ import { dispatch } from "../../../redux/store";
 import { getRobot } from "../../../redux/slices/robot";
 import { getUserDetails } from "../../../redux/slices/userdetail";
 const useStyles = makeStyles((theme) => {
-  console.log(theme, "theme,****123");
+
   return {
     iconifycolor: {
       "&:hover": {
@@ -44,11 +44,11 @@ export default function SettingsCard({ robotData, index }) {
 
   const addMap = (data, id) => {
     searchParams.set("teboId",id);
-    console.log(data, "data***");
+   
     navigate(`/robot-map?${searchParams.toString()}`);
   };
   const editRobotName = (data) => {
-    console.log("editRobotName", data);
+
     setModalOpen(true);
     setRobotId(data);
   };
@@ -99,7 +99,7 @@ export default function SettingsCard({ robotData, index }) {
         (item) => item.iconName !== "tabler:map-plus" 
         
       );
-      console.log({filterIcon})
+   
       // If the condition is not met, set the original iconSet
       setSettingsIconData(filterIcon);
     }
@@ -110,9 +110,6 @@ export default function SettingsCard({ robotData, index }) {
         (item) =>  item.iconName !== "tabler:map-off"
 
       );
-      console.log("filterIcon================filterIcon====================");
-      console.log(filterIcon);
-      console.log("====================================");
       setSettingsIconData(filterIcon);
     } 
   }, [robotData]);

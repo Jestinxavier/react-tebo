@@ -75,18 +75,18 @@ export default function RobotListingCard({ data, sharedRobot }) {
     try {
       const data = await addUserId(myid);
 
-      console.log({ data: "mandan", success: data });
+ 
 
       if (data?.error) {
         enqueueSnackbar(
           "You cannot connect to Tebo right now, another person is currently using Tebo.",
           { variant: "error" }
         );
-        console.log({ data: "mandan", success: data.error });
+     
       } else {
         // Uncomment the following lines if you want to perform additional actions on success
         callUser(toId);
-        console.log(searchParams);
+      
         navigate(`/conference-room?${searchParams.toString()}`);
         processCall();
       }
@@ -112,7 +112,6 @@ export default function RobotListingCard({ data, sharedRobot }) {
 
   const handleButton = useCallback(
     (data) => {
-      console.log(data?.robot_online_status, data.screen_online_status);
       if (data?.robot_online_status && data.screen_online_status) {
         setModel(true);
       } else {
@@ -190,7 +189,6 @@ useEffect(() => {
       >
         <CardActionArea onClick={() => handleButton(data)}>
           <Box sx={{ position: "relative" }}>
-            {console.log({ onlineData: data })}
             {online?<Tooltip title="Online" arrow>
             <Box
               sx={{

@@ -94,7 +94,6 @@ export default function NickNameDialogs({ modalOpen, setModalOpen, nikName, robo
     
       renameRobot(id,robotName)
         .then((data) => {
-          console.log("Data updated:", data.data.connected);
           dispatch(getRobot())
         
            enqueueSnackbar("Rename Successfully", { variant: "success" });

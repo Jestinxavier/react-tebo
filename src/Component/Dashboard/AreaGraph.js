@@ -18,14 +18,13 @@ export default function AreaGraph({ title, subheader, graphData }) {
   const [processedGraphData, setProcessedGraphData] = useState([]);
 
   useEffect(() => {
-    console.log({ graphData });
+    
     const formattedData = graphData?.map((item) => {
       const formattedDate = moment(item.date, "YYYY-MM-DD").toISOString();
       return formattedDate;
     });
     const filterData = graphData?.map((item) =>item.total_calls);
 
-    console.log({ filterData });
     setProcessedGraphData([{ name: "Tebo",data:filterData}])
     setGraphDate(formattedData);
   }, [graphData]);

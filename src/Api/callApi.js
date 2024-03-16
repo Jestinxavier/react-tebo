@@ -3,7 +3,7 @@ import moment from 'moment-timezone'
 const currentTimezone = moment.tz.guess();
 
 export const callStartInfo = (data) => {
-console.log({currentTimezone});
+// console.log({currentTimezone});
   return axios
     .post("/owner/log-caller-info", { robot_uuid: data,timezone:currentTimezone })
     .then((response) => {

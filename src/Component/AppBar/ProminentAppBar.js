@@ -35,8 +35,6 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 export default function ProminentAppBar() {
   const theme = useTheme();
-  console.log(theme, "theme*****");
-
   
   return (
     <Box sx={{ flexGrow: 1 }}>

@@ -18,7 +18,6 @@ export default function RHFDatePicker({ name, label,helperText,value, ...other }
   }, [getValue])
 
   
-  console.log(values,"value ", getValue[name],dayjs(getValue[name]).$d)
 
   return (
     <DesktopDatePicker

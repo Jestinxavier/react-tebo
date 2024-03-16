@@ -301,19 +301,15 @@ export default function TransitionsDialogs({ modalOpen, setModalOpen }) {
 
     const stopCallingAPI = () => {
       clearInterval(intervalId);
-      console.log("Stopped calling API after it returned true.");
+    
     };
     setTimelineStatus(true);
     intervalId = setInterval(() => {
       addRobot(data)
         .then((response) => {
-          console.log("====================================");
-          console.log(response.data.connected);
+          
           if (response.data.connected) {
-            console.log(
-              response.data.connected,
-              "===================================="
-            );
+           
             stopCallingAPI();
             setTimelineStatus(false);
             enqueueSnackbar(response.message, { variant: "success" });

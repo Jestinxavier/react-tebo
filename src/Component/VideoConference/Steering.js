@@ -7,7 +7,7 @@ function Steering() {
 
   // You can also use separate handler for each item
   const handleItemClick = (event, index, data) => {
-    console.log(`[MenuItem] ${data} clicked`);
+    // console.log(`[MenuItem] ${data} clicked`);
     setShow(false); // you should handle your menu visibility yourself
   };
   const handleSubMenuClick = (event, index, data) => {

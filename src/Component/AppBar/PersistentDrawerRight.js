@@ -27,7 +27,6 @@ import DrawerRight from '../../Component/Drawer/DrawerRight';
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => {
-  console.log(theme, "theme,****123");
   return {
     iconifycolor: {
       "&:hover": {

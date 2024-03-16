@@ -19,14 +19,14 @@ export default function ButtonComponent() {
   }, []);
   const bind = useLongPress(enabled ? callback : null, {
     onStart: (event, meta) => {
-      console.log("Press started", meta);
+      // console.log("Press started", meta);
     },
     onFinish: (event, meta) => {
       setLongPressed(false);
-      console.log("Long press finished", meta);
+      // console.log("Long press finished", meta);
     },
     onCancel: (event, meta) => {
-      console.log("Press cancelled", meta);
+      // console.log("Press cancelled", meta);
     },
     //onMove: () => console.log("Detected mouse or touch movement"),
     filterEvents: (event) => true, // All events can potentially trigger long press

@@ -96,10 +96,10 @@ function RobotVideoConferenceInterface() {
   useEffect(() => {
     setTimeout(() => {
       if (call.isReceivingCall && !callAccepted) {
-        console.log(
-          `call.isReceivingCall && !callAccepted `,
-          call.isReceivingCall && !callAccepted
-        );
+        // console.log(
+        //   `call.isReceivingCall && !callAccepted `,
+        //   call.isReceivingCall && !callAccepted
+        // );
         answerCall();
       }
     }, 1000);
