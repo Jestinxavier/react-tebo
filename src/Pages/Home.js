@@ -34,7 +34,7 @@ import ProminentAppBar from "../Component/AppBar/ProminentAppBar";
 import PersistentDrawerRight from "../Component/AppBar/PersistentDrawerRight";
 import { mockData } from "../Constant/MockData";
 import Iconify from "../Component/MUI/iconify/Iconify";
-import { getRobot,getSharedRobotList, getZoomCredentials } from "../redux/slices/robot";
+import { getRobot,getSharedRobotList, getZoomCredentials, updateOnlineStatus, updateSharedRobotList } from "../redux/slices/robot";
 import { useDispatch, useSelector } from "../redux/store";
 import { SocketContext } from "../Context/SocketContext";
 import { useDrawerContext } from "../Context/DrawerContext";
@@ -60,52 +60,7 @@ import TopAppBar from "../Component/AppBar/TopAppBar";
 import TransitionsDialogs from "../Component/Modal/TransitionsDialogs";
 import { Heading } from "../Component/CustomComponent";
 
-const Item = styled("box")(({ theme }) => ({
-  backgroundColor: "#ff000000",
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
 
-
-const nda = [
-  {
-    description:
-      "Occaecati est et illo quibusdam accusamus qui. Incidunt aut et molestiae ut facere aut. Est quidem iusto praesentium excepturi harum nihil tenetur facilis. Ut omnis voluptates nihil accusantium doloribus eaque debitis.",
-    id: "e99f09a7-dd88-49d5-b1c8-1daf80c2d7b1",
-    image:
-      "https://api-dev-minimal-v4.vercel.app/assets/images/covers/cover_1.jpg",
-    title: "Apply These 7 Secret Techniques To Improve Event",
-  },
-  {
-    description:
-      "Occaecati est et illo quibusdam accusamus qui. Incidunt aut et molestiae ut facere aut. Est quidem iusto praesentium excepturi harum nihil tenetur facilis. Ut omnis voluptates nihil accusantium doloribus eaque debitis.",
-    id: "e99f09a7-dd88-49d5-b1c8-1daf80c2d7b1",
-    image:
-      "https://api-dev-minimal-v4.vercel.app/assets/images/covers/cover_1.jpg",
-    title: "Apply These 7 Secret Techniques To Improve Event",
-  },
-  {
-    description:
-      "Occaecati est et illo quibusdam accusamus qui. Incidunt aut et molestiae ut facere aut. Est quidem iusto praesentium excepturi harum nihil tenetur facilis. Ut omnis voluptates nihil accusantium doloribus eaque debitis.",
-    id: "e99f09a7-dd88-49d5-b1c8-1daf80c2d7b1",
-    image:
-      "https://api-dev-minimal-v4.vercel.app/assets/images/covers/cover_1.jpg",
-    title: "Apply These 7 Secret Techniques To Improve Event",
-  },
-];
-
-const CustomTextField = styled(TextField)(() => ({
-  borderRadius: "15px",
-  marginTop: 0,
-  "& fieldset": {
-    borderRadius: "15px",
-  },
-  "& input": {
-    borderRadius: "15px !important",
-    height: "12px",
-  },
-}));
 
 function Home() {
   const {
@@ -117,25 +72,23 @@ function Home() {
     modalOpen,
   } = useDrawerContext();
 
-const {setCallerId} = useContext(SocketContext);
-
-  const theme = useTheme();
+const {setCallerId,socket } = useContext(SocketContext);
   const [Form, setForm] = useState([]);
-  const [robotList, setRobotList] = useState(mockData);
+  const [robotList, setRobotList] = useState(null);
   const [shareRobotList, setShareRobotList] = useState(null)
   const { user } = useAuthContext();
 
-  const Robots = useSelector((state) => state?.robot?.robots?.robots);
-  const sharedRobots = useSelector((state) => state?.robot?.sharedRobot?.robots)
+  const Robots = useSelector((state) => state?.robot?.robots);
+  const sharedRobots = useSelector((state) => state?.robot?.sharedRobot)
 
 
   const { sendMessage,addUserId } = useContext(SocketContext);
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    console.log(open, "open");
-  }, [open]);
+  // useEffect(() => {
+  //   console.log(open, "open");
+  // }, [open]);
 
   const formFieldValue = (name, value) => {
     let data = {};
@@ -150,6 +103,7 @@ const {setCallerId} = useContext(SocketContext);
     setRobotList(Robots);
     
   }, [Robots]);
+
 
 
   useEffect(() => {
@@ -172,6 +126,28 @@ const {setCallerId} = useContext(SocketContext);
    
     sendMessage("testing from Tebo");
   }, []);
+
+  useEffect(() => {
+    socket.on("liveStatus", (onlineRes) => {
+      const result = robotList?.map((data) => {
+        if (onlineRes.TeboUserId == data.robot.uuid) {
+          return { ...data, liveStatus: onlineRes.status };
+        }
+        return data;
+      });
+
+      const sharedRobotResult = sharedRobots?.map((data) => {
+        if (onlineRes.TeboUserId == data.robot.uuid) {
+          return { ...data, liveStatus: onlineRes.status };
+        }
+        return data;
+        });
+      dispatch(updateOnlineStatus(result))
+      dispatch(updateSharedRobotList(sharedRobotResult))
+  });
+
+  }, [socket,robotList,sharedRobots])
+  
 
   useEffect(() => {
     // addUserId(user?.random_id);
@@ -259,8 +235,8 @@ const {setCallerId} = useContext(SocketContext);
         <Grid container spacing={3}>
           <Grid item sm={12} xs={12} md={12}>
           <Heading>My Robots</Heading>
-           
-          {robotList? <CarouselTeboMode mockData={robotList} />:
+         
+          {robotList?.length>0? <CarouselTeboMode mockData={robotList} />:
            <NoRobotCard 
            image ="/images/Tebo.gif"
            Heading = "No Tebo Found"

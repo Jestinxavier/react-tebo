@@ -95,8 +95,7 @@ export default function RobotListingCard({ data, sharedRobot }) {
     }
   };
   const handleConnect = () => {
-    
-    if (data?.robot_online_status && data.screen_online_status) {
+    if (data?.liveStatus) {
       connectRobot(user?.random_id, data?.robot?.uuid);
     // processCall()
     }else{
@@ -112,7 +111,7 @@ export default function RobotListingCard({ data, sharedRobot }) {
 
   const handleButton = useCallback(
     (data) => {
-      if (data?.robot_online_status && data.screen_online_status) {
+      if (data?.liveStatus) {
         setModel(true);
       } else {
         enqueueSnackbar("The Tebo is not Online.", { variant: "error" });
@@ -189,7 +188,7 @@ useEffect(() => {
       >
         <CardActionArea onClick={() => handleButton(data)}>
           <Box sx={{ position: "relative" }}>
-            {online?<Tooltip title="Online" arrow>
+            {data?.liveStatus?<Tooltip title="Online" arrow>
             <Box
               sx={{
                 background: "#38e053",

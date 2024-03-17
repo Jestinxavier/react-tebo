@@ -25,6 +25,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useAuthContext } from "../../auth/useAuthContext";
 import { dispatch, useSelector } from "../../redux/store";
 import {  storZoomCredentials  } from "../../redux/slices/robot";
+import { NODE_BASE_BASEURL } from "../../config-global";
 
 let videoCanvas = document.querySelector("#participant-videos-canvas");
 const vidHeight = 270;
@@ -112,7 +113,7 @@ console.log("api Fetching 999",zoomCredentials);
       await client.init("en-US", "Global", { patchJsMedia: true });
       // Fetch the signature from your backend
       const response = await fetch(
-        "https://jestinxavier.click/generateSignature",
+        `${NODE_BASE_BASEURL}/generateSignature`,
         // "http://localhost:5000/generateSignature",
       // "https://tebo.devlacus.com/generateSignature",
             

@@ -8,7 +8,7 @@ import {
 } from "../../utils/momentformat";
 // utils
 import axios from "../../utils/axios";
-import { ADMIN } from "../../config-global";
+import { ADMIN, NODE_BASE_BASEURL } from "../../config-global";
 
 // ----------------------------------------------------------------------
 
@@ -81,20 +81,20 @@ const slice = createSlice({
       state.isLoading = false;
       state.zoomSdkCredentials = action.payload;
       try {
-        localStorage.setItem('zoomCredentials', JSON.stringify(action.payload));
-     } catch (error) {
-        console.error('Failed to save zoomCredentials to local storage', error);
-     }
+        localStorage.setItem("zoomCredentials", JSON.stringify(action.payload));
+      } catch (error) {
+        console.error("Failed to save zoomCredentials to local storage", error);
+      }
     },
 
     setZoomCredentials(state, action) {
       state.isLoading = false;
       state.zoomCredentials = action.payload;
-    //   try {
-    //     localStorage.setItem('zoomCredentials', JSON.stringify(action.payload));
-    //  } catch (error) {
-    //     console.error('Failed to save zoomCredentials to local storage', error);
-    //  }
+      //   try {
+      //     localStorage.setItem('zoomCredentials', JSON.stringify(action.payload));
+      //  } catch (error) {
+      //     console.error('Failed to save zoomCredentials to local storage', error);
+      //  }
     },
     getRobotList(state, action) {
       state.isLoading = false;
@@ -298,7 +298,8 @@ export function getProducts() {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.post("/owner/my-robots");
-      dispatch(slice.actions.getProductsSuccess(response.data.data));
+      const resultData = response.data.data;
+      dispatch(slice.actions.getProductsSuccess(resultData));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -324,13 +325,36 @@ export function getSharedRobotList(data) {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.post("/owner/others-shared-with-me");
-      dispatch(slice.actions.getSharedRobot(response.data.data));
+      const robotLiveStatus = await axios.get(
+        NODE_BASE_BASEURL + "/getRobotLiveStatus"
+      );
+      let liveStatusResponse = robotLiveStatus.data.robotStatus;
+
+      const result = response?.data?.data?.robots?.map((data) => {
+        if (liveStatusResponse[data.robot.uuid]) {
+          return { ...data, liveStatus: true };
+        }
+        return data;
+      });
+      console.log(result,"others");
+      dispatch(slice.actions.getSharedRobot(result));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
   };
 }
 
+
+export function updateSharedRobotList(data) {
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      dispatch(slice.actions.getSharedRobot(data));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
@@ -340,14 +364,40 @@ export function getRobot() {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.post("/owner/my-robots");
-      if (response) {
-        dispatch(slice.actions.getRobotList(response.data.data));
+      const robotLiveStatus = await axios.get(
+        NODE_BASE_BASEURL + "/getRobotLiveStatus"
+      );
+      let liveStatusResponse = robotLiveStatus.data.robotStatus;
+
+      const result = response?.data?.data?.robots?.map((data) => {
+        if (liveStatusResponse[data.robot.uuid]) {
+          return { ...data, liveStatus: true };
+        }
+        return data;
+      });
+
+      if (result) {
+        dispatch(slice.actions.getRobotList(result));
       }
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
   };
 }
+
+export function updateOnlineStatus(data) {
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      if (data) {
+        dispatch(slice.actions.getRobotList(data));
+      }
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
 
 // ----------------------------------------------------------------------
 
@@ -551,14 +601,18 @@ export function updateZoomCredentials(data) {
       const response = await axios.post("/owner/put-zoom-keys", data);
       if (response) {
         const responseData = await axios.post("/owner/get-zoom-keys");
-     
+
         if (responseData) {
-          dispatch(slice.actions.setZoomSdkCredentials(responseData.data.data.zoom_data));
+          dispatch(
+            slice.actions.setZoomSdkCredentials(
+              responseData.data.data.zoom_data
+            )
+          );
         }
       }
     } catch (error) {
       dispatch(slice.actions.hasError(error));
-        console.error('Failed to load zoomCredentials from local storage', error);
+      console.error("Failed to load zoomCredentials from local storage", error);
     }
   };
 }
@@ -567,16 +621,16 @@ export function getZoomCredentials() {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-     
-        const responseData = await axios.post("/owner/get-zoom-keys");
-     
-        if (responseData) {
-          dispatch(slice.actions.setZoomSdkCredentials(responseData.data.data.zoom_data));
-        }
-      
+      const responseData = await axios.post("/owner/get-zoom-keys");
+
+      if (responseData) {
+        dispatch(
+          slice.actions.setZoomSdkCredentials(responseData.data.data.zoom_data)
+        );
+      }
     } catch (error) {
       dispatch(slice.actions.hasError(error));
-        console.error('Failed to load zoomCredentials from local storage', error);
+      console.error("Failed to load zoomCredentials from local storage", error);
     }
   };
 }

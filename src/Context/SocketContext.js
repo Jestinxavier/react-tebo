@@ -128,9 +128,10 @@ const ContextProvider = ({ children }) => {
   useEffect(() => {
     // "https://tebo.devlacus.com"
     const socketInstance = io(
-      // "http://localhost:5000",
+      "http://localhost:5000",
       // "https://tebo.devlacus.com",
-      'https://jestinxavier.click/',
+      // NODE_BASE_BASEURL,
+     
       {
         // transports: ["websocket"],
         query: {
@@ -176,18 +177,20 @@ const ContextProvider = ({ children }) => {
         // );
         // setType("WEBRTC_ROOM");
       });
-      socket.on("call-state", (data) => {
+      socket?.on("call-state", (data) => {
         // console.log(data, "call-state");
       });
-      socket.on("CredentialAcknowledgement", (data) => {
+      socket?.on("CredentialAcknowledgement", (data) => {
         console.log(data, "CredentialAcknowledgement");
         setZoomAcknowledgementData(data)
       });
-      socket.on("mobileLogData", (data) => {
+      socket?.on("mobileLogData", (data) => {
         console.log("mobileLogData📲📲📲",data);
      
       });
-      
+    
+
+  
 
       socket?.on("ICEcandidate", (data) => {
         let message = data.rtcMessage;
@@ -643,6 +646,7 @@ const ContextProvider = ({ children }) => {
   return (
     <SocketContext.Provider
       value={{
+        socket,
         alertWarningOnCall,
         obstacle,
         sentZoomCredentials,
