@@ -5,30 +5,15 @@ import React, {
   useContext,
   useCallback,
 } from "react";
-import ReactPlayer from "react-player";
 import ConferenceAppBar from "../Component/VideoConference/ConferenceAppbar";
-import VideoController from "../Component/VideoController/VideoController";
-import { Icon } from "@iconify/react";
 import { useTheme } from "@mui/material/styles";
 import { useLocation, useNavigate } from "react-router-dom";
 
 // import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-import {
-  IconButton,
-  Box,
-  Stack,
-  Grid,
-  Button,
-  Typography,
-  TextField,
-} from "@mui/material";
 // import { TiltController } from "../Component/VideoConference";
 import VideoPlayer from "../Component/Backup/VideoPlayerForConference"; // Correct casing
-import { TILT_CONTROLLER } from "../Constant/defaultValue";
-import { RobotController } from "../Component/VideoConference";
 import { SocketContext } from "../Context/SocketContext";
-import { ContextProvider } from "../Context/SocketContext";
 
 const APP_BAR_HEIGHT = 64;
 const ICON_WRAPPER_SIZE = 80;
@@ -38,12 +23,9 @@ const CONTROLLER_ICON_WRAPPER_SIZE = 50;
 const CONTROLLER_ICON_BORDER_RADIUS = 8;
 
 function RobotVideoConferenceInterface() {
-  const theme = useTheme();
-  const location = useLocation();
   const navigate = useNavigate();
   const [controls, setControls] = useState(false);
   const [launchPad, setLaunchPad] = useState(false);
-  const [idToCall, setIdToCall] = useState("");
   const [userId, setUserId] = useState("");
 
   const searchParams = new URLSearchParams();
@@ -52,40 +34,18 @@ function RobotVideoConferenceInterface() {
 // Check orientation when the page loads
 
   const {
-    name,
-    callAccepted,
     myVideo,
     userVideo,
-    callEnded,
-    stream,
-    call,
-    isScreenSharing,
-    shareScreen,
-    stopScreenSharing,
-    answerCall,
-    me,
-    myId,
-    setName,
     leaveCall,
-    callUser,
-    addUserId,
     disconnectUser,
-    otherUserId,
-    processCall,
   } = useContext(SocketContext);
 
-  // const addUser = useCallback(() => {
-  //   addUserId("TEBO-BXAYP-H2WH5-IRONO");
-  // }, [addUserId]);
 
   const DisConnectUser = () => {
     disconnectUser(userId);
   };
 
   useEffect(() => {
-    // addUser();
-
-    // searchParams.set("toId", "TEBO-BXAYP-H2WH5-IRONO");
     navigate(`/RobotVideoConferenceInterface/?${searchParams.toString()}`);
     return () => {
       leaveCall();
@@ -93,17 +53,6 @@ function RobotVideoConferenceInterface() {
     };
   }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (call.isReceivingCall && !callAccepted) {
-        // console.log(
-        //   `call.isReceivingCall && !callAccepted `,
-        //   call.isReceivingCall && !callAccepted
-        // );
-        answerCall();
-      }
-    }, 1000);
-  }, [call]);
 
   return (
     <div>
@@ -122,14 +71,6 @@ function RobotVideoConferenceInterface() {
         CONTROLLER_ICON_SIZE={CONTROLLER_ICON_SIZE}
         setControls={setControls}
       />
-      {call.isReceivingCall && !callAccepted && (
-        <div style={{ display: "flex", justifyContent: "space-around" }}>
-          <h1>{call.name} is calling:</h1>
-          <Button variant="contained" color="primary" onClick={answerCall}>
-            Answer
-          </Button>
-        </div>
-      )}     
     </div>
   );
 }

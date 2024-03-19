@@ -37,8 +37,8 @@ export default function ConferenceAppBar({ AppBarHeight }) {
   const [readyState, setReadyState] = React.useState(true);
   const { readyStateMqtt } = React.useContext(SocketContext);
   const { user } = useAuthContext();
-  const robotList = useSelector((state) => state?.robot?.robots?.robots);
-  const sharedList = useSelector((state) => state?.robot?.sharedRobot?.robots);
+  const robotList = useSelector((state) => state?.robot?.robots);
+  const sharedList = useSelector((state) => state?.robot?.sharedRobot);
 
   const handleClickOpen = () => {
     setReadyState(true);

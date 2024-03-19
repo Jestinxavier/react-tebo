@@ -128,7 +128,7 @@ const {user} = useAuthContext()
           <img src="/images/camareTilt.jpeg" alt="Image Alt Text" />
           <div class="card-content">
             <h2 class="card-title">Tilt Control</h2>
-            <p class="card-description">You can preview your video here.</p>
+            <p class="card-description">You can control your camera here.</p>
           </div>
         </div>
       ),
@@ -282,10 +282,6 @@ const {user} = useAuthContext()
   };
 
 
-  const handleClickStart = (e) => {
-    e.preventDefault();
-    stopTour(true);
-  };
 
   const handleJoyrideCallback = (data) => {
     const { status, type,action } = data;
@@ -311,13 +307,7 @@ const {user} = useAuthContext()
   };
 
   useEffect(() => {
-    // setJoyRide(takeAtour)
-
-    
-   
-  
-      stopTour(takeAtour)
-    
+      stopTour(takeAtour)    
   }, [takeAtour])
 
   useEffect(() => {
@@ -329,36 +319,11 @@ const {user} = useAuthContext()
   
 
   const {
-    name,
-    callAccepted,
     myVideo,
     userVideo,
     alertWarningOnCall,
-    callEnded,
-    stream,
-    call,
-    isScreenSharing,
-    shareScreen,
-    stopScreenSharing,
-    answerCall,
-    me,
-    myId,
-    setName,
-    leaveCall,
-    callUser,
-    addUserId,
-    disconnectUser,
   } = useContext(SocketContext);
 
-  // useEffect(() => {
-    // addUserId(userUUID);
-    // callUser(toIdUUID);
-    // callUser('TEBO-GOKUL-NOKIA-TABLET')
-    // setTimeout(() => {
-    //   // setJoyRide(false)
-    //   stopTour(false)
-    // }, 1000);
-  // }, [userUUID, toIdUUID]);
   useEffect(() => {
     if (alertWarningOnCall) {
       setAlert(alertWarningOnCall);
@@ -366,13 +331,7 @@ const {user} = useAuthContext()
     }
   }, [alertWarningOnCall]);
 
-  // const addUser = useCallback(() => {
-  //   addUserId(userId);
-  // }, [userId, addUserId]);
 
-  const DisConnectUser = useCallback(() => {
-    disconnectUser(userId);
-  });
 
   return (
     <div>

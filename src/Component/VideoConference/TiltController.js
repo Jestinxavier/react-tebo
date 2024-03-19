@@ -69,8 +69,6 @@ export default function TiltController({TiltController}) {
   };
 
   const handleChange = (data)=>{
-    // data.preventDefault();
-   
     setMqttRequestForTilting(data,toIdUUID)
   }
 
@@ -91,8 +89,6 @@ export default function TiltController({TiltController}) {
         }}
         aria-label="Temperature"
         valueLabelDisplay="auto"
-        // onKeyPress={handleKeyPress}
-        //  onKeyDown={preventHorizontalKeyboardNavigation}
          onkeydown="event.preventDefault()"
       />
     </Box>

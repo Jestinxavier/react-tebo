@@ -66,7 +66,6 @@ export default function SharedRobotListingCard({ data }) {
   };
   const handleConnect = () => {
     connectRobot(user?.random_id, data?.robot?.uuid);
-    // processCall()
   };
 
   const shareRobot = (id)=>{

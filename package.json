@@ -70,7 +70,6 @@
     "react-sweetalert2": "^0.6.0",
     "react-wavify": "^1.9.0",
     "redux-persist": "^6.0.0",
-    "simple-peer": "^9.11.1",
     "simplebar-react": "^3.1.0",
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.7.2",

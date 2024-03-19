@@ -3,28 +3,19 @@ import TiltController from "./TiltController";
 import { SocketContext } from "../../Context/SocketContext";
 import { TILT_CONTROLLER } from "../../Constant/defaultValue";
 import { Icon } from "@iconify/react";
-import RobotController from "./RobotController";
 import VideoController from "../../Component/VideoController/VideoController";
-import { callStartInfo, callEndedInfo } from "../../Api/callApi";
+import { callStartInfo } from "../../Api/callApi";
 import { useSnackbar } from "../../Component/MUI/snackbar";
 import ConferenceModal from "../../Modals/Conference/Conference";
 import ZoomVideo, { VideoQuality } from "@zoom/videosdk";
 
-import {
-  IconButton,
-  Box,
-  Stack,
-  Grid,
-  Button,
-  Typography,
-  TextField,
-} from "@mui/material";
+import { IconButton, Grid, CircularProgress, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useArrowKeyHandlers from "../../hooks/useArrowKeyHandlers";
 import { v4 as uuidv4 } from "uuid";
 import { useAuthContext } from "../../auth/useAuthContext";
 import { dispatch, useSelector } from "../../redux/store";
-import {  storZoomCredentials  } from "../../redux/slices/robot";
+import { storZoomCredentials } from "../../redux/slices/robot";
 import { NODE_BASE_BASEURL } from "../../config-global";
 
 let videoCanvas = document.querySelector("#participant-videos-canvas");
@@ -61,34 +52,29 @@ export default function VideoPlayerForConference({
   const [stream, setStream] = useState(null);
   const participantVideoCanvasRef = useRef(null);
   const [userId, setUserId] = useState(null);
-  const [participantUserIds, setParticipantUserIds] = useState([]);
+  const [videoProgress, setVideoProgress] = useState(true);
   const [audioStarted, setAudioStarted] = useState(false);
   const micStatus = useSelector((state) => state?.robot?.muteMic);
   const callState = useSelector((state) => state?.robot?.callState);
-  const zoomCredentials = useSelector((state) => state?.robot?.zoomSdkCredentials)
+  const zoomCredentials = useSelector(
+    (state) => state?.robot?.zoomSdkCredentials
+  );
+  const [open, setOpen] = React.useState(false);
 
   // const zoomCredentials = localStorage.getItem('zoomCredentials');
 
-  console.log({ micStatus });
+  // console.log({ micStatus });
   //  --------------------------
 
   const {
-    myVideo,
-    userVideo,
-    remoteRef,
-    localRef,
-    PageTrigger,
     setPageTrigger,
     setMqttRequestToServer,
-    sentZoomCredentials,zoomAcknowledgementData,setZoomAcknowledgementData,
-    myId,
-    me,
-    localStream,
-    remoteStream,
+    sentZoomCredentials,
+    zoomAcknowledgementData,
+    setZoomAcknowledgementData,
     processCall,
     obstacle,
     setObstacle,
-    readyState,
     obstacleData,
   } = useContext(SocketContext);
 
@@ -103,10 +89,9 @@ export default function VideoPlayerForConference({
 
   // Zoom Functions --------------------------------
   const joinSession = async () => {
-console.log("api Fetching 999",zoomCredentials);
+    console.log("api Fetching 999", zoomCredentials);
 
     // let zoomCredentialsData = JSON.parse(zoomCredentials)
-   
 
     try {
       // Initialize the Zoom client
@@ -115,16 +100,16 @@ console.log("api Fetching 999",zoomCredentials);
       const response = await fetch(
         `${NODE_BASE_BASEURL}/generateSignature`,
         // "http://localhost:5000/generateSignature",
-      // "https://tebo.devlacus.com/generateSignature",
-            
+        // "https://tebo.devlacus.com/generateSignature",
+
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            sdkKey:zoomCredentials.zoom_account_id,
-            sdkSecret:zoomCredentials.zoom_secret_key,
+            sdkKey: zoomCredentials.zoom_account_id,
+            sdkSecret: zoomCredentials.zoom_secret_key,
             sessionName: zoomUserData.sessionName,
             role: zoomUserData.role, // 0 for attendee, 1 for host
             sessionKey: zoomUserData.sessionKey,
@@ -133,9 +118,11 @@ console.log("api Fetching 999",zoomCredentials);
         }
       );
       const { signature } = await response.json();
-
+      callStartInfo(toIdUUID).then((data) => {
+        setCallerApiId(data);
+      });
       // Join the session using the generated signature
-     const joinRes =  await client.join(
+      const joinRes = await client.join(
         `${zoomUserData.sessionName}`,
         signature,
         `${user.name}`,
@@ -147,13 +134,11 @@ console.log("api Fetching 999",zoomCredentials);
       setStream(mediaStream);
       const userInfo = client.getCurrentUserInfo();
       const sessionId = await client.getSessionInfo().sessionId;
-      
+
       setUserId(userInfo.userId);
 
       // Fetch and set the current users
       const currentUsers = await client.getAllUser();
-     
-      setParticipantUserIds(currentUsers.map((user) => user.userId));
     } catch (error) {
       console.error("Error joining the Zoom session:", error);
     }
@@ -163,7 +148,6 @@ console.log("api Fetching 999",zoomCredentials);
     try {
       if (stream) {
         if (stream.isRenderSelfViewWithVideoElement()) {
-          
           await stream.startVideo({
             videoElement: document.querySelector("#my-self-view-video"),
           });
@@ -171,7 +155,7 @@ console.log("api Fetching 999",zoomCredentials);
           try {
             // await stream.startVideo();
             await stream.startVideo({ originalRatio: true, hd: true });
-            console.log({ stream });
+            // console.log({ stream });
 
             if (userId) {
               // client.on("video-aspect-ratio-change", async (payload) => {
@@ -219,16 +203,6 @@ console.log("api Fetching 999",zoomCredentials);
     }
   };
 
-  const handleVideoStop = async () => {
-    try {
-      if (stream) {
-        await stream.stopVideo();
-        // console.log("Video stopped");
-      }
-    } catch (error) {
-      console.error("Error stopping video:", error);
-    }
-  };
   let audioDecode;
   let audioEncode;
   const startAudioButton = async () => {
@@ -333,23 +307,6 @@ console.log("api Fetching 999",zoomCredentials);
     }
   };
 
-  const toggleVideo = async () => {
-    const mediaStream = client.getMediaStream();
-    if (mediaStream.isCapturingVideo()) {
-      await mediaStream.stopVideo();
-      await renderVideo({
-        action: "Stop",
-        userId: client.getCurrentUserInfo().userId,
-      });
-    } else {
-      await mediaStream.startVideo();
-      await renderVideo({
-        action: "Start",
-        userId: client.getCurrentUserInfo().userId,
-      });
-    }
-  };
-
   // your start audio button click
 
   const leaveMeeting = async () => {
@@ -368,13 +325,13 @@ console.log("api Fetching 999",zoomCredentials);
       leaveMeeting();
     }
   }, [callState, leaveMeeting]);
-const passCredentialToApp = async () => {
-  let zoomData = {zoomUserData, toIdUUID,zoomCredentials}
-  dispatch(storZoomCredentials(zoomData))
-  const zoomAknowlegment = await sentZoomCredentials(zoomData, toIdUUID)
-  setZoomAcknowledgementData(true)
-  return zoomAknowlegment
-}
+  const passCredentialToApp = async () => {
+    let zoomData = { zoomUserData, toIdUUID, zoomCredentials };
+    dispatch(storZoomCredentials(zoomData));
+    const zoomAknowlegment = await sentZoomCredentials(zoomData, toIdUUID);
+    setZoomAcknowledgementData(true);
+    return zoomAknowlegment;
+  };
   useEffect(() => {
     // const clientSideTelemetry = client?.getLoggerClient()
     const fetchData = async () => {
@@ -383,39 +340,15 @@ const passCredentialToApp = async () => {
         joinSession();
       }
     };
-    
-    const onUserAdded = (payload) => {
-      setParticipantUserIds((prevIds) => [
-        ...new Set([...prevIds, payload.userId]),
-      ]);
-    };
 
-    const onUserRemoved = (payload) => {
-      setParticipantUserIds((prevIds) =>
-        prevIds.filter((id) => id !== payload.userId)
-      );
-    };
-
-    client.on("network-quality-change", (payload) => {
-      console.log({ networkQualityChange: payload });
-      // enqueueSnackbar(payload,{variant:"info"})
-    });
-    client.on("user-added", onUserAdded);
-    client.on("user-removed", onUserRemoved);
-    // clientSideTelemetry.reportToGlobalTracing()
-    fetchData()
-    return () => {
-      client.off("user-added", onUserAdded);
-      client.off("user-removed", onUserRemoved);
-    };
+    fetchData();
   }, []);
   useEffect(() => {
     // console.log({zoomAcknowledgementData});
-  if(!zoomAcknowledgementData){
-    passCredentialToApp()
-  }
-  }, [zoomAcknowledgementData])
-  
+    if (!zoomAcknowledgementData) {
+      passCredentialToApp();
+    }
+  }, [zoomAcknowledgementData]);
 
   useEffect(() => {
     const onPeerVideoStateChange = async (payload) => {
@@ -423,26 +356,9 @@ const passCredentialToApp = async () => {
         // Assume a function to get video stream (this is an example and might not exist in the SDK)
         const HDVideo = await stream?.isSupportHDVideo();
         // console.log(HDVideo, "HDVideo");
-        
+
         const videoStream = await client.getAllUser();
-
-        // client.on("video-aspect-ratio-change", async (payload) => {
-        //   const { userId, aspectRatio } = payload;
-        //   console.log({aspectRatio}, "Aspect Ratio Log");
-        //   const height = 1080 / aspectRatio; // Correct calculation for height
-        //   // Resize the video
-        //   await stream.adjustRenderedVideoPosition(
-        //     document.querySelector("#participant-videos-canvas"), // Ensure this ID matches your canvas element
-        //     userId,
-        //     1080, // Desired width
-        //     height, // Calculated height
-        //     0,
-        //     1
-        //   );
-        // });
-
-        // console.log({ stream }, "stream******&&&&&");
-        // console.log({participant:videoStream});
+        setVideoProgress(false);
         videoStream.forEach((user) => {
           if (user.bVideoOn) {
             stream.renderVideo(
@@ -453,42 +369,36 @@ const passCredentialToApp = async () => {
               0,
               0,
               VideoQuality.Video_1080P
-
             );
           }
         });
       }
     };
 
-   
-      stream?.subscribeVideoStatisticData();
-      stream?.subscribeAudioStatisticData()
+    stream?.subscribeVideoStatisticData();
+    stream?.subscribeAudioStatisticData();
 
-      client?.on("peer-video-state-change", onPeerVideoStateChange);
-      client?.on("video-statistic-data-change", (payload) => {
-        
-        const label = payload.encoding
-          ? "Sending video statistic:"
-          : "Receiving video statistic:";
-        console.log(payload,)
-      });
-      client.on('audio-statistic-data-change', (payload) => {
-        // console.log({'audio-statistic-data-change':payload})
-       })
-      
+    client?.on("peer-video-state-change", onPeerVideoStateChange);
+    client?.on("video-statistic-data-change", (payload) => {
+      const label = payload.encoding
+        ? "Sending video statistic:"
+        : "Receiving video statistic:";
+      // console.log(payload);
+    });
+    client.on("audio-statistic-data-change", (payload) => {
+      // console.log({'audio-statistic-data-change':payload})
+    });
 
+    // stream.enableBackgroundNoiseSuppression(true)
+    // stream.muteAudio()
 
-      // stream.enableBackgroundNoiseSuppression(true)
-      // stream.muteAudio()
-
-      // stream.startAudio();
-      handleVideoStart();
-    
+    // stream.startAudio();
+    handleVideoStart();
 
     return () => {
       if (client) {
         client.off("peer-video-state-change", onPeerVideoStateChange);
-        client.off("video-statistic-data-change")
+        client.off("video-statistic-data-change");
       }
     };
   }, [client, stream, userId]);
@@ -565,15 +475,6 @@ const passCredentialToApp = async () => {
     left: handleLeft,
   });
 
-  const objectStyleAlert = {
-    boxShadow: "red 91px 34px 102px 120px inset",
-    marginLeft: 0,
-    filter:
-      "grayscale(10%) saturate(4) blur(1px) brightness(1) contrast(1) hue-rotate(331deg) invert(0.01) sepia(0)",
-  };
-
-  const [open, setOpen] = React.useState(false);
-
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -603,26 +504,11 @@ const passCredentialToApp = async () => {
     return () => setPageTrigger(false);
   }, []);
 
-  // useEffect(() => {
-  //   if (localStream && localRef.current) {
-  //     localRef.current.srcObject = localStream;
-  //   }
-  //   if (!remoteStream) {
-  //     processCall();
-  //   }
-  //   if (remoteStream && remoteRef.current) {
-  //     remoteRef.current.srcObject = remoteStream;
-  //     callStartInfo(toIdUUID).then((data) => {
-  //       setCallerApiId(data);
-  //     });
-  //   }
-  // }, [localStream, remoteStream]);
-
   useEffect(() => {
     let continueProcessCall = true;
 
     const checkAndProcessCall = () => {
-      if (!remoteStream && continueProcessCall) {
+      if (continueProcessCall) {
         processCall();
         setTimeout(checkAndProcessCall, 5000); // Call again after a delay
       } else {
@@ -631,27 +517,12 @@ const passCredentialToApp = async () => {
       }
     };
 
-    if (localStream && localRef.current) {
-      localRef.current.srcObject = localStream;
-    }
+    checkAndProcessCall(); // Initial call to check and process
 
-    if (!remoteStream) {
-      checkAndProcessCall(); // Initial call to check and process
-    }
-
-    if (remoteStream && remoteRef.current) {
-      remoteRef.current.srcObject = remoteStream;
-      callStartInfo(toIdUUID).then((data) => {
-        // console.log({ DataLogger: data });
-        setCallerApiId(data);
-      });
-    }
-
-    // Clean up the effect when it's unmounted or when you want to stop the process
     return () => {
       continueProcessCall = false; // Stop the recursive calls
     };
-  }, [localStream, remoteStream]);
+  }, []);
 
   useEffect(() => {
     if (obstacle) {
@@ -674,17 +545,24 @@ const passCredentialToApp = async () => {
         height: "100vh",
       }}
     >
+      
       <div>
-        <div style={{ transform: "scaleX(-1)" }}>
-          {/* <video
-            src="/Video/Demo.mp4"
-            autoPlay
-            playsInline
-            ref={remoteRef}
-            onClick={() => setLaunchPad(!launchPad)}
-            style={videoStyles}
-          />  */}
-
+        <div>
+          {videoProgress ? (
+            <Box
+              sx={{
+                position: "absolute",
+                display: "flex",
+                height: "100vh",
+                width: "100vw",
+                justifyContent: "center",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <CircularProgress className="123" color="secondary" />
+            </Box>
+          ) : null}
           <canvas
             id="participant-videos-canvas"
             ref={participantVideoCanvasRef}
@@ -711,20 +589,6 @@ const passCredentialToApp = async () => {
                   paddingTop: "20px",
                 }}
               >
-                {/* <video
-                  className="my-video"
-                  src="/Video/Demo.mp4"
-                  playsInline
-                  ref={localRef}
-                  muted
-                  autoPlay
-                  style={{
-                    width: "20%",
-                    height: "30%",
-                    // border: "2px solid red",
-                    borderRadius: 10,
-                  }}
-                /> */}
                 <video
                   playsInline
                   id="my-self-view-video"

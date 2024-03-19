@@ -1,12 +1,5 @@
 import React, { useContext, useState } from "react";
-import ReactPlayer from "react-player";
-// import ConferenceAppBar from "../Component/VideoConference/ConferenceAppbar";
-import { Icon } from "@iconify/react";
 import { useTheme } from "@mui/material/styles";
-import RobotController from "./RobotController";
-import ButtonComponent from "../ButtonComponent/ButtonComponent";
-import { LongPressEventType, useLongPress } from "use-long-press";
-import useArrowKeyHandlers from "../../hooks/useArrowKeyHandlers";
 import { useLocation,useNavigate } from "react-router-dom";
 import { SocketContext } from "../../Context/SocketContext";
 import { Box } from "@mui/material";
@@ -16,35 +9,12 @@ import {callEndedInfo} from "../../Api/callApi"
 import { dispatch } from "../../redux/store";
 
 function VideoStreamControllerButtons({
-  CONTROLLER_ICON_BORDER_RADIUS,
-  CONTROLLER_ICON_WRAPPER_SIZE,
   CONTROLLER_ICON_SIZE,
   callerApiId
 }) {
   const {
-    name,
-    callAccepted,
-    myVideo,
-    userVideo,
-    callEnded,
-    stream,
-    call,
-    isScreenSharing,
-    shareScreen,
-    stopScreenSharing,
-    answerCall,
-    me,
-    myId,
-    setName,
     leaveCall,
-    callUser,
-    disconnectUser,
-    setType,
-    otherUserId,
-    switchCamera,
-    toggleCamera,
     leave,
-    toggleMic,
   } = useContext(SocketContext);
   const [mute, setMute] = useState(false);
   const [gotoHome, setGotoHome] = useState(false)
@@ -79,14 +49,12 @@ const MyId = searchParms.get("myid")
     if (mute) {
       setMuteButtonName("ic:sharp-mic");
       // toggleMic()
-// stream.muteAudio()
       dispatch(muteFunctionality());
       setMute(!mute);
     }else{
       setMuteButtonName("material-symbols:mic-off");
       setMute(!mute);
       dispatch(muteFunctionality());
-      // stream.unmuteAudio()
       // toggleMic()
     }
 
@@ -119,12 +87,6 @@ const MyId = searchParms.get("myid")
       }
   };
 
-  const switchCameraDevice = ()=>{
-    switchCamera()
-  }
-  const cameraToggle = ()=>{
-    toggleCamera()
-  }
 
 
   const callControlingButtonGroups = [

@@ -10,10 +10,6 @@ import {
 import { useTheme, styled } from "@mui/material/styles";
 import { Icon } from "@iconify/react";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import Image from "mui-image";
 import BatteryLevel from "../Battery/BatteryLevel";
 import { GoogleMap } from "../Google";
@@ -56,8 +52,6 @@ const SupportButton = styled(Button)(({ theme }) => ({
 
 export default function ScrollDialog({ model, setModel, data, sharedRobot }) {
   const [open, setOpen] = React.useState(false);
-  const [scroll, setScroll] = React.useState("paper");
-  const [Id, setId] = useState("");
   const location = useLocation();
   const theme = useTheme();
 const {enqueueSnackbar} = useSnackbar()
@@ -66,7 +60,6 @@ const {enqueueSnackbar} = useSnackbar()
   const searchParams = new URLSearchParams();
   const dispatch = useDispatch();
   const searchGetParms = new URLSearchParams(location.search);
-  const Robots = useSelector((state) => state.robot?.robots?.singleRobot);
   const zoomCredentials = localStorage.getItem('zoomCredentials');
   
   useEffect(() => {
@@ -78,14 +71,13 @@ const {enqueueSnackbar} = useSnackbar()
   }, []);
 
   const navigate = useNavigate();
-  const handleClickOpen = (scrollType) => () => {
-    setOpen(true);
-    setScroll(scrollType);
-  };
+  // const handleClickOpen = (scrollType) => () => {
+  //   setOpen(true);
+  //   setScroll(scrollType);
+  // };
   useEffect(() => {
     if (model) {
       setOpen(true);
-      setScroll("paper");
     }
     if (!open) {
       setModel(false);
@@ -148,11 +140,7 @@ const {enqueueSnackbar} = useSnackbar()
         fullWidth
         maxWidth="lg"
         sx={{ overflow: "hidden" }}
-        // scroll={scroll}
-        // aria-labelledby="scroll-dialog-title"
-        // aria-describedby="scroll-dialog-description"
       >
-        {/* <DialogContent style={{ overflow: "hidden" }}> */}
         <Box sx={{ p: "30px" }}>
           <ContentBox>
             <Stack
@@ -361,7 +349,6 @@ const {enqueueSnackbar} = useSnackbar()
             </Grid>
           </Grid>
         </Box>
-        {/* </DialogContent> */}
       </Dialog>
     </div>
   );

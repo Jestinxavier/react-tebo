@@ -247,7 +247,7 @@ const {setCallerId,socket } = useContext(SocketContext);
           <Grid item sm={12} xs={12} md={12}>
           <Heading>Shared Robots</Heading>
           
-          {shareRobotList? <CarouselTeboMode mockData={shareRobotList} sharedRobot />:
+          {shareRobotList?.length>0?  <CarouselTeboMode mockData={shareRobotList} sharedRobot />:
 
             <NoRobotCard 
            image ="/images/sharerobot.gif"
